@@ -4,6 +4,3 @@
 node_modules/
 platforms/
 plugins/
-
-#ignore node_modules
-node_modules/
