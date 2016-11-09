@@ -1,23 +1,23 @@
-.tab-nav .tabs{
+.tabs{
   background-color: #F54F2B !important;
-  height: auto;
+  height: auto !important;
 
   .tab-item {
     box-sizing: border-box;
-    padding: 5px 0 5px 0;
+    padding: 5px 0 5px 0 !important;
     font-size: 1em !important;
-    color: rgba(255,255,255,0.6) !important;
+    color: rgba(255,255,255,1) !important;
 
     .tab-title {
-      display: block;
+      display: block !important;
       clear: both;
-      padding-top: 5px !important;
+      padding-top: 10px !important;
     }
   }
 
   .tab-item-active {
     color: white !important;
-    border-bottom: 4px solid white
+    border-bottom: 4px solid white !important;
   }
 
 }
