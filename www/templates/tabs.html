@@ -3,21 +3,21 @@ Create tabs with an icon and label, using the tabs-positive style.
 Each tab's child <ion-nav-view> directive will have its own
 navigation history that also transitions its views in and out.
 -->
-<ion-tabs class="tabs-icon-top tabs-color-active-assertive">
+<ion-tabs class="tabs-icon-top tabs-color-active-positive">
 
-  <!-- Settings Tab -->
-  <ion-tab title="Settings" icon-off="ion-ios-gear-outline" icon-on="ion-ios-gear" href="#/tab/settings">
-    <ion-nav-view name="tab-settings"></ion-nav-view>
+  <!-- Dashboard Tab -->
+  <ion-tab title="Settings" icon="ion-android-settings"  href="#/tab/dash">
+    <ion-nav-view name="tab-dash"></ion-nav-view>
   </ion-tab>
 
-  <!-- Map Tab -->
-  <ion-tab title="Map" icon-off="ion-ios-location-outline" icon-on="ion-ios-location" href="#/tab/map">
-    <ion-nav-view name="tab-map"></ion-nav-view>
+  <!-- Chats Tab -->
+  <ion-tab title="Map" icon="ion-ios-navigate" href="#/tab/chats">
+    <ion-nav-view name="tab-chats"></ion-nav-view>
   </ion-tab>
 
-  <!-- Friends Tab -->
-  <ion-tab title="Friends" icon-off="ion-ios-people-outline" icon-on="ion-ios-people" href="#/tab/friends">
-    <ion-nav-view name="tab-friends"></ion-nav-view>
+  <!-- Account Tab -->
+  <ion-tab title="Friends" icon="ion-ios-people" href="#/tab/account">
+    <ion-nav-view name="tab-account"></ion-nav-view>
   </ion-tab>
 
 
