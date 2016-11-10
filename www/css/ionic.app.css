@@ -15,22 +15,6 @@ $assertive:                       #ef473a !default;
 $royal:                           #886aea !default;
 $dark:                            #444 !default;
 */
-.tabs {
-  background-color: #F54F2B !important;
-  height: auto !important; }
-  .tabs .tab-item {
-    box-sizing: border-box;
-    padding: 5px 0 5px 0 !important;
-    font-size: 1em !important;
-    color: white !important; }
-    .tabs .tab-item .tab-title {
-      display: block !important;
-      clear: both;
-      padding-top: 10px !important; }
-  .tabs .tab-item-active {
-    color: white !important;
-    border-bottom: 4px solid white !important; }
-
 /*!
   Ionicons, v2.0.1
   Created by Ben Sperry for the Ionic Framework, http://ionicons.com/
@@ -9830,19 +9814,3 @@ a.button {
   opacity: 0;
   -webkit-transition-duration: 0s;
   transition-duration: 0s; }
-
-.tabs {
-  background-color: #F54F2B !important;
-  height: auto !important; }
-  .tabs .tab-item {
-    box-sizing: border-box;
-    padding: 5px 0 5px 0 !important;
-    font-size: 1em !important;
-    color: white !important; }
-    .tabs .tab-item .tab-title {
-      display: block !important;
-      clear: both;
-      padding-top: 10px !important; }
-  .tabs .tab-item-active {
-    color: white !important;
-    border-bottom: 4px solid white !important; }
