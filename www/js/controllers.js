@@ -13,7 +13,6 @@ angular.module('starter.controllers', [])
 
   //document.addEventListener("deviceready", function () {
 
-    // Get current position once
     var posOptions = {
       timeout: 10000,
       enableHighAccuracy: true
@@ -24,10 +23,12 @@ angular.module('starter.controllers', [])
       .then(
         function(position) {
 
+        // Get current position once
         var latLng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
 
         // Set map options
         var mapOptions = {
+          // Set map center to current position
           center: latLng,
           clickableIcons: false,
           zoom: 18,
@@ -56,14 +57,14 @@ angular.module('starter.controllers', [])
           }]
         };
 
-        // Add map to the application scope
-        $scope.map = new google.maps.Map(document.getElementById("map"), mapOptions);
+        // Create a map with the given options
+        var map = new google.maps.Map(document.getElementById("map"), mapOptions);
 
         // https://developers.google.com/maps/documentation/javascript/symbols
-        // Using an SVG (vector) path instead of an image as a marker
+        // Create a new marker using an SVG (vector) path
         var marker = new google.maps.Marker({
         // Set the marker at the center of the map
-          position: $scope.map.getCenter(),
+          position: map.getCenter(),
           icon: {
             path: google.maps.SymbolPath.FORWARD_OPEN_ARROW,
             strokeColor: '#f65338',
@@ -72,8 +73,11 @@ angular.module('starter.controllers', [])
             rotation: 0
           },
           draggable: false,
-          map: $scope.map
+          map: map
         }); // End marker
+
+        // Add map to the application scope
+        $scope.map = map;
 
         // ngCordova Geolocation options
         var posOptions = {
