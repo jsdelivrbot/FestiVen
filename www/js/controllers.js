@@ -13,24 +13,14 @@ angular.module('starter.controllers', [])
 
   document.addEventListener("deviceready", function () {
 
-    // ngCordova Geolocation options
-    var posOptions = {
-      timeout: 5000,
-      enableHighAccuracy: true
-    };
+    //Get current position Once
+    var posOptions = {timeout: 10000, enableHighAccuracy: true};
+    $cordovaGeolocation
+      .getCurrentPosition(posOptions)
+      .then(function (position) {
+        var lat  = position.coords.latitude
+        var long = position.coords.longitude
 
-    var watchPos = $cordovaGeolocation.watchPosition(posOptions);
-
-    watchPos.then(
-      null,
-      function(error) {
-        // Error handling in case ngCordova Geolocation fails
-      },
-      function(position) {
-
-        console.log(position);
-
-        // Create a Google Maps LatLng from the ngCordova position
         var latLng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
 
         // Set map options and style
@@ -111,37 +101,82 @@ angular.module('starter.controllers', [])
 
         // Add map to the application scope
         $scope.map = new google.maps.Map(document.getElementById("map"), mapOptions);
-        var headOptions = {
-         frequency: 100
-       }
 
-       var headWatch = $cordovaDeviceOrientation.watchHeading(headOptions).then(
-         null,
-         function(error) {
-           alert(error);
-           // An error occurred
+        // https://developers.google.com/maps/documentation/javascript/symbols
+        // Using an SVG (vector) path instead of an image as a marker
+       var marker = new google.maps.Marker({
+         // Set the marker at the center of the map
+         position: $scope.map.getCenter(),
+         icon: {
+           path: google.maps.SymbolPath.FORWARD_OPEN_ARROW,
+           strokeColor: '#f65338',
+           strokeWeight: 5,
+           scale: 3,
+           rotation: 0
          },
-         function(result) {   // updates constantly (depending on frequency value)
+         draggable: true,
+         map: $scope.map
+       });
 
-           var trueHeading = result.trueHeading;
-           console.log(trueHeading);
 
-            // https://developers.google.com/maps/documentation/javascript/symbols
-            // Using an SVG (vector) path instead of an image as a marker
-           var marker = new google.maps.Marker({
-             // Set the marker at the center of the map
-             position: $scope.map.getCenter(),
-             icon: {
-               path: google.maps.SymbolPath.FORWARD_OPEN_ARROW,
-               strokeColor: '#f65338',
-               strokeWeight: 5,
-               scale: 3,
-               rotation: trueHeading
-             },
-             draggable: true,
-             map: $scope.map
-           });
+        // ngCordova Geolocation options
+        var posOptions = {
+          timeout: 500,
+          enableHighAccuracy: true
+        };
 
+        var watchPos = $cordovaGeolocation.watchPosition(posOptions);
+
+        watchPos.then(
+          null,
+          function(error) {
+            // Error handling in case ngCordova Geolocation fails
+          },
+          function(position) {
+
+            console.log(position);
+
+            // Create a Google Maps LatLng from the ngCordova position
+            var latLng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
+
+            $scope.map.setCenter(latLng);
+
+
+            $cordovaDeviceOrientation.getCurrentHeading().then(function(result) {
+               var magneticHeading = result.magneticHeading;
+               var trueHeading = result.trueHeading;
+               var accuracy = result.headingAccuracy;
+               var timeStamp = result.timestamp;
+
+               var trueHeading = result.trueHeading;
+               console.log(trueHeading);
+
+               marker.setMap(null);
+               marker = null;
+               marker = new google.maps.Marker({
+                 // Set the marker at the center of the map
+                 position: $scope.map.getCenter(),
+                 icon: {
+                   path: google.maps.SymbolPath.FORWARD_OPEN_ARROW,
+                   strokeColor: '#f65338',
+                   strokeWeight: 5,
+                   scale: 3,
+                   rotation: trueHeading
+                 },
+                 draggable: true,
+                 map: $scope.map
+               });
+
+
+            }, function(err) {
+              // An error occurred
+
+              alert(error.message);
+            });
+
+      }, function(err) {
+        // error
+        alert(error.message);
       });
 
     });
