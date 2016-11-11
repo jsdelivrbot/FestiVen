@@ -11,7 +11,7 @@ angular.module('starter.controllers', [])
 // Controller for the map view
 .controller('MapCtrl', function($scope, $state, $cordovaGeolocation, $cordovaDeviceOrientation) {
 
-  document.addEventListener("deviceready", function () {
+  //document.addEventListener("deviceready", function () {
 
     // Get current position once
     var posOptions = {
@@ -20,13 +20,13 @@ angular.module('starter.controllers', [])
     };
 
     $cordovaGeolocation
-      .getCurrentPosition(posOptions)
+    .getCurrentPosition(posOptions)
       .then(
         function(position) {
 
         var latLng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
 
-        // Set map options and style
+        // Set map options
         var mapOptions = {
           center: latLng,
           clickableIcons: false,
@@ -71,7 +71,7 @@ angular.module('starter.controllers', [])
             scale: 3,
             rotation: 0
           },
-          draggable: true,
+          draggable: false,
           map: $scope.map
         }); // End marker
 
@@ -85,7 +85,7 @@ angular.module('starter.controllers', [])
         watchPos.then(
           null,
           function(error) {
-            alert(error.message);
+            alert("watchPosition error " + error);
           },
           function(position) {
             // Create a Google Maps LatLng centered on the ngCordova position
@@ -118,17 +118,14 @@ angular.module('starter.controllers', [])
                }); // End marker
               }, // End getCurrentHeading then success
               function(error) {
-                alert(error.message);
+                alert("getCurrentHeading error: " + error);
               } // End getCurrentHeading then error
             ); // End getCurrentHeading then
-          }, // End watchPosition then succes
-          function(error) {
-            alert(error.message);
-          } // End watchPosition then error
+          } // End watchPosition then succes
         ); // End watchPosition then
       } // End getCurrentPosition then success
     ); // End getCurrentPosition then
-  }); // Add devideready
+  //}); // Add devideready
 }) // End MapCtrl
 
 // Controller for the friends view
