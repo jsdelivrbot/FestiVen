@@ -1,5 +1,4 @@
 // Each screen has its own controller
-
 angular.module('starter.controllers', [])
 
 // Controller for the settings view
@@ -10,122 +9,145 @@ angular.module('starter.controllers', [])
 })
 
 // Controller for the map view
-.controller('MapCtrl', function($scope, $state, $cordovaGeolocation) {
+.controller('MapCtrl', function($scope, $state, $cordovaGeolocation, $cordovaDeviceOrientation) {
 
-  // ngCordova Geolocation options
-  var options = {
-    timeout: 5000,
-    enableHighAccuracy: true
-  };
+  document.addEventListener("deviceready", function () {
 
-  var watch = $cordovaGeolocation.watchPosition(options);
+    // ngCordova Geolocation options
+    var posOptions = {
+      timeout: 5000,
+      enableHighAccuracy: true
+    };
 
-  watch.then(
-    null,
-    function(error) {
-      // Error handling in case ngCordova Geolocation fails
-    },
-    function(position) {
+    var watchPos = $cordovaGeolocation.watchPosition(posOptions);
 
-      console.log(position);
+    watchPos.then(
+      null,
+      function(error) {
+        // Error handling in case ngCordova Geolocation fails
+      },
+      function(position) {
 
-      // Create a Google Maps LatLng from the ngCordova position
-      var latLng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
+        console.log(position);
 
-      // Set map options and style
-      var mapOptions = {
-        center: latLng,
-        clickableIcons: false,
-        zoom: 18,
-        minZoom: 17,
-        maxZoom: 20,
-        zoomControl: false,
-        mapTypeId: google.maps.MapTypeId.ROADMAP,
-        mapTypeControl: false,
-        streetViewControl: false,
-        styles: [{
-          "featureType": "poi.park",
-          "elementType": "geometry.fill",
-          "stylers": [{
-            "color": "#bae5a6"
-          }]
-        }, {
-          "featureType": "road",
-          "elementType": "all",
-          "stylers": [{
-            "weight": "1.00"
+        // Create a Google Maps LatLng from the ngCordova position
+        var latLng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
+
+        // Set map options and style
+        var mapOptions = {
+          center: latLng,
+          clickableIcons: false,
+          zoom: 18,
+          minZoom: 17,
+          maxZoom: 20,
+          zoomControl: false,
+          mapTypeId: google.maps.MapTypeId.ROADMAP,
+          mapTypeControl: false,
+          streetViewControl: false,
+          styles: [{
+            "featureType": "poi.park",
+            "elementType": "geometry.fill",
+            "stylers": [{
+              "color": "#bae5a6"
+            }]
           }, {
-            "gamma": "1.8"
+            "featureType": "road",
+            "elementType": "all",
+            "stylers": [{
+              "weight": "1.00"
+            }, {
+              "gamma": "1.8"
+            }, {
+              "saturation": "0"
+            }]
           }, {
-            "saturation": "0"
-          }]
-        }, {
-          "featureType": "road",
-          "elementType": "geometry.fill",
-          "stylers": [{
-            "hue": "#ffb200"
-          }]
-        }, {
-          "featureType": "road.arterial",
-          "elementType": "geometry.fill",
-          "stylers": [{
-            "lightness": "0"
+            "featureType": "road",
+            "elementType": "geometry.fill",
+            "stylers": [{
+              "hue": "#ffb200"
+            }]
           }, {
-            "gamma": "1"
-          }]
-        }, {
-          "featureType": "transit.station.airport",
-          "elementType": "all",
-          "stylers": [{
-            "hue": "#b000ff"
+            "featureType": "road.arterial",
+            "elementType": "geometry.fill",
+            "stylers": [{
+              "lightness": "0"
+            }, {
+              "gamma": "1"
+            }]
           }, {
-            "saturation": "23"
+            "featureType": "transit.station.airport",
+            "elementType": "all",
+            "stylers": [{
+              "hue": "#b000ff"
+            }, {
+              "saturation": "23"
+            }, {
+              "lightness": "-4"
+            }, {
+              "gamma": "0.80"
+            }]
           }, {
-            "lightness": "-4"
+            "featureType": "water",
+            "elementType": "all",
+            "stylers": [{
+              "color": "#a0daf2"
+            }]
           }, {
-            "gamma": "0.80"
-          }]
-        }, {
-          "featureType": "water",
-          "elementType": "all",
-          "stylers": [{
-            "color": "#a0daf2"
-          }]
-        }, {
-          "featureType": "landscape.man_made",
-          "elementType": "geometry",
-          "stylers": [{
-            "hue": "#ff0000"
-          }]
-        }, {
-          "featureType": "landscape.man_made",
-          "elementType": "geometry.fill",
-          "stylers": [{
-            "hue": "#ff3200"
+            "featureType": "landscape.man_made",
+            "elementType": "geometry",
+            "stylers": [{
+              "hue": "#ff0000"
+            }]
           }, {
-            "visibility": "on"
+            "featureType": "landscape.man_made",
+            "elementType": "geometry.fill",
+            "stylers": [{
+              "hue": "#ff3200"
+            }, {
+              "visibility": "on"
+            }]
           }]
-        }]
-      };
+        };
 
-      // Add map to the application scope
-      $scope.map = new google.maps.Map(document.getElementById("map"), mapOptions);
+        // Add map to the application scope
+        $scope.map = new google.maps.Map(document.getElementById("map"), mapOptions);
+        var headOptions = {
+         frequency: 100
+       }
 
-      // https://developers.google.com/maps/documentation/javascript/symbols
-      // Using an SVG (vector) path instead of an image as a marker
-      var marker = new google.maps.Marker({
-        // Set the marker at the center of the map
-        position: $scope.map.getCenter(),
-        icon: {
-          path: google.maps.SymbolPath.FORWARD_OPEN_ARROW,
-          strokeColor: '#f65338',
-          strokeWeight: 5,
-          scale: 3
-        },
-        draggable: true,
-        map: $scope.map
+       var headWatch = $cordovaDeviceOrientation.watchHeading(headOptions).then(
+         null,
+         function(error) {
+           alert(error);
+           // An error occurred
+         },
+         function(result) {   // updates constantly (depending on frequency value)
+
+           var trueHeading = result.trueHeading;
+           console.log(trueHeading);
+
+            // https://developers.google.com/maps/documentation/javascript/symbols
+            // Using an SVG (vector) path instead of an image as a marker
+           var marker = new google.maps.Marker({
+             // Set the marker at the center of the map
+             position: $scope.map.getCenter(),
+             icon: {
+               path: google.maps.SymbolPath.FORWARD_OPEN_ARROW,
+               strokeColor: '#f65338',
+               strokeWeight: 5,
+               scale: 3,
+               rotation: trueHeading
+             },
+             draggable: true,
+             map: $scope.map
+           });
+
       });
+
     });
+
+  });
+
 })
 
 // Controller for the friends view
