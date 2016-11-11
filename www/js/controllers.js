@@ -11,15 +11,15 @@ angular.module('starter.controllers', [])
 // Controller for the map view
 .controller('MapCtrl', function($scope, $state, $cordovaGeolocation, $cordovaDeviceOrientation) {
 
-  //document.addEventListener("deviceready", function () {
+  document.addEventListener("deviceready", function () {
 
-    var posOptions = {
+    var singleOptions = {
       timeout: 10000,
       enableHighAccuracy: true
     };
 
     $cordovaGeolocation
-    .getCurrentPosition(posOptions)
+    .getCurrentPosition(singleOptions)
       .then(
         function(position) {
 
@@ -60,11 +60,15 @@ angular.module('starter.controllers', [])
         // Create a map with the given options
         var map = new google.maps.Map(document.getElementById("map"), mapOptions);
 
+        // Add map to the application scope
+        $scope.map = map;
+
+
         // https://developers.google.com/maps/documentation/javascript/symbols
         // Create a new marker using an SVG (vector) path
         var marker = new google.maps.Marker({
         // Set the marker at the center of the map
-          position: map.getCenter(),
+          position: $scope.map.getCenter(),
           icon: {
             path: google.maps.SymbolPath.FORWARD_OPEN_ARROW,
             strokeColor: '#f65338',
@@ -76,12 +80,11 @@ angular.module('starter.controllers', [])
           map: map
         }); // End marker
 
-        // Add map to the application scope
-        $scope.map = map;
 
         // ngCordova Geolocation options
         var posOptions = {
-          timeout: 500,
+          timeout: 10000,
+          frequency: 100,
           enableHighAccuracy: true
         };
 
@@ -89,11 +92,15 @@ angular.module('starter.controllers', [])
         watchPos.then(
           null,
           function(error) {
-            alert("watchPosition error " + error);
+            alert("watchPosition error " + error.message);
           },
           function(position) {
+
             // Create a Google Maps LatLng centered on the ngCordova position
-            var latLng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
+            var latLng = new google.maps.LatLng(position.coords.latitude,
+            position.coords.longitude);
+
+
             $scope.map.setCenter(latLng);
 
             $cordovaDeviceOrientation
@@ -129,7 +136,7 @@ angular.module('starter.controllers', [])
         ); // End watchPosition then
       } // End getCurrentPosition then success
     ); // End getCurrentPosition then
-  //}); // Add devideready
+  }); // Add devideready
 }) // End MapCtrl
 
 // Controller for the friends view
