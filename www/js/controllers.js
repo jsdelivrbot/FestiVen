@@ -403,9 +403,9 @@ angular.module('starter.controllers', [])
           icon: {
             path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW,
             strokeColor: '#f65338',
-            strokeWeight: 2,
             fillColor: '#f65338',
-            scale: 3,
+            fillOpacity: 1,
+            scale: 4,
             rotation: 0
           },
           draggable: false,
@@ -452,12 +452,12 @@ angular.module('starter.controllers', [])
                   icon: {
                     path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW,
                     strokeColor: '#f65338',
-                    strokeWeight: 2,
                     fillColor: '#f65338',
-                    scale: 3,
+                    fillOpacity: 1,
+                    scale: 4,
                     rotation: trueHeading
                   }, // End icon
-                  draggable: true,
+                  draggable: false,
                   map: $scope.map
                }); // End marker
               }, // End getCurrentHeading then success
