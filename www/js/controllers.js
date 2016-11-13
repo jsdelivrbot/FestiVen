@@ -11,7 +11,7 @@ angular.module('starter.controllers', [])
 // Controller for the map view
 .controller('MapCtrl', function($scope, $state, $cordovaGeolocation, $cordovaDeviceOrientation) {
 
-  //document.addEventListener("deviceready", function () {
+  document.addEventListener("deviceready", function () {
 
     var singleOptions = {
       timeout: 10000,
@@ -23,9 +23,12 @@ angular.module('starter.controllers', [])
       .then(
         function(position) {
 
+        alert(position.coords.latitude + ", " + position.coords.longitude);
+
         // Get current position once
         var latLng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
 
+        alert("LatLong created");
         // Set map options
         var mapOptions = {
           // Set map center to current position
@@ -145,11 +148,14 @@ angular.module('starter.controllers', [])
 ]
         };
 
+
         // Create a map with the given options
         var map = new google.maps.Map(document.getElementById("map"), mapOptions);
 
+
         // Add map to the application scope
         $scope.map = map;
+
 
         // https://developers.google.com/maps/documentation/javascript/symbols
         // Create a new marker using an SVG (vector) path
@@ -166,13 +172,13 @@ angular.module('starter.controllers', [])
             rotation: 0
           },
           draggable: false,
-          map: map
+          map: $scope.map
         });
 
         // ngCordova Geolocation options
         var posOptions = {
           timeout: 10000,
-          frequency: 100,
+          frequency: 10,
           enableHighAccuracy: true
         };
 
@@ -185,19 +191,28 @@ angular.module('starter.controllers', [])
           function(position) {
 
             // Create a Google Maps LatLng centered on the ngCordova position
-            var latLng = new google.maps.LatLng(position.coords.latitude,
+            var newLatLng = new google.maps.LatLng(position.coords.latitude,
             position.coords.longitude);
 
 
-            $scope.map.setCenter(latLng);
+            //$scope.map.setCenter(newLatLng);
 
             $cordovaDeviceOrientation
             .getCurrentHeading()
             .then(
               function(result) {
                 var trueHeading = result.trueHeading;
-
-                marker.setMap(null);
+                marker.setIcon({
+                  path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW,
+                  strokeColor: '#f65338',
+                  strokeWeight: 0,
+                  fillColor: '#f65338',
+                  fillOpacity: 1,
+                  scale: 4,
+                  rotation: trueHeading
+                })
+                //marker.setMap(null);
+                /*
                 marker = new google.maps.Marker({
                   // Set the marker at the center of the map
                   position: $scope.map.getCenter(),
@@ -212,7 +227,7 @@ angular.module('starter.controllers', [])
                   }, // End icon
                   draggable: false,
                   map: $scope.map
-               }); // End marker
+               }); // End marker*/
               }, // End getCurrentHeading then success
               function(error) {
                 alert("getCurrentHeading error: " + error);
@@ -222,7 +237,7 @@ angular.module('starter.controllers', [])
         ); // End watchPosition then
       } // End getCurrentPosition then success
     ); // End getCurrentPosition then
-  //}); // Add devideready
+  }); // Add devideready
 }) // End MapCtrl
 
 // Controller for the friends view
