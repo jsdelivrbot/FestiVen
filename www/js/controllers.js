@@ -11,7 +11,7 @@ angular.module('starter.controllers', [])
 // Controller for the map view
 .controller('MapCtrl', function($scope, $state, $cordovaGeolocation, $cordovaDeviceOrientation) {
 
-  document.addEventListener("deviceready", function () {
+  //document.addEventListener("deviceready", function () {
 
     var singleOptions = {
       timeout: 10000,
@@ -23,12 +23,11 @@ angular.module('starter.controllers', [])
       .then(
         function(position) {
 
-        alert(position.coords.latitude + ", " + position.coords.longitude);
+
 
         // Get current position once
         var latLng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
 
-        alert("LatLong created");
         // Set map options
         var mapOptions = {
           // Set map center to current position
@@ -177,7 +176,7 @@ angular.module('starter.controllers', [])
 
         // ngCordova Geolocation options
         var posOptions = {
-          timeout: 10000,
+          timeout: 3000,
           frequency: 10,
           enableHighAccuracy: true
         };
@@ -186,7 +185,7 @@ angular.module('starter.controllers', [])
         watchPos.then(
           null,
           function(error) {
-            alert("watchPosition error " + error.message);
+            //alert("watchPosition error " + error.message);
           },
           function(position) {
 
@@ -230,14 +229,14 @@ angular.module('starter.controllers', [])
                }); // End marker*/
               }, // End getCurrentHeading then success
               function(error) {
-                alert("getCurrentHeading error: " + error);
+                //alert("getCurrentHeading error: " + error);
               } // End getCurrentHeading then error
             ); // End getCurrentHeading then
           } // End watchPosition then succes
         ); // End watchPosition then
       } // End getCurrentPosition then success
     ); // End getCurrentPosition then
-  }); // Add devideready
+  //}); // Add devideready
 }) // End MapCtrl
 
 // Controller for the friends view

@@ -3,18 +3,7 @@
 To customize the look and feel of Ionic, you can override the variables
 in ionic's _variables.scss file.
 
-For example, you might change some of the default colors:
-
-$light:                           #fff !default;
-$stable:                          #f8f8f8 !default;
-$positive:                        #387ef5 !default;
-$calm:                            #11c1f3 !default;
-$balanced:                        #33cd5f !default;
-$energized:                       #ffc900 !default;
-$assertive:                       #ef473a !default;
-$royal:                           #886aea !default;
-$dark:                            #444 !default;
-*/
+For example, you might change some of the default colors:*/
 /*!
   Ionicons, v2.0.1
   Created by Ben Sperry for the Ionic Framework, http://ionicons.com/
@@ -9823,7 +9812,7 @@ a.button {
   height: 100%; }
 
 .pill-nav {
-  background: #fff;
+  background-color: #EC4940;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
   border-radius: 30px;
   position: fixed;
@@ -9834,6 +9823,26 @@ a.button {
   box-model: border-box;
   line-height: 3rem;
   padding: 1rem; }
+  .pill input {
+    /* HIDE RADIO */
+    visibility: hidden;
+    /* Makes input not-clickable */
+    position: absolute;
+    /* Remove input from document flow */ }
+  .pill input + img {
+    /* IMAGE STYLES */
+    cursor: pointer;
+    border: 2px solid transparent;
+    display: inline-block;
+    vertical-align: middle;
+    opacity: 0.5;
+    fill: #fff; }
+  .pill input:checked + img {
+    /* (RADIO CHECKED) IMAGE STYLES */
+    opacity: 1; }
+  .pill .radio-pill {
+    visibility: hidden;
+    position: absolute; }
 
 .pill-nav .pill:first-child {
   border-radius: 30px 0 0 30px;
@@ -9842,3 +9851,23 @@ a.button {
 .pill-nav .pill:last-child {
   border-radius: 0 30px 30px 0;
   padding-right: 2rem; }
+
+input[type=checkbox] {
+  display: none; }
+
+input[type=checkbox] + label {
+  background: url("../img/marker.svg") no-repeat;
+  background-size: 50%;
+  height: 48px;
+  width: 48px;
+  display: inline-block;
+  padding: 0 0 0 0px; }
+
+input[type=checkbox]:checked + label {
+  background: url("../img/marker.svg") no-repeat;
+  background-size: 50%;
+  height: 48px;
+  width: 48px;
+  display: inline-block;
+  padding: 0 0 0 0px;
+  opacity: 0.5; }
