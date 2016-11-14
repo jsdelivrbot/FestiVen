@@ -9861,7 +9861,7 @@ a.button {
   .pill.center-map {
     padding: .6rem; }
   .pill.center-map img {
-    opacity: 1; }
+    opacity: .5; }
 
 .profile-information p {
   padding: 16px;

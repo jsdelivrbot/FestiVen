@@ -85,7 +85,7 @@ angular.module('starter.controllers', [])
             strokeWeight: 0,
             fillColor: '#f65338',
             fillOpacity: 1,
-            scale: 5,
+            scale: 6,
             rotation: 0
           },
           draggable: false,
@@ -122,7 +122,7 @@ angular.module('starter.controllers', [])
                   strokeWeight: 0,
                   fillColor: '#f65338',
                   fillOpacity: 1,
-                  scale: 5,
+                  scale: 6,
                   rotation: trueHeading
                 })
               }, // End getCurrentHeading then success
