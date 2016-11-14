@@ -23,8 +23,6 @@ angular.module('starter.controllers', [])
       .then(
         function(position) {
 
-
-
         // Get current position once
         var latLng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
 
