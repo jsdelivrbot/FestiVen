@@ -11,7 +11,7 @@ angular.module('starter.controllers', [])
 // Controller for the map view
 .controller('MapCtrl', function($scope, $state, $cordovaGeolocation, $cordovaDeviceOrientation) {
 
-  //document.addEventListener("deviceready", function () {
+  document.addEventListener("deviceready", function () {
 
     var singleOptions = {
       timeout: 10000,
@@ -101,6 +101,7 @@ angular.module('starter.controllers', [])
 
             // Create a Google Maps LatLng centered on the ngCordova position
             var newLatLng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
+            marker.setPosition(newLatLng);
 
             $cordovaDeviceOrientation
             .getCurrentHeading()
@@ -125,7 +126,7 @@ angular.module('starter.controllers', [])
         ); // End watchPosition then
       } // End getCurrentPosition then success
     ); // End getCurrentPosition then
-  //}); // End deviceready
+  }); // End deviceready
 }) // End MapCtrl
 
 // Controller for the friends view
