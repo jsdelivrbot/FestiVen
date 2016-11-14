@@ -36,125 +36,37 @@ angular.module('starter.controllers', [])
           maxZoom: 20,
           disableDefaultUI: true,
           mapTypeId: google.maps.MapTypeId.ROADMAP,
-          styles: [
-    {
-        "featureType": "administrative",
-        "elementType": "labels.text.fill",
-        "stylers": [
-            {
-                "color": "#444444"
-            }
-        ]
-    },
-    {
-        "featureType": "landscape",
-        "elementType": "all",
-        "stylers": [
-            {
-                "visibility": "on"
-            }
-        ]
-    },
-    {
-        "featureType": "landscape.man_made",
-        "elementType": "geometry.fill",
-        "stylers": [
-            {
-                "visibility": "on"
-            }
-        ]
-    },
-    {
-        "featureType": "landscape.man_made",
-        "elementType": "geometry.stroke",
-        "stylers": [
-            {
-                "visibility": "off"
-            }
-        ]
-    },
-    {
-        "featureType": "poi",
-        "elementType": "all",
-        "stylers": [
-            {
-                "visibility": "off"
-            }
-        ]
-    },
-    {
-        "featureType": "road",
-        "elementType": "all",
-        "stylers": [
-            {
-                "saturation": -100
-            },
-            {
-                "lightness": 45
-            }
-        ]
-    },
-    {
-        "featureType": "road.highway",
-        "elementType": "all",
-        "stylers": [
-            {
-                "visibility": "simplified"
-            }
-        ]
-    },
-    {
-        "featureType": "road.highway",
-        "elementType": "geometry.fill",
-        "stylers": [
-            {
-                "color": "#ffffff"
-            }
-        ]
-    },
-    {
-        "featureType": "road.arterial",
-        "elementType": "labels.icon",
-        "stylers": [
-            {
-                "visibility": "off"
-            }
-        ]
-    },
-    {
-        "featureType": "transit",
-        "elementType": "all",
-        "stylers": [
-            {
-                "visibility": "off"
-            }
-        ]
-    },
-    {
-        "featureType": "water",
-        "elementType": "all",
-        "stylers": [
-            {
-                "color": "#dde6e8"
-            },
-            {
-                "visibility": "on"
-            }
-        ]
-    }
-]
+          styles: [{
+            "featureType": "administrative", "elementType": "labels.text.fill", "stylers": [{ "color": "#444444" }]
+          }, {
+            "featureType": "landscape", "elementType": "all", "stylers": [{ "visibility": "on" }]
+          }, {
+            "featureType": "landscape.man_made", "elementType": "geometry.fill", "stylers": [{ "visibility": "on" }]
+          }, {
+            "featureType": "landscape.man_made", "elementType": "geometry.stroke", "stylers": [{ "visibility": "off" }]
+          }, {
+            "featureType": "poi", "elementType": "all", "stylers": [{ "visibility": "off" }]
+          }, {
+            "featureType": "road", "elementType": "all", "stylers": [{ "saturation": -100 }, { "lightness": 45 }]
+          }, {
+            "featureType": "road.highway", "elementType": "all", "stylers": [{ "visibility": "simplified" }]
+          }, {
+            "featureType": "road.highway", "elementType": "geometry.fill", "stylers": [{ "color": "#ffffff" }]
+          }, {
+            "featureType": "road.arterial", "elementType": "labels.icon", "stylers": [{ "visibility": "off" }]
+          }, {
+            "featureType": "transit", "elementType": "all", "stylers": [{ "visibility": "off" }]
+          }, {
+            "featureType": "water", "elementType": "all", "stylers": [{ "color": "#dde6e8" }, { "visibility": "on" }]
+          }]
         };
-
 
         // Create a map with the given options
         var map = new google.maps.Map(document.getElementById("map"), mapOptions);
 
-
         // Add map to the application scope
         $scope.map = map;
 
-
-        // https://developers.google.com/maps/documentation/javascript/symbols
         // Create a new marker using an SVG (vector) path
         var marker = new google.maps.Marker({
         // Set the marker at the center of the map
@@ -165,7 +77,7 @@ angular.module('starter.controllers', [])
             strokeWeight: 0,
             fillColor: '#f65338',
             fillOpacity: 1,
-            scale: 4,
+            scale: 5,
             rotation: 0
           },
           draggable: false,
@@ -191,9 +103,6 @@ angular.module('starter.controllers', [])
             var newLatLng = new google.maps.LatLng(position.coords.latitude,
             position.coords.longitude);
 
-
-            //$scope.map.setCenter(newLatLng);
-
             $cordovaDeviceOrientation
             .getCurrentHeading()
             .then(
@@ -205,26 +114,9 @@ angular.module('starter.controllers', [])
                   strokeWeight: 0,
                   fillColor: '#f65338',
                   fillOpacity: 1,
-                  scale: 4,
+                  scale: 5,
                   rotation: trueHeading
                 })
-                //marker.setMap(null);
-                /*
-                marker = new google.maps.Marker({
-                  // Set the marker at the center of the map
-                  position: $scope.map.getCenter(),
-                  icon: {
-                    path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW,
-                    strokeColor: '#f65338',
-                    strokeWeight: 0,
-                    fillColor: '#f65338',
-                    fillOpacity: 1,
-                    scale: 4,
-                    rotation: trueHeading
-                  }, // End icon
-                  draggable: false,
-                  map: $scope.map
-               }); // End marker*/
               }, // End getCurrentHeading then success
               function(error) {
                 //alert("getCurrentHeading error: " + error);
