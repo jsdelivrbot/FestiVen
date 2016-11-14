@@ -11,7 +11,16 @@ angular.module('starter.controllers', [])
 // Controller for the map view
 .controller('MapCtrl', function($scope, $state, $cordovaGeolocation, $cordovaDeviceOrientation) {
 
-  document.addEventListener("deviceready", function () {
+  var map = null;
+  var currentPosition = null;
+
+  $(".center-map").click(function() {
+    if(map && currentPosition) {
+      map.panTo(currentPosition);
+    }
+  });
+
+  //document.addEventListener("deviceready", function () {
 
     var singleOptions = {
       timeout: 10000,
@@ -19,9 +28,8 @@ angular.module('starter.controllers', [])
     };
 
     $cordovaGeolocation
-    .getCurrentPosition(singleOptions)
-      .then(
-        function(position) {
+    .getCurrentPosition(singleOptions).then(
+      function(position) {
 
         // Get current position once
         var latLng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
@@ -62,7 +70,7 @@ angular.module('starter.controllers', [])
         };
 
         // Create a map with the given options
-        var map = new google.maps.Map(document.getElementById("map"), mapOptions);
+        map = new google.maps.Map(document.getElementById("map"), mapOptions);
 
         // Add map to the application scope
         $scope.map = map;
@@ -101,11 +109,11 @@ angular.module('starter.controllers', [])
 
             // Create a Google Maps LatLng centered on the ngCordova position
             var newLatLng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
+            currentPosition = newLatLng;
             marker.setPosition(newLatLng);
 
             $cordovaDeviceOrientation
-            .getCurrentHeading()
-            .then(
+            .getCurrentHeading().then(
               function(result) {
                 var trueHeading = result.trueHeading;
                 marker.setIcon({
@@ -126,7 +134,7 @@ angular.module('starter.controllers', [])
         ); // End watchPosition then
       } // End getCurrentPosition then success
     ); // End getCurrentPosition then
-  }); // End deviceready
+  //}); // End deviceready
 }) // End MapCtrl
 
 // Controller for the friends view
