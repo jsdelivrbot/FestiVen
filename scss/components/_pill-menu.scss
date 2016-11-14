@@ -1,0 +1,58 @@
+.pill-menu {
+  background-color: $primary-color;
+  border-radius: 30px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, .2);
+  position: fixed;
+  top: 1rem;
+}
+
+.pill-menu-left {
+  left: 1rem;
+}
+
+.pill-menu-right {
+  right: 1rem;
+}
+
+.pill {
+  line-height: 3rem;
+  padding: 1rem;
+
+  &:first-child {
+    border-radius: 30px 0 0 30px;
+    padding-left: 2rem;
+  }
+
+  &:last-child {
+    border-radius: 0 30px 30px 0;
+    padding-right: 2rem;
+  }
+
+  input {
+    position: absolute;
+    visibility: hidden;
+  }
+
+  img {
+    vertical-align: middle;
+    width: 28px;
+    border: 2px solid transparent;
+    cursor: pointer;
+    display: inline-block;
+    fill: #fff;
+    opacity: .5;
+  }
+
+  input:checked + img {
+    opacity: 1;
+  }
+
+  .radio-pill {
+    position: absolute;
+    visibility: hidden;
+  }
+
+  &.center-map img {
+    opacity: 1;
+  }
+}
