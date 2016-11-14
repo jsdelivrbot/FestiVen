@@ -100,8 +100,7 @@ angular.module('starter.controllers', [])
           function(position) {
 
             // Create a Google Maps LatLng centered on the ngCordova position
-            var newLatLng = new google.maps.LatLng(position.coords.latitude,
-            position.coords.longitude);
+            var newLatLng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
 
             $cordovaDeviceOrientation
             .getCurrentHeading()
@@ -126,7 +125,7 @@ angular.module('starter.controllers', [])
         ); // End watchPosition then
       } // End getCurrentPosition then success
     ); // End getCurrentPosition then
-  //}); // Add devideready
+  //}); // End deviceready
 }) // End MapCtrl
 
 // Controller for the friends view
