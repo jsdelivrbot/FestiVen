@@ -9846,22 +9846,30 @@ a.button {
     position: absolute;
     visibility: hidden; }
   .pill img {
-    vertical-align: middle;
-    width: 28px;
     border: 2px solid transparent;
     cursor: pointer;
     display: inline-block;
     fill: #fff;
-    opacity: .5; }
+    opacity: .5;
+    vertical-align: middle;
+    width: 28px; }
   .pill input:checked + img {
     opacity: 1; }
   .pill .radio-pill {
     position: absolute;
     visibility: hidden; }
   .pill.center-map {
-    padding: .6rem; }
+    padding: .5rem;
+    position: relative; }
   .pill.center-map img {
     opacity: .5; }
+  .pill.center-map:before {
+    bottom: -2rem;
+    content: '';
+    left: -2rem;
+    position: absolute;
+    right: -2rem;
+    top: -2rem; }
 
 .profile-information p {
   padding: 16px;
