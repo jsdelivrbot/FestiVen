@@ -12,7 +12,7 @@ angular.module('starter.controllers')
     }
   });
 
-  document.addEventListener("deviceready", function () {
+  //document.addEventListener("deviceready", function () {
 
     var singleOptions = {
       timeout: 10000,
@@ -34,8 +34,6 @@ angular.module('starter.controllers')
           center: latLng,
           clickableIcons: false,
           zoom: 18,
-          minZoom: 17,
-          maxZoom: 20,
           disableDefaultUI: true,
           mapTypeId: google.maps.MapTypeId.ROADMAP,
           styles: [{
@@ -128,5 +126,5 @@ angular.module('starter.controllers')
         ); // End watchPosition then
       } // End getCurrentPosition then success
     ); // End getCurrentPosition then
-  }); // End deviceready
+  //}); // End deviceready
 }) // End MapCtrl
