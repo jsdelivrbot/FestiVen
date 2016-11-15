@@ -97,11 +97,17 @@ angular.module('starter.controllers')
 
   $(".center-map").click(function() {
     if(map && currentPosition) {
-      map.panTo(currentPosition);
+      //alert("Center before panning: " + map.getCenter());
+      //alert("CurrentPosition before panning: " + currentPosition);
+      google.maps.event.addListener(map, 'tilesloaded', function(event) {
+        map.panTo(currentPosition);
+      });
+      //alert("Center after panning: " + map.getCenter());
+      //alert("CurrentPosition after panning: " + currentPosition);
     }
   });
 
-  //document.addEventListener("deviceready", function () {
+  document.addEventListener("deviceready", function() {
 
     var singleOptions = {
       timeout: 10000,
@@ -123,8 +129,6 @@ angular.module('starter.controllers')
           center: latLng,
           clickableIcons: false,
           zoom: 18,
-          minZoom: 17,
-          maxZoom: 20,
           disableDefaultUI: true,
           mapTypeId: google.maps.MapTypeId.ROADMAP,
           styles: [{
@@ -217,7 +221,7 @@ angular.module('starter.controllers')
         ); // End watchPosition then
       } // End getCurrentPosition then success
     ); // End getCurrentPosition then
-  //}); // End deviceready
+  }); // End deviceready
 }) // End MapCtrl
 
 angular.module('starter.controllers')
