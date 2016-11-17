@@ -6,14 +6,6 @@ angular.module('starter.controllers')
   var map = null;
   var currentPosition = null;
 
-  $(".center-map").click(function() {
-    if(map && currentPosition) {
-      google.maps.event.addListener(map, 'tilesloaded', function(event) {
-        map.panTo(currentPosition);
-      });
-    }
-  });
-
   //document.addEventListener("deviceready", function() {
 
     var singleOptions = {
@@ -65,12 +57,20 @@ angular.module('starter.controllers')
         // Create a map with the given options
         map = new google.maps.Map(document.getElementById("map"), mapOptions);
 
+        // Add map to the application scope
+        $scope.map = map;
+
+        // Remove spinner when the map is loaded
         google.maps.event.addListenerOnce(map, 'idle', function() {
           $(".center").fadeOut();
         });
 
-        // Add map to the application scope
-        $scope.map = map;
+        // Center the map on the current location
+        $(".center-map").click(function() {
+          if(map && currentPosition) {
+              map.panTo(currentPosition);
+          }
+        });
 
         // Create a new marker using an SVG (vector) path
         var marker = new google.maps.Marker({
