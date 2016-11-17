@@ -1,5 +1,5 @@
 angular.module('starter', ['ionic', 'starter.controllers', 'ngCordova'])
-angular.module('starter.controllers', [])
+angular.module('starter.controllers', ['ionic.cloud'])
 
 angular.module('starter')
 
@@ -67,10 +67,26 @@ angular.module('starter')
         controller: 'FriendsCtrl'
       }
     }
+  })
+
+  .state('tab.requests', {
+    url: '/requests',
+    views: {
+      'tab-friends': {
+        templateUrl: 'templates/tab-requests.html',
+        controller: 'RequestsCtrl'
+      }
+    }
+  })
+
+  .state('login', {
+    url: '/login',
+    templateUrl: 'templates/login.html',
+    controller: 'LoginCtrl'
   });
 
   // if none of the above states are matched, use this as the fallback
-  $urlRouterProvider.otherwise('/tab/map');
+  $urlRouterProvider.otherwise('/login');
 
   $ionicConfigProvider.tabs.style('standard');
   $ionicConfigProvider.tabs.position('bottom');
@@ -85,6 +101,34 @@ angular.module('starter.controllers')
   $scope.remove = function(friend) {
     Friends.remove(friend);
   };
+});
+
+angular.module('starter')
+.controller('LoginCtrl', function($ionicAuth, $ionicUser, $rootScope){
+  var vm = this;
+
+  vm.login = function(){
+    $ionicAuth.login('facebook').then(
+      // Get the user_id of the facebook account
+      $rootScope.uid = $ionicUser.social.facebook.uid;
+
+
+      // Check if the user_id already exists
+        // YES: Get all the settings and data and Initialize
+
+        // NO: Save the user_id as a user_id and default settings
+
+
+      $rootScope.data = $ionicAuth.social.facebook.data;
+
+
+
+    );
+  }
+
+  vm.logout = function(){
+    $ionicAuth.logout();
+  }
 })
 
 angular.module('starter.controllers')

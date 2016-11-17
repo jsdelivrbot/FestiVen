@@ -6,4 +6,4 @@ angular.module('starter.controllers')
   $scope.remove = function(friend) {
     Friends.remove(friend);
   };
-})
+});
