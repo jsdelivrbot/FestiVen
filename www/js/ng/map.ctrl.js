@@ -65,8 +65,6 @@ angular.module('starter.controllers')
         // Create a map with the given options
         map = new google.maps.Map(document.getElementById("map"), mapOptions);
 
-
-
         google.maps.event.addListenerOnce(map, 'idle', function() {
           $(".center").fadeOut();
         });
