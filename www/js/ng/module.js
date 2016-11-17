@@ -1,2 +1,2 @@
 angular.module('starter', ['ionic', 'starter.controllers', 'ngCordova'])
-angular.module('starter.controllers', [])
+angular.module('starter.controllers', ['ionic.cloud'])

@@ -45,10 +45,26 @@ angular.module('starter')
         controller: 'FriendsCtrl'
       }
     }
+  })
+
+  .state('tab.requests', {
+    url: '/requests',
+    views: {
+      'tab-friends': {
+        templateUrl: 'templates/tab-requests.html',
+        controller: 'RequestsCtrl'
+      }
+    }
+  })
+
+  .state('login', {
+    url: '/login',
+    templateUrl: 'templates/login.html',
+    controller: 'LoginCtrl'
   });
 
   // if none of the above states are matched, use this as the fallback
-  $urlRouterProvider.otherwise('/tab/map');
+  $urlRouterProvider.otherwise('/login');
 
   $ionicConfigProvider.tabs.style('standard');
   $ionicConfigProvider.tabs.position('bottom');
