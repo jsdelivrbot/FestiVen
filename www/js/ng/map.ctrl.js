@@ -8,17 +8,13 @@ angular.module('starter.controllers')
 
   $(".center-map").click(function() {
     if(map && currentPosition) {
-      //alert("Center before panning: " + map.getCenter());
-      //alert("CurrentPosition before panning: " + currentPosition);
       google.maps.event.addListener(map, 'tilesloaded', function(event) {
         map.panTo(currentPosition);
       });
-      //alert("Center after panning: " + map.getCenter());
-      //alert("CurrentPosition after panning: " + currentPosition);
     }
   });
 
-  document.addEventListener("deviceready", function() {
+  //document.addEventListener("deviceready", function() {
 
     var singleOptions = {
       timeout: 10000,
@@ -32,7 +28,6 @@ angular.module('starter.controllers')
         // Get current position once
         var latLng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
         currentPosition = latLng;
-
 
         // Set map options
         var mapOptions = {
@@ -69,6 +64,12 @@ angular.module('starter.controllers')
 
         // Create a map with the given options
         map = new google.maps.Map(document.getElementById("map"), mapOptions);
+
+
+
+        google.maps.event.addListenerOnce(map, 'idle', function() {
+          $(".center").fadeOut();
+        });
 
         // Add map to the application scope
         $scope.map = map;
@@ -132,5 +133,5 @@ angular.module('starter.controllers')
         ); // End watchPosition then
       } // End getCurrentPosition then success
     ); // End getCurrentPosition then
-  }); // End deviceready
+  //}); // End deviceready
 }) // End MapCtrl

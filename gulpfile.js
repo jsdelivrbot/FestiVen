@@ -1,6 +1,5 @@
 var bower = require('bower');
 var concat = require('gulp-concat');
-var eventStream = require('event-stream');
 var gulp = require('gulp');
 var gutil = require('gulp-util');
 var minifyCss = require('gulp-minify-css');
@@ -29,7 +28,7 @@ gulp.task('sass', function(done) {
 });
 
 gulp.task('watch', function() {
-  gulp.watch(paths.sass, ['sass', 'ng', 'js']);
+  gulp.watch(paths.sass, ['sass', 'ng']);
 });
 
 gulp.task('ng', function() {
