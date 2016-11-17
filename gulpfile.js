@@ -1,15 +1,18 @@
-var gulp = require('gulp');
-var gutil = require('gulp-util');
 var bower = require('bower');
 var concat = require('gulp-concat');
-var sass = require('gulp-sass');
+var eventStream = require('event-stream');
+var gulp = require('gulp');
+var gutil = require('gulp-util');
 var minifyCss = require('gulp-minify-css');
 var rename = require('gulp-rename');
+var sass = require('gulp-sass');
 var sh = require('shelljs');
+var uglify = require('gulp-uglify')
 
 var paths = {
   sass: ['./scss/**/*.scss'],
-  ng: ['./www/js/ng/**/module.js', './www/js/ng/run.js', './www/js/ng/config.js', './www/js/ng/**/*.svc.js', './www/js/ng/**/*.ctrl.js']
+  ng: ['./www/js/ng/**/module.js', './www/js/ng/run.js', './www/js/ng/config.js', './www/js/ng/**/*.svc.js', './www/js/ng/**/*.ctrl.js'],
+  js: ['./www/js/*.js']
 };
 
 gulp.task('sass', function(done) {
@@ -26,7 +29,7 @@ gulp.task('sass', function(done) {
 });
 
 gulp.task('watch', function() {
-  gulp.watch(paths.sass, ['sass', 'ng']);
+  gulp.watch(paths.sass, ['sass', 'ng', 'js']);
 });
 
 gulp.task('ng', function() {
@@ -34,6 +37,15 @@ gulp.task('ng', function() {
   .pipe(concat('app.js'))
   .pipe(gulp.dest('./www/js/'));
 });
+
+// gulp.task('js', function() {
+//   gulp.src(paths.js)
+//   .pipe(concat('scripts.js'))
+//   .pipe(gulp.dest(paths.js))
+//   .pipe(rename('scripts.min.js'))
+//   .pipe(uglify())
+//   .pipe(gulp.dest(paths.js));
+// });
 
 gulp.task('install', ['git-check'], function() {
   return bower.commands.install()
@@ -43,7 +55,7 @@ gulp.task('install', ['git-check'], function() {
 });
 
 gulp.task('git-check', function(done) {
-  if (!sh.which('git')) {
+  if(!sh.which('git')) {
     console.log(
       '  ' + gutil.colors.red('Git is not installed.'),
       '\n  Git, the version control system, is required to download Ionic.',
