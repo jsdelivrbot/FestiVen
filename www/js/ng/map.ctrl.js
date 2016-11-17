@@ -6,6 +6,14 @@ angular.module('starter.controllers')
   var map = null;
   var currentPosition = null;
 
+  // Center the map on the current location
+  $(".center-map").click(function() {
+    if(map && currentPosition) {
+      // Buggy when clicked before all tiles are loaded
+      map.panTo(currentPosition);
+    }
+  });
+
   //document.addEventListener("deviceready", function() {
 
     var singleOptions = {
@@ -63,13 +71,6 @@ angular.module('starter.controllers')
         // Remove spinner when the map is loaded
         google.maps.event.addListenerOnce(map, 'idle', function() {
           $(".center").fadeOut();
-        });
-
-        // Center the map on the current location
-        $(".center-map").click(function() {
-          if(map && currentPosition) {
-              map.panTo(currentPosition);
-          }
         });
 
         // Create a new marker using an SVG (vector) path
