@@ -1,0 +1,28 @@
+angular.module('starter.controllers')
+
+// Controller for the friends view
+<<<<<<< HEAD
+.controller('FriendsCtrl', function(ngFB) {
+
+  var vm = this;
+
+  vm.friends = [];
+
+  var getFriends = function(){
+    ngFB.api({path: '/me/friends'})
+      .then(function(friends){
+        console.log(friends);
+      });
+  }
+
+
+  getFriends();
+})
+=======
+.controller('FriendsCtrl', function($scope, Friends) {
+  $scope.friends = Friends.all();
+  $scope.remove = function(friend) {
+    Friends.remove(friend);
+  };
+});
+>>>>>>> refs/remotes/origin/master
