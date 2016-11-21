@@ -41,6 +41,7 @@ angular.module('starter')
     url: '/friends',
     views: {
       'tab-friends': {
+        cache: false,
         templateUrl: 'templates/tab-friends.html',
         controller: 'FriendsCtrl as vm'
       }
