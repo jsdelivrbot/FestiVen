@@ -1,10 +1,9 @@
-angular.module('starter', ['ionic', 'starter.controllers', 'ngCordova'])
-angular.module('starter.controllers', [])
+angular.module('starter', ['ionic', 'starter.controllers', 'starter.services', 'ngCordova', 'ngOpenFB'])
+angular.module('starter.services', [])
+angular.module('starter.controllers', ['ionic', 'starter.services', 'ngOpenFB'])
 
 angular.module('starter')
-
-
-.run(function($ionicPlatform) {
+.run(function($ionicPlatform, ngFB) {
   $ionicPlatform.ready(function() {
     // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
     // for form inputs)
@@ -18,6 +17,8 @@ angular.module('starter')
       StatusBar.styleDefault();
     }
   });
+
+  ngFB.init({appId: 347525672266180});
 })
 
 angular.module('starter')
@@ -44,7 +45,7 @@ angular.module('starter')
     views: {
       'tab-settings': {
         templateUrl: 'templates/tab-settings.html',
-        controller: 'SettingsCtrl'
+        controller: 'SettingsCtrl as vm'
       }
     }
   })
@@ -64,27 +65,128 @@ angular.module('starter')
     views: {
       'tab-friends': {
         templateUrl: 'templates/tab-friends.html',
-        controller: 'FriendsCtrl'
+        controller: 'FriendsCtrl as vm'
       }
     }
+  })
+
+  // .state('tab.requests', {
+  //   url: '/requests',
+  //   views: {
+  //     'tab-friends': {
+  //       templateUrl: 'templates/tab-requests.html',
+  //       controller: 'RequestsCtrl'
+  //     }
+  //   }
+  // })
+
+  .state('login', {
+    url: '/login',
+    templateUrl: 'templates/login.html',
+    controller: 'LoginCtrl as vm'
   });
 
   // if none of the above states are matched, use this as the fallback
-  $urlRouterProvider.otherwise('/tab/map');
+  $urlRouterProvider.otherwise('/login');
 
   $ionicConfigProvider.tabs.style('standard');
   $ionicConfigProvider.tabs.position('bottom');
 
+
+});
+
+angular.module('starter.services')
+
+.service('UserService', function() {
+
+//for the purpose of this example I will store user data on ionic local storage but you should save it on a database
+
+  var setUser = function(user_data) {
+    window.localStorage.starter_facebook_user = JSON.stringify(user_data);
+  };
+
+  var getUser = function(){
+    return JSON.parse(window.localStorage.starter_facebook_user || '{}');
+  };
+
+  return {
+    getUser: getUser,
+    setUser: setUser
+  };
 });
 
 angular.module('starter.controllers')
 
 // Controller for the friends view
-.controller('FriendsCtrl', function($scope, Friends) {
-  $scope.friends = Friends.all();
-  $scope.remove = function(friend) {
-    Friends.remove(friend);
-  };
+.controller('FriendsCtrl', function(ngFB) {
+
+  var vm = this;
+
+  vm.friends = [];
+
+  var getFriends = function(){
+    ngFB.api({path: '/me/friends'})
+      .then(function(friends){
+        console.log(friends);
+      });
+  }
+
+
+  getFriends();
+})
+
+angular.module('starter.controllers')
+.controller('LoginCtrl', function($scope, $state, $ionicModal, $timeout, ngFB, UserService) {
+  var vm = this;
+
+  var isAuthenticated = function(){
+    var token = localStorage.getItem('fbAccessToken');
+
+    sessionStorage.setItem('fbAccessToken', token);
+
+    var found = (token !== null && token !== "");
+    return found;
+  }
+
+  var checkLoggedIn = function(){
+    console.log("Checking if logged in")
+    if(isAuthenticated()){
+      $state.go('tab.map');
+    }
+    else {
+      console.log("Couldn't find the logged in token")
+      vm.fbLogin();
+    }
+  }
+
+  vm.fbLogin = function () {
+    ngFB.login({scope: 'email,user_friends,public_profile'}).then(
+        function (response) {
+            if (response.status === 'connected') {
+                console.log('Facebook login succeeded');
+
+                // Sets token in local storage
+                setToken(response);
+
+
+            } else {
+                alert('Facebook login failed');
+            }
+        })
+        .then(function(){
+          $state.go('tab.map');
+        });
+
+  }
+
+  var setToken = function(response){
+    localStorage.setItem('fbAccessToken', response.authResponse.accessToken);
+
+    sessionStorage.setItem('fbAccessToken', response.authResponse.accessToken);
+  }
+
+  checkLoggedIn();
+
 })
 
 angular.module('starter.controllers')
@@ -92,18 +194,18 @@ angular.module('starter.controllers')
 // Controller for the map view
 .controller('MapCtrl', function($scope, $state, $cordovaGeolocation, $cordovaDeviceOrientation) {
 
-  var map = null;
-  var currentPosition = null;
-
-  // Center the map on the current location
-  $(".center-map").click(function() {
-    if(map && currentPosition) {
-      // Buggy when clicked before all tiles are loaded
-      map.panTo(currentPosition);
-    }
-  });
-
   //document.addEventListener("deviceready", function() {
+
+    var map = null;
+    var currentPosition = null;
+
+    // Center the map on the current location
+    $(".center-map").click(function() {
+      if(map && currentPosition) {
+        // Buggy when clicked before all tiles are loaded
+        map.panTo(currentPosition);
+      }
+    });
 
     var singleOptions = {
       timeout: 10000,
@@ -227,8 +329,10 @@ angular.module('starter.controllers')
 angular.module('starter.controllers')
 
 // Controller for the settings view
-.controller('SettingsCtrl', function($scope) {
-  $scope.settings = {
+.controller('SettingsCtrl', function(ngFB) {
+  var vm = this;
+
+  vm.settings = {
     enableFriends: true
   };
 })

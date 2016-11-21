@@ -1,2 +1,3 @@
-angular.module('starter', ['ionic', 'starter.controllers', 'ngCordova'])
-angular.module('starter.controllers', ['ionic.cloud'])
+angular.module('starter', ['ionic', 'starter.controllers', 'starter.services', 'ngCordova', 'ngOpenFB'])
+angular.module('starter.services', [])
+angular.module('starter.controllers', ['ionic', 'starter.services', 'ngOpenFB'])

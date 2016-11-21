@@ -22,7 +22,7 @@ angular.module('starter')
     views: {
       'tab-settings': {
         templateUrl: 'templates/tab-settings.html',
-        controller: 'SettingsCtrl'
+        controller: 'SettingsCtrl as vm'
       }
     }
   })
@@ -42,25 +42,25 @@ angular.module('starter')
     views: {
       'tab-friends': {
         templateUrl: 'templates/tab-friends.html',
-        controller: 'FriendsCtrl'
+        controller: 'FriendsCtrl as vm'
       }
     }
   })
 
-  .state('tab.requests', {
-    url: '/requests',
-    views: {
-      'tab-friends': {
-        templateUrl: 'templates/tab-requests.html',
-        controller: 'RequestsCtrl'
-      }
-    }
-  })
+  // .state('tab.requests', {
+  //   url: '/requests',
+  //   views: {
+  //     'tab-friends': {
+  //       templateUrl: 'templates/tab-requests.html',
+  //       controller: 'RequestsCtrl'
+  //     }
+  //   }
+  // })
 
   .state('login', {
     url: '/login',
     templateUrl: 'templates/login.html',
-    controller: 'LoginCtrl'
+    controller: 'LoginCtrl as vm'
   });
 
   // if none of the above states are matched, use this as the fallback
@@ -68,5 +68,6 @@ angular.module('starter')
 
   $ionicConfigProvider.tabs.style('standard');
   $ionicConfigProvider.tabs.position('bottom');
+
 
 });

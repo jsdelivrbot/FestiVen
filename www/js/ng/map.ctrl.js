@@ -3,18 +3,18 @@ angular.module('starter.controllers')
 // Controller for the map view
 .controller('MapCtrl', function($scope, $state, $cordovaGeolocation, $cordovaDeviceOrientation) {
 
-  var map = null;
-  var currentPosition = null;
-
-  // Center the map on the current location
-  $(".center-map").click(function() {
-    if(map && currentPosition) {
-      // Buggy when clicked before all tiles are loaded
-      map.panTo(currentPosition);
-    }
-  });
-
   //document.addEventListener("deviceready", function() {
+
+    var map = null;
+    var currentPosition = null;
+
+    // Center the map on the current location
+    $(".center-map").click(function() {
+      if(map && currentPosition) {
+        // Buggy when clicked before all tiles are loaded
+        map.panTo(currentPosition);
+      }
+    });
 
     var singleOptions = {
       timeout: 10000,

@@ -1,27 +1,53 @@
-angular.module('starter')
-.controller('LoginCtrl', function($ionicAuth, $ionicUser, $rootScope){
+angular.module('starter.controllers')
+.controller('LoginCtrl', function($scope, $state, $ionicModal, $timeout, ngFB, UserService) {
   var vm = this;
 
-  vm.login = function(){
-    $ionicAuth.login('facebook').then(
-      // Get the user_id of the facebook account
-      $rootScope.uid = $ionicUser.social.facebook.uid;
+  var isAuthenticated = function(){
+    var token = localStorage.getItem('fbAccessToken');
 
+    sessionStorage.setItem('fbAccessToken', token);
 
-      // Check if the user_id already exists
-        // YES: Get all the settings and data and Initialize
-
-        // NO: Save the user_id as a user_id and default settings
-
-
-      $rootScope.data = $ionicAuth.social.facebook.data;
-
-
-
-    );
+    var found = (token !== null && token !== "");
+    return found;
   }
 
-  vm.logout = function(){
-    $ionicAuth.logout();
+  var checkLoggedIn = function(){
+    console.log("Checking if logged in")
+    if(isAuthenticated()){
+      $state.go('tab.map');
+    }
+    else {
+      console.log("Couldn't find the logged in token")
+      vm.fbLogin();
+    }
   }
+
+  vm.fbLogin = function () {
+    ngFB.login({scope: 'email,user_friends,public_profile'}).then(
+        function (response) {
+            if (response.status === 'connected') {
+                console.log('Facebook login succeeded');
+
+                // Sets token in local storage
+                setToken(response);
+
+
+            } else {
+                alert('Facebook login failed');
+            }
+        })
+        .then(function(){
+          $state.go('tab.map');
+        });
+
+  }
+
+  var setToken = function(response){
+    localStorage.setItem('fbAccessToken', response.authResponse.accessToken);
+
+    sessionStorage.setItem('fbAccessToken', response.authResponse.accessToken);
+  }
+
+  checkLoggedIn();
+
 })

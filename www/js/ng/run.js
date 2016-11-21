@@ -1,7 +1,5 @@
 angular.module('starter')
-
-
-.run(function($ionicPlatform) {
+.run(function($ionicPlatform, ngFB) {
   $ionicPlatform.ready(function() {
     // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
     // for form inputs)
@@ -15,4 +13,6 @@ angular.module('starter')
       StatusBar.styleDefault();
     }
   });
+
+  ngFB.init({appId: 347525672266180});
 })
