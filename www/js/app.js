@@ -70,20 +70,20 @@ angular.module('starter')
     }
   })
 
-  // .state('tab.requests', {
-  //   url: '/requests',
-  //   views: {
-  //     'tab-friends': {
-  //       templateUrl: 'templates/tab-requests.html',
-  //       controller: 'RequestsCtrl'
-  //     }
-  //   }
-  // })
+  .state('tab.requests', {
+    url: '/requests',
+    views: {
+      'tab-friends': {
+        templateUrl: 'templates/tab-requests.html',
+        controller: 'RequestsCtrl'
+      }
+    }
+  })
 
   .state('login', {
     url: '/login',
     templateUrl: 'templates/login.html',
-    controller: 'LoginCtrl as vm'
+    controller: 'LoginCtrl'
   });
 
   // if none of the above states are matched, use this as the fallback
@@ -118,21 +118,39 @@ angular.module('starter.services')
 angular.module('starter.controllers')
 
 // Controller for the friends view
-.controller('FriendsCtrl', function(ngFB) {
+.controller('FriendsCtrl', function($scope, Friends) {
+  $scope.friends = Friends.all();
+  $scope.remove = function(friend) {
+    Friends.remove(friend);
+  };
+});
 
+angular.module('starter')
+.controller('LoginCtrl', function($ionicAuth, $ionicUser, $rootScope){
   var vm = this;
 
-  vm.friends = [];
+  vm.login = function(){
+    $ionicAuth.login('facebook').then(
+      // Get the user_id of the facebook account
+      $rootScope.uid = $ionicUser.social.facebook.uid;
 
-  var getFriends = function(){
-    ngFB.api({path: '/me/friends'})
-      .then(function(friends){
-        console.log(friends);
-      });
+
+      // Check if the user_id already exists
+        // YES: Get all the settings and data and Initialize
+
+        // NO: Save the user_id as a user_id and default settings
+
+
+      $rootScope.data = $ionicAuth.social.facebook.data;
+
+
+
+    );
   }
 
-
-  getFriends();
+  vm.logout = function(){
+    $ionicAuth.logout();
+  }
 })
 
 angular.module('starter.controllers')
