@@ -47,6 +47,15 @@ angular.module('starter')
       }
     }
   })
+  .state('tab.addFriends', {
+    url: '/addFriends',
+    views: {
+      'tab-friends': {
+        templateUrl: 'templates/tab-add-friends.html',
+        controller: 'AddFriendsCtrl as vm'
+      }
+    }
+  })
 
   // .state('tab.requests', {
   //   url: '/requests',

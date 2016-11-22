@@ -70,6 +70,15 @@ angular.module('starter')
       }
     }
   })
+  .state('tab.addFriends', {
+    url: '/addFriends',
+    views: {
+      'tab-friends': {
+        templateUrl: 'templates/tab-add-friends.html',
+        controller: 'AddFriendsCtrl as vm'
+      }
+    }
+  })
 
   // .state('tab.requests', {
   //   url: '/requests',
@@ -118,6 +127,26 @@ angular.module('starter.services')
 
 angular.module('starter.controllers')
 
+
+.controller('AddFriendsCtrl', function(ngFB) {
+
+  var vm = this;
+
+  vm.fbFriends = [];
+
+  var getFbFriends = function(){
+    ngFB.api({path: '/me/friends'})
+      .then(function(friends){
+        vm.fbFriends = friends.data;
+      });
+  }
+
+
+  getFbFriends();
+})
+
+angular.module('starter.controllers')
+
 // Controller for the friends view
 .controller('FriendsCtrl', function(ngFB) {
 
@@ -137,8 +166,10 @@ angular.module('starter.controllers')
 })
 
 angular.module('starter.controllers')
-.controller('LoginCtrl', function($scope, $state, $ionicModal, $timeout, ngFB, UserService) {
+.controller('LoginCtrl', function($scope, $state, $ionicModal, $timeout, ngFB, UserService, $http, $rootScope) {
   var vm = this;
+
+
 
   var isAuthenticated = function(){
     var token = localStorage.getItem('fbAccessToken');
@@ -152,7 +183,17 @@ angular.module('starter.controllers')
   var checkLoggedIn = function(){
     console.log("Checking if logged in")
     if(isAuthenticated()){
-      $state.go('tab.map');
+      ngFB.api({
+          path: '/me',
+          params: {
+              fields: 'id, name'
+          }
+      }).then(function(data){
+        $rootScope.name = data.name;
+        $rootScope.id = data.id;
+        $state.go('tab.map');
+      })
+
     }
     else {
       console.log("Couldn't find the logged in token")
@@ -162,21 +203,43 @@ angular.module('starter.controllers')
 
   vm.fbLogin = function () {
     ngFB.login({scope: 'email,user_friends,public_profile'}).then(
+      // Success
         function (response) {
-            if (response.status === 'connected') {
-                console.log('Facebook login succeeded');
+            if (response.status === 'connected'){
 
                 // Sets token in local storage
-                setToken(response);
 
+                ngFB.api({
+                    path: '/me',
+                    params: {
+                        fields: 'id, name'
+                    }
+                })
+                .then(function(data){
+                  $http.post('http://95.85.9.178:3000/api/register', {
+                    id: data.id,
+                    name: data.name
+                  });
 
-            } else {
-                alert('Facebook login failed');
+                  // Set id and name of logged in person to rootScope
+                  // Only needs to get this data once on login
+                  $rootScope.name = data.name;
+                  $rootScope.id = data.id;
+                })
+                .then(function(result){
+                  // Success popup
+                  setToken(response);
+                  $state.go('tab.map');
+                }, function(error){
+                  // Popup with error message
+                  $state.go('login');
+                });
+            }
+            else {
+                $state.go('login');
             }
         })
-        .then(function(){
-          $state.go('tab.map');
-        });
+
 
   }
 
@@ -330,8 +393,9 @@ angular.module('starter.controllers')
 angular.module('starter.controllers')
 
 // Controller for the settings view
-.controller('SettingsCtrl', function(ngFB) {
+.controller('SettingsCtrl', function(ngFB, $rootScope) {
   var vm = this;
+  vm.name = $rootScope.name;
 
   vm.settings = {
     enableFriends: true
