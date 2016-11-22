@@ -5,7 +5,7 @@ angular.module('starter.controllers')
   vm.fbFriends = [];
 
   var getFbFriends = function() {
-    // As the database for the user's friends
+    // Ask the database for the user's friends
     ngFB.api({
       path: '/me/friends'
     })

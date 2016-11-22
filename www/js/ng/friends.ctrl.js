@@ -1,19 +1,18 @@
 angular.module('starter.controllers')
-
-// Controller for the friends view
 .controller('FriendsCtrl', function(ngFB) {
-
   var vm = this;
 
-  vm.friends = [];
+  vm.fBfriends = [];
 
-  var getFriends = function(){
-    ngFB.api({path: '/me/friends'})
-      .then(function(friends){
-        console.log(friends);
-      });
+  var getFriends = function() {
+    // Ask the database for the user's friends
+    ngFB.api({
+      path: '/me/friends'
+    })
+    .then(function(friends){
+      console.log(friends);
+    });
   }
-
 
   getFriends();
 })
