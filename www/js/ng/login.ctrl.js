@@ -57,7 +57,7 @@ angular.module('starter.controllers')
           })
           .then(function(data) {
             // Register the iser to the database by POSTing name and id
-            $http.post('http://95.85.9.178:3000/api/register', {
+            $http.post('http://188.166.58.138:3000/api/register', {
               id: data.id,
               name: data.name
             });
@@ -69,7 +69,7 @@ angular.module('starter.controllers')
           .then(function(result) {
             // Success popup
             // Save the fbAccessToken to local and session storage
-            setToken(response);
+            //setToken(response);
             // Show the map screen
             $state.go('tab.map');
           }, function(error) {

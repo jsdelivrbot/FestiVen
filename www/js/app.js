@@ -114,9 +114,21 @@ angular.module('starter')
     return {
         restrict: 'AEC',
         templateUrl: '/templates/add-friend-btn.html',
-        controller: function($scope, $element) {
+        controller: function($scope, $element, $rootScope, $http) {
           $scope.addFriend = function(id){
-            $element.html('Added');
+            $http.post('http://188.166.58.138:3000/api/addrequest',
+            {
+              origin: $rootScope.id,
+              to: id
+            })
+            .then(function(result){
+              // Success message
+              $element.html('Added');
+            }, function(error){
+              // Keep the dom as it is
+              // Error message
+            });
+
           }
         }
     };
@@ -147,8 +159,6 @@ angular.module('starter.controllers')
   var vm = this;
 
   vm.fbFriends = [];
-  vm.added = false;
-
   var getFbFriends = function() {
     // Ask the database for the user's friends
     ngFB.api({
@@ -162,38 +172,7 @@ angular.module('starter.controllers')
 
   getFbFriends();
 
-  vm.addFriend = function(id){
-    console.log("Adding friend");
-    // Add the request to the list of sent and received requests
-    // $http.post('http://localhost:3000/api/add-request', {origin: $rootScope.id, to: id})
-    // .then(function(result){
-    //   // Success message
-    //   vm.added = true;
-    // }, function(error){
-    //   // Change dom back to button
-    //   vm.added = false;
-    //
-    // });
-
-
     // Change the dom INSTANTLY from button to text, so that the user cannot send multiple requests
-
-
-
-  }
-
-  var getElement = function(id){
-    var htmlID = 'button-box' + id;
-
-    var el = $document[0].getElementById(htmlID);
-
-
-    return angular.element(el);
-  }
-
-  var emptyParent = function(angularElement){
-    angularElement.empty();
-  }
 
 
 })
@@ -276,7 +255,7 @@ angular.module('starter.controllers')
           })
           .then(function(data) {
             // Register the iser to the database by POSTing name and id
-            $http.post('http://95.85.9.178:3000/api/register', {
+            $http.post('http://188.166.58.138:3000/api/register', {
               id: data.id,
               name: data.name
             });
