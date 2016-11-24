@@ -5,7 +5,7 @@ angular.module('starter.controllers')
   var isAuthenticated = function() {
     // Get fbAccessToken from localStorage
     var token = localStorage.getItem('fbAccessToken');
-    sessionStorage.setItem('fbAccessToken', token);
+    //sessionStorage.setItem('fbAccessToken', token);
     // Check whether token is not null
     var found = (token !== null && token !== "");
     return found;
@@ -14,25 +14,28 @@ angular.module('starter.controllers')
   var checkLoggedIn = function() {
     console.log("Checking if logged in")
     // If fbAccessToken is not null
-    if(isAuthenticated()) {
+    //if(isAuthenticated()) {
       // Get user's id and name
-      ngFB.api({
-        path: '/me',
-        params: {
-          fields: 'id, name'
-        }
-      }).then(function(data) {
-        // Set the user's id and name to the rootScope
-        $rootScope.name = data.name;
-        $rootScope.id = data.id;
-        // Show the map screen
-        $state.go('tab.map');
-      })
-    } else {
-      console.log("Couldn't find the logged in token")
-      // If fbAccessToken hasn't been created, try logging in
+      // ngFB.api({
+      //   path: '/me',
+      //   params: {
+      //     fields: 'id, name'
+      //   }
+      // }).then(function(data) {
+      //   // Set the user's id and name to the rootScope
+      //   $rootScope.name = data.name;
+      //   $rootScope.id = data.id;
+      //   // Show the map screen
+      //   $state.go('tab.map');
+      // })
+
       vm.fbLogin();
-    }
+
+    //} else {
+      //console.log("Couldn't find the logged in token")
+      // If fbAccessToken hasn't been created, try logging in
+
+    //}
   }
 
   vm.fbLogin = function() {
@@ -86,7 +89,7 @@ angular.module('starter.controllers')
   var setToken = function(response) {
     // Set fbAccessToken to local and session storage
     localStorage.setItem('fbAccessToken', response.authResponse.accessToken);
-    sessionStorage.setItem('fbAccessToken', response.authResponse.accessToken);
+    //sessionStorage.setItem('fbAccessToken', response.authResponse.accessToken);
   }
 
   checkLoggedIn();

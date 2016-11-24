@@ -5,20 +5,23 @@ angular.module('starter.controllers', ['ionic', 'starter.services', 'ngOpenFB'])
 angular.module('starter')
 .run(function($ionicPlatform, ngFB) {
   $ionicPlatform.ready(function() {
-    // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
-    // for form inputs)
-    if (window.cordova && window.cordova.plugins && window.cordova.plugins.Keyboard) {
+    // Style the keyboard
+    if(window.cordova && window.cordova.plugins && window.cordova.plugins.Keyboard) {
       cordova.plugins.Keyboard.hideKeyboardAccessoryBar(true);
       cordova.plugins.Keyboard.disableScroll(true);
 
     }
-    if (window.StatusBar) {
+    
+    // Style the status bar
+    if(window.StatusBar) {
       // org.apache.cordova.statusbar required
-      StatusBar.styleDefault();
+      StatusBar.backgroundColorByHexString("#ec4940");
     }
   });
 
-  ngFB.init({appId: 347525672266180});
+  ngFB.init({
+    appId: 347525672266180
+  });
 })
 
 angular.module('starter')
@@ -105,6 +108,20 @@ angular.module('starter')
 
 });
 
+angular.module('starter')
+
+.directive('friendAddButton', function() {
+    return {
+        restrict: 'AEC',
+        templateUrl: '/templates/add-friend-btn.html',
+        controller: function($scope, $element) {
+          $scope.addFriend = function(id){
+            $element.html('Added');
+          }
+        }
+    };
+});
+
 angular.module('starter.services')
 
 .service('UserService', function() {
@@ -126,41 +143,76 @@ angular.module('starter.services')
 });
 
 angular.module('starter.controllers')
-
-
-.controller('AddFriendsCtrl', function(ngFB) {
-
+.controller('AddFriendsCtrl', function(ngFB, $rootScope, $http, $document) {
   var vm = this;
 
   vm.fbFriends = [];
+  vm.added = false;
 
-  var getFbFriends = function(){
-    ngFB.api({path: '/me/friends'})
-      .then(function(friends){
-        vm.fbFriends = friends.data;
-      });
+  var getFbFriends = function() {
+    // Ask the database for the user's friends
+    ngFB.api({
+      path: '/me/friends'
+    })
+    .then(function(friends) {
+      // Add the user's friends to the viewmodel
+      vm.fbFriends = friends.data;
+    });
+  }
+
+  getFbFriends();
+
+  vm.addFriend = function(id){
+    console.log("Adding friend");
+    // Add the request to the list of sent and received requests
+    // $http.post('http://localhost:3000/api/add-request', {origin: $rootScope.id, to: id})
+    // .then(function(result){
+    //   // Success message
+    //   vm.added = true;
+    // }, function(error){
+    //   // Change dom back to button
+    //   vm.added = false;
+    //
+    // });
+
+
+    // Change the dom INSTANTLY from button to text, so that the user cannot send multiple requests
+
+
+
+  }
+
+  var getElement = function(id){
+    var htmlID = 'button-box' + id;
+
+    var el = $document[0].getElementById(htmlID);
+
+
+    return angular.element(el);
+  }
+
+  var emptyParent = function(angularElement){
+    angularElement.empty();
   }
 
 
-  getFbFriends();
 })
 
 angular.module('starter.controllers')
-
-// Controller for the friends view
 .controller('FriendsCtrl', function(ngFB) {
-
   var vm = this;
 
-  vm.friends = [];
+  vm.fBfriends = [];
 
-  var getFriends = function(){
-    ngFB.api({path: '/me/friends'})
-      .then(function(friends){
-        console.log(friends);
-      });
+  var getFriends = function() {
+    // Ask the database for the user's friends
+    ngFB.api({
+      path: '/me/friends'
+    })
+    .then(function(friends){
+      console.log(friends);
+    });
   }
-
 
   getFriends();
 })
@@ -169,84 +221,94 @@ angular.module('starter.controllers')
 .controller('LoginCtrl', function($scope, $state, $ionicModal, $timeout, ngFB, UserService, $http, $rootScope) {
   var vm = this;
 
-
-
-  var isAuthenticated = function(){
+  var isAuthenticated = function() {
+    // Get fbAccessToken from localStorage
     var token = localStorage.getItem('fbAccessToken');
-
-    sessionStorage.setItem('fbAccessToken', token);
-
+    //sessionStorage.setItem('fbAccessToken', token);
+    // Check whether token is not null
     var found = (token !== null && token !== "");
     return found;
   }
 
-  var checkLoggedIn = function(){
+  var checkLoggedIn = function() {
     console.log("Checking if logged in")
-    if(isAuthenticated()){
-      ngFB.api({
-          path: '/me',
-          params: {
-              fields: 'id, name'
-          }
-      }).then(function(data){
-        $rootScope.name = data.name;
-        $rootScope.id = data.id;
-        $state.go('tab.map');
-      })
+    // If fbAccessToken is not null
+    //if(isAuthenticated()) {
+      // Get user's id and name
+      // ngFB.api({
+      //   path: '/me',
+      //   params: {
+      //     fields: 'id, name'
+      //   }
+      // }).then(function(data) {
+      //   // Set the user's id and name to the rootScope
+      //   $rootScope.name = data.name;
+      //   $rootScope.id = data.id;
+      //   // Show the map screen
+      //   $state.go('tab.map');
+      // })
 
-    }
-    else {
-      console.log("Couldn't find the logged in token")
       vm.fbLogin();
-    }
+
+    //} else {
+      //console.log("Couldn't find the logged in token")
+      // If fbAccessToken hasn't been created, try logging in
+
+    //}
   }
 
-  vm.fbLogin = function () {
-    ngFB.login({scope: 'email,user_friends,public_profile'}).then(
+  vm.fbLogin = function() {
+    ngFB.login({
+      // Try to log in and ask for user email, friends and profile permissions
+      scope: 'email,user_friends,public_profile'
+    })
+    .then(
       // Success
-        function (response) {
-            if (response.status === 'connected'){
-
-                // Sets token in local storage
-
-                ngFB.api({
-                    path: '/me',
-                    params: {
-                        fields: 'id, name'
-                    }
-                })
-                .then(function(data){
-                  $http.post('http://95.85.9.178:3000/api/register', {
-                    id: data.id,
-                    name: data.name
-                  });
-
-                  // Set id and name of logged in person to rootScope
-                  // Only needs to get this data once on login
-                  $rootScope.name = data.name;
-                  $rootScope.id = data.id;
-                })
-                .then(function(result){
-                  // Success popup
-                  setToken(response);
-                  $state.go('tab.map');
-                }, function(error){
-                  // Popup with error message
-                  $state.go('login');
-                });
+      function(response) {
+        // On succesful login
+        if(response.status === 'connected') {
+          // Get the user's id and name
+          ngFB.api({
+            path: '/me',
+            params: {
+              fields: 'id, name'
             }
-            else {
-                $state.go('login');
-            }
-        })
-
-
+          })
+          .then(function(data) {
+            // Register the iser to the database by POSTing name and id
+            $http.post('http://95.85.9.178:3000/api/register', {
+              id: data.id,
+              name: data.name
+            });
+            // Set id and name of logged in user to rootScope
+            // Only needed once on login
+            $rootScope.name = data.name;
+            $rootScope.id = data.id;
+          })
+          .then(function(result) {
+            // Success popup
+            // Save the fbAccessToken to local and session storage
+            setToken(response);
+            // Show the map screen
+            $state.go('tab.map');
+          }, function(error) {
+            // Popup with error message
+            // Show the login screen
+            $state.go('login');
+          });
+        } else {
+          // On login fail
+          // Show the login screen
+          $state.go('login');
+        }
+      }
+    )
   }
 
-  var setToken = function(response){
+  var setToken = function(response) {
+    // Set fbAccessToken to local and session storage
     localStorage.setItem('fbAccessToken', response.authResponse.accessToken);
-
-    sessionStorage.setItem('fbAccessToken', response.authResponse.accessToken);
+    //sessionStorage.setItem('fbAccessToken', response.authResponse.accessToken);
   }
 
   checkLoggedIn();

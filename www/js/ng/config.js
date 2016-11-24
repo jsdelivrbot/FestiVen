@@ -1,10 +1,14 @@
 angular.module('starter')
+
 .config(function($stateProvider, $urlRouterProvider, $ionicConfigProvider) {
 
-  // Each state's controller has its own ctrljs file
+  // Ionic uses AngularUI Router which uses the concept of states
+  // Learn more here: https://github.com/angular-ui/ui-router
+  // Set up the various states which the app can be in.
+  // Each state's controller can be found in controllers.js
   $stateProvider
 
-  // Setup an abstract state for the tabs directive
+  // setup an abstract state for the tabs directive
   .state('tab', {
     url: '/tab',
     abstract: true,
@@ -66,15 +70,14 @@ angular.module('starter')
   .state('login', {
     url: '/login',
     templateUrl: 'templates/login.html',
-    // Allows the controller to be addressed differently
     controller: 'LoginCtrl as vm'
   });
 
-  // If none of the above states are matched, use this one as the fallback
+  // if none of the above states are matched, use this as the fallback
   $urlRouterProvider.otherwise('/login');
 
-  // Android-specific configuration
   $ionicConfigProvider.tabs.style('standard');
   $ionicConfigProvider.tabs.position('bottom');
+
 
 });

@@ -1,0 +1,22 @@
+.add-button-box{
+  display: inline-block;
+  position: absolute;
+  right: 25px;
+
+  .add-button {
+    width: 32px;
+    height: 32px;
+    background:none;
+    border: 1px solid orangered;
+    border-radius: 5px;
+    font-size: 1rem;
+    color: orangered;
+
+    .icon {
+      position: relative;
+      height: auto;
+      font-size: 1rem;
+      left: calc(50% - 9px);
+    }
+  }
+}
