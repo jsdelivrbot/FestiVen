@@ -6,15 +6,18 @@ angular.module('starter')
         templateUrl: '/templates/add-friend-btn.html',
         controller: function($scope, $element, $rootScope, $http) {
           $scope.addFriend = function(id){
+            console.log(id);
+            console.log($rootScope.id);
             $http.post('http://188.166.58.138:3000/api/addrequest',
             {
               origin: $rootScope.id,
               to: id
             })
-            .then(function(result){
+            .success(function(){
               // Success message
               $element.html('Added');
-            }, function(error){
+            })
+            .error(function(error){
               // Keep the dom as it is
               // Error message
             });

@@ -1,11 +1,24 @@
 angular.module('starter.controllers')
 
 // Controller for the map view
-.controller('MapCtrl', function($scope, $state, $cordovaGeolocation, $cordovaDeviceOrientation) {
+.controller('MapCtrl', function($scope, $state, $cordovaGeolocation, $cordovaDeviceOrientation, $ionicLoading) {
 
   //document.addEventListener("deviceready", function() {
 
+  $scope.show = function() {
+    $ionicLoading.show({
+      template: '<div class="center"><div class="spinner spinner-1"></div></div>'
+    });
+  };
+
+  $scope.hide = function(){
+        $ionicLoading.hide();
+  };
+
+
+
     var map = null;
+
     var currentPosition = null;
 
     // Center the map on the current location
@@ -20,6 +33,9 @@ angular.module('starter.controllers')
       timeout: 10000,
       enableHighAccuracy: true
     };
+
+    //$scope.show($ionicLoading);
+
 
     $cordovaGeolocation
     .getCurrentPosition(singleOptions).then(
@@ -65,13 +81,13 @@ angular.module('starter.controllers')
         // Create a map with the given options
         map = new google.maps.Map(document.getElementById("map"), mapOptions);
 
+        // Remove spinner when the tiles are loaded
+        google.maps.event.addListenerOnce(map, "idle", function(event){
+          $scope.hide($ionicLoading);
+        })
+
         // Add map to the application scope
         $scope.map = map;
-
-        // Remove spinner when the map is loaded
-        google.maps.event.addListenerOnce(map, 'idle', function() {
-          $(".center").fadeOut();
-        });
 
         // Create a new marker using an SVG (vector) path
         var marker = new google.maps.Marker({
@@ -89,6 +105,7 @@ angular.module('starter.controllers')
           draggable: false,
           map: $scope.map
         });
+
 
         // ngCordova Geolocation options
         var posOptions = {

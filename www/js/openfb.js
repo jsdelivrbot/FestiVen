@@ -42,6 +42,7 @@ var openFB = (function () {
     // Used in the exit event handler to identify if the login has already been processed elsewhere (in the oauthCallback function)
         loginProcessed;
 
+
     // MAKE SURE YOU INCLUDE <script src="cordova.js"></script> IN YOUR index.html, OTHERWISE runningInCordova will always by false.
     // You don't need to (and should not) add the actual cordova.js file to your file system: it will be added automatically
     // by the Cordova build process
