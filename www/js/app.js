@@ -114,18 +114,20 @@ angular.module('starter')
     return {
         restrict: 'AEC',
         templateUrl: '/templates/add-friend-btn.html',
-        controller: function($scope, $element, $rootScope, $http) {
+        controller: function($scope, $element, $rootScope, $http, $window) {
           $scope.addFriend = function(id){
+            $scope.disabled = false;
             console.log(id);
-            console.log($rootScope.id);
+            console.log(localStorage.getItem('id'));
             $http.post('http://188.166.58.138:3000/api/addrequest',
             {
-              origin: $rootScope.id,
+              origin: $window.localStorage.getItem('id'),
               to: id
             })
             .success(function(){
               // Success message
               $element.html('Added');
+              $scope.disabled = true;
             })
             .error(function(error){
               // Keep the dom as it is
@@ -200,7 +202,7 @@ angular.module('starter.controllers')
 })
 
 angular.module('starter.controllers')
-.controller('LoginCtrl', function($scope, $state, $ionicModal, $timeout, ngFB, UserService, $http, $rootScope, $ionicLoading) {
+.controller('LoginCtrl', function($scope, $state, $ionicModal, $timeout, ngFB, UserService, $http, $rootScope, $ionicLoading, $window) {
   var vm = this;
 
   vm.show = function() {
@@ -215,8 +217,8 @@ angular.module('starter.controllers')
 
   var isAuthenticated = function() {
     // Get fbAccessToken from localStorage
-    var token = localStorage.getItem('fbAccessToken');
-    sessionStorage.setItem('fbAccessToken', token);
+    var token = $window.localStorage.getItem('fbAccessToken');
+    $window.sessionStorage.setItem('fbAccessToken', token);
     // Check whether token is not null
     var found = (token !== null && token !== "");
     return found;
@@ -227,16 +229,15 @@ angular.module('starter.controllers')
     if(isAuthenticated()) {
       vm.show($ionicLoading);
       //Get user's id and name
-      alert('Getting my data');
       ngFB.api({
         path: '/me',
         params: {
           fields: 'id, name'
         }
       }).then(function(data) {
-        //Set the user's id and name to the rootScope
-        $rootScope.name = data.name;
-        $rootScope.id = data.id;
+        //Set the user's id and name to the local storage
+        $window.localStorage.setItem('name', data.name);
+        $window.localStorage.setItem('id', data.id);
         // Show the map screen
         $state.go('tab.map');
       })

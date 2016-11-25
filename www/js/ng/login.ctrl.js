@@ -1,5 +1,5 @@
 angular.module('starter.controllers')
-.controller('LoginCtrl', function($scope, $state, $ionicModal, $timeout, ngFB, UserService, $http, $rootScope, $ionicLoading) {
+.controller('LoginCtrl', function($scope, $state, $ionicModal, $timeout, ngFB, UserService, $http, $rootScope, $ionicLoading, $window) {
   var vm = this;
 
   vm.show = function() {
@@ -14,8 +14,8 @@ angular.module('starter.controllers')
 
   var isAuthenticated = function() {
     // Get fbAccessToken from localStorage
-    var token = localStorage.getItem('fbAccessToken');
-    sessionStorage.setItem('fbAccessToken', token);
+    var token = $window.localStorage.getItem('fbAccessToken');
+    $window.sessionStorage.setItem('fbAccessToken', token);
     // Check whether token is not null
     var found = (token !== null && token !== "");
     return found;
@@ -26,16 +26,15 @@ angular.module('starter.controllers')
     if(isAuthenticated()) {
       vm.show($ionicLoading);
       //Get user's id and name
-      alert('Getting my data');
       ngFB.api({
         path: '/me',
         params: {
           fields: 'id, name'
         }
       }).then(function(data) {
-        //Set the user's id and name to the rootScope
-        $rootScope.name = data.name;
-        $rootScope.id = data.id;
+        //Set the user's id and name to the local storage
+        $window.localStorage.setItem('name', data.name);
+        $window.localStorage.setItem('id', data.id);
         // Show the map screen
         $state.go('tab.map');
       })
