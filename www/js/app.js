@@ -245,6 +245,21 @@ angular.module('starter.controllers')
       $ionicLoading.hide();
   };
 
+  var isValidByTime  = function(){
+    var date = $window.localStorage.getItem('createdAt');
+    var now = new Date();
+
+    // Date was stored in ms in localStorage
+    var diff = now.getTime() - date;
+
+    var msIn5days = 1000 * 60 * 60 * 24 * 5
+
+    if (diff >= msIn5days){
+      return false;
+    }
+    return true;
+  }
+
   var isAuthenticated = function() {
     // Get fbAccessToken from localStorage
     var token = $window.localStorage.getItem('fbAccessToken');
@@ -256,7 +271,7 @@ angular.module('starter.controllers')
 
   var checkLoggedIn = function() {
     //If fbAccessToken is not null
-    if(isAuthenticated()) {
+    if(isAuthenticated() && isValidByTime()) {
       vm.show($ionicLoading);
       //Get user's id and name
       ngFB.api({
@@ -268,6 +283,7 @@ angular.module('starter.controllers')
         //Set the user's id and name to the local storage
         $window.localStorage.setItem('name', data.name);
         $window.localStorage.setItem('id', data.id);
+
         // Show the map screen
         $state.go('tab.map');
       })
@@ -300,6 +316,7 @@ angular.module('starter.controllers')
             }
           })
           .then(function(data) {
+            $window.localStorage.setItem('createdAt', (new Date()).getTime());
             $window.localStorage.setItem('name', data.name);
             $window.localStorage.setItem('id', data.id);
             // Register the user to the database by POSTing name and id
