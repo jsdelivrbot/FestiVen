@@ -67,7 +67,9 @@ angular.module('starter.controllers')
             }
           })
           .then(function(data) {
-            // Register the iser to the database by POSTing name and id
+            $window.localStorage.setItem('name', data.name);
+            $window.localStorage.setItem('id', data.id);
+            // Register the user to the database by POSTing name and id
             $http.post('http://188.166.58.138:3000/api/register', {
               id: data.id,
               name: data.name
@@ -92,6 +94,7 @@ angular.module('starter.controllers')
             // On both cases hide the loading
             //vm.hide($ionicLoading);
           })
+
 
           setToken(response);
         } else {
