@@ -117,8 +117,7 @@ angular.module('starter')
         controller: function($scope, $element, $rootScope, $http, $window) {
           $scope.addFriend = function(id){
             $scope.disabled = false;
-            console.log(id);
-            console.log(localStorage.getItem('id'));
+            
             $http.post('http://188.166.58.138:3000/api/addrequest',
             {
               origin: $window.localStorage.getItem('id'),
@@ -160,19 +159,50 @@ angular.module('starter.services')
 });
 
 angular.module('starter.controllers')
-.controller('AddFriendsCtrl', function(ngFB, $rootScope, $http, $document) {
+.controller('AddFriendsCtrl', function(ngFB, $rootScope, $http, $document, $q, $window) {
   var vm = this;
-
-  vm.fbFriends = [];
+  vm.filteredFriends = [];
   var getFbFriends = function() {
     // Ask the database for the user's friends
-    ngFB.api({
-      path: '/me/friends'
-    })
-    .then(function(friends) {
-      // Add the user's friends to the viewmodel
-      vm.fbFriends = friends.data;
-    });
+
+      // Get the people that are not friends yet and you are friends with on facebook
+
+      // API Request to get list of sent requests
+      var myId = $window.localStorage.getItem('id');
+      $q.all([
+        $http.post('http://188.166.58.138:3000/api/sent-requests', {
+          id: myId
+        }),
+        ngFB.api({path: '/me/friends'})
+      ]).then(function(data){
+        var requests = data[0];
+        console.log(requests);
+        var fbFriends = data [1];
+        console.log(fbFriends);
+
+        vm.filteredFriends = showUnique(requests.data.sent, fbFriends.data);
+      })
+
+  }
+
+  var showUnique = function(req, fb) {
+    var filtered = [];
+    // Loop over fb array first
+    for (i = 0; i < fb.length; i++){
+      var found = false;
+      for (j = 0; j < req.length; j++){
+
+        if (req[j].id == fb[i].id){
+          found = true;
+        }
+      }
+      if (!found){
+        filtered.push(fb[i]);
+      }
+
+    }
+    return filtered;
+
   }
 
   getFbFriends();

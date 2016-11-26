@@ -7,8 +7,7 @@ angular.module('starter')
         controller: function($scope, $element, $rootScope, $http, $window) {
           $scope.addFriend = function(id){
             $scope.disabled = false;
-            console.log(id);
-            console.log(localStorage.getItem('id'));
+            
             $http.post('http://188.166.58.138:3000/api/addrequest',
             {
               origin: $window.localStorage.getItem('id'),
