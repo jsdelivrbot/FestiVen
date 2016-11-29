@@ -167,10 +167,10 @@ angular.module('starter.services')
     return found;
   }
 
-
+  var registered = undefined;
 
   this.login = function() {
-    var registered = $q.defer();
+    var deferred = $q.defer();
     ngFB.login({
       // Try to log in and ask for user email, friends and profile permissions
       scope: 'email,user_friends,public_profile'
@@ -181,24 +181,40 @@ angular.module('starter.services')
           // Get the user's id and name
 
           UserService.getInfo().then(function(data){
+            console.log(data);
             $http.post('http://188.166.58.138:3000/api/register', {
               id: data.id,
               name: data.name
             }).then(function(result) {
-              registered.resolve(result);
+              console.log('http');
+              console.log(result);
+              registered = result;
+              deferred.resolve(registered);
             }, function(error) {
+              console.log('http');
+              console.log(error);
               // Popup with error message
               // Show the login screen
-              registered.reject(error);
+              registered = error;
+              deferred.reject(error);
             })
           }, function(error){
-            registered.reject(error);
+            console.log('info');
+            console.log(error);
+            registered = error;
+            deferred.reject(error);
           })
           setToken(response);
         } else {
-          registered.reject({error: "Couldn't login with facebook"});
+          var error = {error: "Couldn't login with facebook"};
+          console.log('fb-login');
+          console.log(error);
+          registered = error;
+          deferred.reject(error);
         }
       })
+
+      registered = deferred.promise;
 
       return $q.when(registered);
   }
@@ -228,22 +244,28 @@ angular.module('starter.services')
     return JSON.parse(window.localStorage.starter_facebook_user || '{}');
   };
 
+  var info = undefined;
+
   this.getInfo = function(){
-    var info = $q.defer();
+    var deferred = $q.defer();
     ngFB.api({
       path: '/me',
       params: {
         fields: 'id, name'
       }
     }).then(function(data){
-      info.resolve(data);
+      info = data;
+      deferred.resolve(info);
       //Set the user's id and name to the local storage
       $window.localStorage.setItem('createdAt', (new Date()).getTime());
       $window.localStorage.setItem('name', data.name);
       $window.localStorage.setItem('id', data.id);
     }, function(error){
-      info.reject(error);
+      info = error;
+      deferred.reject(error);
     })
+
+    info = deferred.promise;
 
     return $q.when(info);
   }
@@ -344,9 +366,11 @@ angular.module('starter.controllers')
     vm.show($ionicLoading);
     if(LoginService.isAuthenticated() && LoginService.isValidByTime()) {
       LoginService.login().then(function(result){
+        console.log(result);
         // Popup successfully logged in
         $state.go('tab.map');
       }, function(error){
+        console.log(error);
         // Popup not successfully logged in
         $state.go('login');
       })
@@ -354,9 +378,11 @@ angular.module('starter.controllers')
     } else {
       //If fbAccessToken hasn't been created, try logging in
       LoginService.login().then(function(result){
+        console.log(result);
         // Popup successfully logged in
         $state.go('tab.map');
       }, function(error){
+        console.log(error);
         // Popup not successfully logged in
         $state.go('login');
       })
@@ -524,9 +550,9 @@ angular.module('starter.controllers')
 angular.module('starter.controllers')
 
 // Controller for the settings view
-.controller('SettingsCtrl', function(ngFB, $rootScope) {
+.controller('SettingsCtrl', function(ngFB, $rootScope, $window) {
   var vm = this;
-  vm.name = $rootScope.name;
+  vm.name = $window.localStorage.getItem('name');
 
   vm.settings = {
     enableFriends: true

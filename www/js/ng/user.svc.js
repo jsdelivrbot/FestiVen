@@ -12,22 +12,28 @@ angular.module('starter.services')
     return JSON.parse(window.localStorage.starter_facebook_user || '{}');
   };
 
+  var info = undefined;
+
   this.getInfo = function(){
-    var info = $q.defer();
+    var deferred = $q.defer();
     ngFB.api({
       path: '/me',
       params: {
         fields: 'id, name'
       }
     }).then(function(data){
-      info.resolve(data);
+      info = data;
+      deferred.resolve(info);
       //Set the user's id and name to the local storage
       $window.localStorage.setItem('createdAt', (new Date()).getTime());
       $window.localStorage.setItem('name', data.name);
       $window.localStorage.setItem('id', data.id);
     }, function(error){
-      info.reject(error);
+      info = error;
+      deferred.reject(error);
     })
+
+    info = deferred.promise;
 
     return $q.when(info);
   }
