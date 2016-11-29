@@ -9,6 +9,7 @@ angular.module('starter.controllers')
 
       // API Request to get list of sent requests
       var myId = $window.localStorage.getItem('id');
+      console.log(myId);
       $q.all([
         $http.post('http://188.166.58.138:3000/api/sent-requests', {
           id: myId
@@ -17,10 +18,11 @@ angular.module('starter.controllers')
       ]).then(function(data){
         var requests = data[0];
         console.log(requests);
-        var fbFriends = data [1];
+        var fbFriends = data[1];
         console.log(fbFriends);
 
-        vm.filteredFriends = showUnique(requests.data.sent, fbFriends.data);
+
+        vm.filteredFriends = showUnique(requests.data, fbFriends.data);
       })
 
   }

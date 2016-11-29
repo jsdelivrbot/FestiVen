@@ -105,6 +105,7 @@ angular.module('starter')
   $ionicConfigProvider.tabs.style('standard');
   $ionicConfigProvider.tabs.position('bottom');
 
+  
 
 });
 
@@ -140,22 +141,113 @@ angular.module('starter')
 
 angular.module('starter.services')
 
-.service('UserService', function() {
+.service('LoginService', function($window, $http, $state, UserService, $q, ngFB) {
+
+  this.isValidByTime  = function(){
+    var date = $window.localStorage.getItem('createdAt');
+    var now = new Date();
+
+    // Date was stored in ms in localStorage
+    var diff = now.getTime() - date;
+
+    var msIn5days = 1000 * 60 * 60 * 24 * 5
+
+    if (diff >= msIn5days){
+      return false;
+    }
+    return true;
+  }
+
+  this.isAuthenticated = function() {
+    // Get fbAccessToken from localStorage
+    var token = $window.localStorage.getItem('fbAccessToken');
+    $window.sessionStorage.setItem('fbAccessToken', token);
+    // Check whether token is not null
+    var found = (token !== null && token !== "");
+    return found;
+  }
+
+
+
+  this.login = function() {
+    var registered = $q.defer();
+    ngFB.login({
+      // Try to log in and ask for user email, friends and profile permissions
+      scope: 'email,user_friends,public_profile'
+    })
+    .then(function(response) {
+        // On succesful login
+        if(response.status === 'connected') {
+          // Get the user's id and name
+
+          UserService.getInfo().then(function(data){
+            $http.post('http://188.166.58.138:3000/api/register', {
+              id: data.id,
+              name: data.name
+            }).then(function(result) {
+              registered.resolve(result);
+            }, function(error) {
+              // Popup with error message
+              // Show the login screen
+              registered.reject(error);
+            })
+          }, function(error){
+            registered.reject(error);
+          })
+          setToken(response);
+        } else {
+          registered.reject({error: "Couldn't login with facebook"});
+        }
+      })
+
+      return $q.when(registered);
+  }
+
+  var setToken = function(response) {
+    // Set fbAccessToken to local and session storage
+    $window.localStorage.setItem('fbAccessToken', response.authResponse.accessToken);
+    $window.sessionStorage.setItem('fbAccessToken', response.authResponse.accessToken);
+  }
+
+
+
+
+});
+
+angular.module('starter.services')
+
+.service('UserService', function($q, $window, ngFB) {
 
 //for the purpose of this example I will store user data on ionic local storage but you should save it on a database
 
-  var setUser = function(user_data) {
+  this.setUser = function(user_data) {
     window.localStorage.starter_facebook_user = JSON.stringify(user_data);
   };
 
-  var getUser = function(){
+  this.getUser = function(){
     return JSON.parse(window.localStorage.starter_facebook_user || '{}');
   };
 
-  return {
-    getUser: getUser,
-    setUser: setUser
-  };
+  this.getInfo = function(){
+    var info = $q.defer();
+    ngFB.api({
+      path: '/me',
+      params: {
+        fields: 'id, name'
+      }
+    }).then(function(data){
+      info.resolve(data);
+      //Set the user's id and name to the local storage
+      $window.localStorage.setItem('createdAt', (new Date()).getTime());
+      $window.localStorage.setItem('name', data.name);
+      $window.localStorage.setItem('id', data.id);
+    }, function(error){
+      info.reject(error);
+    })
+
+    return $q.when(info);
+  }
+
 });
 
 angular.module('starter.controllers')
@@ -169,6 +261,7 @@ angular.module('starter.controllers')
 
       // API Request to get list of sent requests
       var myId = $window.localStorage.getItem('id');
+      console.log(myId);
       $q.all([
         $http.post('http://188.166.58.138:3000/api/sent-requests', {
           id: myId
@@ -177,10 +270,11 @@ angular.module('starter.controllers')
       ]).then(function(data){
         var requests = data[0];
         console.log(requests);
-        var fbFriends = data [1];
+        var fbFriends = data[1];
         console.log(fbFriends);
 
-        vm.filteredFriends = showUnique(requests.data.sent, fbFriends.data);
+
+        vm.filteredFriends = showUnique(requests.data, fbFriends.data);
       })
 
   }
@@ -232,7 +326,7 @@ angular.module('starter.controllers')
 })
 
 angular.module('starter.controllers')
-.controller('LoginCtrl', function($scope, $state, $ionicModal, $timeout, ngFB, UserService, $http, $rootScope, $ionicLoading, $window) {
+.controller('LoginCtrl', function($scope, $state, ngFB, $ionicLoading, LoginService, UserService) {
   var vm = this;
 
   vm.show = function() {
@@ -245,131 +339,28 @@ angular.module('starter.controllers')
       $ionicLoading.hide();
   };
 
-  var isValidByTime  = function(){
-    var date = $window.localStorage.getItem('createdAt');
-    var now = new Date();
-
-    // Date was stored in ms in localStorage
-    var diff = now.getTime() - date;
-
-    var msIn5days = 1000 * 60 * 60 * 24 * 5
-
-    if (diff >= msIn5days){
-      return false;
-    }
-    return true;
-  }
-
-  var isAuthenticated = function() {
-    // Get fbAccessToken from localStorage
-    var token = $window.localStorage.getItem('fbAccessToken');
-    $window.sessionStorage.setItem('fbAccessToken', token);
-    // Check whether token is not null
-    var found = (token !== null && token !== "");
-    return found;
-  }
-
   var checkLoggedIn = function() {
     //If fbAccessToken is not null
-    if(isAuthenticated() && isValidByTime()) {
-      vm.show($ionicLoading);
-      //Get user's id and name
-      ngFB.api({
-        path: '/me',
-        params: {
-          fields: 'id, name'
-        }
-      }).then(function(data) {
-        //Set the user's id and name to the local storage
-        $window.localStorage.setItem('name', data.name);
-        $window.localStorage.setItem('id', data.id);
-
-        // Show the map screen
+    vm.show($ionicLoading);
+    if(LoginService.isAuthenticated() && LoginService.isValidByTime()) {
+      LoginService.login().then(function(result){
+        // Popup successfully logged in
         $state.go('tab.map');
+      }, function(error){
+        // Popup not successfully logged in
+        $state.go('login');
       })
-
-      vm.fbLogin();
 
     } else {
       //If fbAccessToken hasn't been created, try logging in
-      vm.fbLogin();
+      LoginService.login().then(function(result){
+        // Popup successfully logged in
+        $state.go('tab.map');
+      }, function(error){
+        // Popup not successfully logged in
+        $state.go('login');
+      })
     }
-  }
-
-  vm.fbLogin = function() {
-
-    ngFB.login({
-      // Try to log in and ask for user email, friends and profile permissions
-      scope: 'email,user_friends,public_profile'
-    })
-    .then(
-      // Success
-      function(response) {
-        // On succesful login
-        if(response.status === 'connected') {
-          // Get the user's id and name
-
-          ngFB.api({
-            path: '/me',
-            params: {
-              fields: 'id, name'
-            }
-          })
-          .then(function(data) {
-            $window.localStorage.setItem('createdAt', (new Date()).getTime());
-            $window.localStorage.setItem('name', data.name);
-            $window.localStorage.setItem('id', data.id);
-            // Register the user to the database by POSTing name and id
-            $http.post('http://188.166.58.138:3000/api/register', {
-              id: data.id,
-              name: data.name
-            }).then(function(result) {
-              $state.go('tab.map');
-            }, function(error) {
-              // Popup with error message
-              // Show the login screen
-              $state.go('login');
-            });
-            // Set id and name of logged in user to rootScope
-            // Only needed once on login
-
-          })
-          .then(function(result) {
-            $state.go('tab.map');
-          }, function(error) {
-            // Popup with error message
-            // Show the login screen
-            $state.go('login');
-          }).finally(function($ionicLoading) {
-            // On both cases hide the loading
-            //vm.hide($ionicLoading);
-          })
-
-
-          setToken(response);
-        } else {
-          // On login fail
-          // Show the login screen
-          $state.go('login');
-
-        }
-      }
-    ).then(function(result) {
-      $state.go('tab.map');
-    }, function(error) {
-      // Popup with error message
-      // Show the login screen
-      $state.go('login');
-    }).finally(function($ionicLoading) {
-      // On both cases hide the loading
-      //vm.hide($ionicLoading);
-    });
-  }
-
-  var setToken = function(response) {
-    // Set fbAccessToken to local and session storage
-    localStorage.setItem('fbAccessToken', response.authResponse.accessToken);
-    sessionStorage.setItem('fbAccessToken', response.authResponse.accessToken);
   }
 
   checkLoggedIn();

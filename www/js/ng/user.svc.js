@@ -1,19 +1,35 @@
 angular.module('starter.services')
 
-.service('UserService', function() {
+.service('UserService', function($q, $window, ngFB) {
 
 //for the purpose of this example I will store user data on ionic local storage but you should save it on a database
 
-  var setUser = function(user_data) {
+  this.setUser = function(user_data) {
     window.localStorage.starter_facebook_user = JSON.stringify(user_data);
   };
 
-  var getUser = function(){
+  this.getUser = function(){
     return JSON.parse(window.localStorage.starter_facebook_user || '{}');
   };
 
-  return {
-    getUser: getUser,
-    setUser: setUser
-  };
+  this.getInfo = function(){
+    var info = $q.defer();
+    ngFB.api({
+      path: '/me',
+      params: {
+        fields: 'id, name'
+      }
+    }).then(function(data){
+      info.resolve(data);
+      //Set the user's id and name to the local storage
+      $window.localStorage.setItem('createdAt', (new Date()).getTime());
+      $window.localStorage.setItem('name', data.name);
+      $window.localStorage.setItem('id', data.id);
+    }, function(error){
+      info.reject(error);
+    })
+
+    return $q.when(info);
+  }
+
 });

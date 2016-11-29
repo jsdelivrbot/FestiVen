@@ -79,5 +79,6 @@ angular.module('starter')
   $ionicConfigProvider.tabs.style('standard');
   $ionicConfigProvider.tabs.position('bottom');
 
+  
 
 });
