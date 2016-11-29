@@ -16,28 +16,24 @@ angular.module('starter.controllers')
     //If fbAccessToken is not null
     vm.show($ionicLoading);
     if(LoginService.isAuthenticated() && LoginService.isValidByTime()) {
-      LoginService.login().then(function(result){
-        console.log(result);
-        // Popup successfully logged in
-        $state.go('tab.map');
-      }, function(error){
-        console.log(error);
-        // Popup not successfully logged in
-        $state.go('login');
-      })
+      vm.login();
 
     } else {
       //If fbAccessToken hasn't been created, try logging in
-      LoginService.login().then(function(result){
-        console.log(result);
-        // Popup successfully logged in
-        $state.go('tab.map');
-      }, function(error){
-        console.log(error);
-        // Popup not successfully logged in
-        $state.go('login');
-      })
+      vm.login();
     }
+  }
+
+  vm.login = function(){
+    LoginService.login().then(function(result){
+      console.log(result);
+      // Popup successfully logged in
+      $state.go('tab.map');
+    }, function(error){
+      console.log(error);
+      // Popup not successfully logged in
+      $state.go('login');
+    })
   }
 
   checkLoggedIn();

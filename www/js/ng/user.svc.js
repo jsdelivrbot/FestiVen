@@ -1,18 +1,32 @@
 angular.module('starter.services')
 
-.service('UserService', function($q, $window, ngFB) {
-
-//for the purpose of this example I will store user data on ionic local storage but you should save it on a database
-
-  this.setUser = function(user_data) {
-    window.localStorage.starter_facebook_user = JSON.stringify(user_data);
-  };
-
-  this.getUser = function(){
-    return JSON.parse(window.localStorage.starter_facebook_user || '{}');
-  };
+.service('UserService', function($q, $http, $window, ngFB) {
 
   var info = undefined;
+  var friends = undefined;
+
+  this.getFriends = function(){
+    var myId = $window.localStorage.getItem('id');
+    var deferred = $q.defer();
+
+    $http.post('http://188.166.58.138:3000/api/user/friends',
+      {
+        id: myId
+      }).then(function(result) {
+      friends = result;
+      deferred.resolve(friends);
+    }, function(error) {
+      // Popup with error message
+      // Show the login screen
+      friends = error;
+      deferred.reject(error);
+    })
+
+    friends = deferred.promise;
+
+    return $q.when(friends);
+
+  }
 
   this.getInfo = function(){
     var deferred = $q.defer();

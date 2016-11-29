@@ -45,21 +45,15 @@ angular.module('starter.services')
               id: data.id,
               name: data.name
             }).then(function(result) {
-              console.log('http');
-              console.log(result);
               registered = result;
               deferred.resolve(registered);
             }, function(error) {
-              console.log('http');
-              console.log(error);
               // Popup with error message
               // Show the login screen
               registered = error;
               deferred.reject(error);
             })
           }, function(error){
-            console.log('info');
-            console.log(error);
             registered = error;
             deferred.reject(error);
           })

@@ -64,6 +64,7 @@ angular.module('starter')
   })
 
   .state('tab.friends', {
+    cache: false,
     url: '/friends',
     views: {
       'tab-friends': {
@@ -74,6 +75,7 @@ angular.module('starter')
     }
   })
   .state('tab.addFriends', {
+    cache: false,
     url: '/addFriends',
     views: {
       'tab-friends': {
@@ -94,6 +96,7 @@ angular.module('starter')
   // })
 
   .state('login', {
+    cache: false,
     url: '/login',
     templateUrl: 'templates/login.html',
     controller: 'LoginCtrl as vm'
@@ -104,21 +107,24 @@ angular.module('starter')
 
   $ionicConfigProvider.tabs.style('standard');
   $ionicConfigProvider.tabs.position('bottom');
+  $ionicConfigProvider.views.transition('none');
 
-  
+
 
 });
 
 angular.module('starter')
 
-.directive('friendAddButton', function() {
+.directive('friendButton', function() {
     return {
         restrict: 'AEC',
-        templateUrl: '/templates/add-friend-btn.html',
+        templateUrl: function(elem, attr) {
+          return '/templates/' + attr.type +  '-friend-btn.html';
+        },
         controller: function($scope, $element, $rootScope, $http, $window) {
           $scope.addFriend = function(id){
             $scope.disabled = false;
-            
+
             $http.post('http://188.166.58.138:3000/api/addrequest',
             {
               origin: $window.localStorage.getItem('id'),
@@ -186,21 +192,15 @@ angular.module('starter.services')
               id: data.id,
               name: data.name
             }).then(function(result) {
-              console.log('http');
-              console.log(result);
               registered = result;
               deferred.resolve(registered);
             }, function(error) {
-              console.log('http');
-              console.log(error);
               // Popup with error message
               // Show the login screen
               registered = error;
               deferred.reject(error);
             })
           }, function(error){
-            console.log('info');
-            console.log(error);
             registered = error;
             deferred.reject(error);
           })
@@ -232,19 +232,33 @@ angular.module('starter.services')
 
 angular.module('starter.services')
 
-.service('UserService', function($q, $window, ngFB) {
-
-//for the purpose of this example I will store user data on ionic local storage but you should save it on a database
-
-  this.setUser = function(user_data) {
-    window.localStorage.starter_facebook_user = JSON.stringify(user_data);
-  };
-
-  this.getUser = function(){
-    return JSON.parse(window.localStorage.starter_facebook_user || '{}');
-  };
+.service('UserService', function($q, $http, $window, ngFB) {
 
   var info = undefined;
+  var friends = undefined;
+
+  this.getFriends = function(){
+    var myId = $window.localStorage.getItem('id');
+    var deferred = $q.defer();
+
+    $http.post('http://188.166.58.138:3000/api/user/friends',
+      {
+        id: myId
+      }).then(function(result) {
+      friends = result;
+      deferred.resolve(friends);
+    }, function(error) {
+      // Popup with error message
+      // Show the login screen
+      friends = error;
+      deferred.reject(error);
+    })
+
+    friends = deferred.promise;
+
+    return $q.when(friends);
+
+  }
 
   this.getInfo = function(){
     var deferred = $q.defer();
@@ -273,10 +287,10 @@ angular.module('starter.services')
 });
 
 angular.module('starter.controllers')
-.controller('AddFriendsCtrl', function(ngFB, $rootScope, $http, $document, $q, $window) {
+.controller('AddFriendsCtrl', function(ngFB, $rootScope, $http, $document, $q, $window, $state) {
   var vm = this;
   vm.filteredFriends = [];
-  var getFbFriends = function() {
+  vm.getFbFriends = function() {
     // Ask the database for the user's friends
 
       // Get the people that are not friends yet and you are friends with on facebook
@@ -285,7 +299,7 @@ angular.module('starter.controllers')
       var myId = $window.localStorage.getItem('id');
       console.log(myId);
       $q.all([
-        $http.post('http://188.166.58.138:3000/api/sent-requests', {
+        $http.post('http://188.166.58.138:3000/api/user/sent', {
           id: myId
         }),
         ngFB.api({path: '/me/friends'})
@@ -321,7 +335,11 @@ angular.module('starter.controllers')
 
   }
 
-  getFbFriends();
+  vm.getFbFriends();
+
+  vm.goBack = function(){
+    $state.go('tab.friends');
+  }
 
     // Change the dom INSTANTLY from button to text, so that the user cannot send multiple requests
 
@@ -329,19 +347,17 @@ angular.module('starter.controllers')
 })
 
 angular.module('starter.controllers')
-.controller('FriendsCtrl', function(ngFB) {
+.controller('FriendsCtrl', function(ngFB, UserService) {
   var vm = this;
 
-  vm.fBfriends = [];
+  vm.friends = [];
 
   var getFriends = function() {
     // Ask the database for the user's friends
-    ngFB.api({
-      path: '/me/friends'
+    UserService.getFriends().then(function(result){
+      console.log(result);
+      vm.friends = result.data;
     })
-    .then(function(friends){
-      console.log(friends);
-    });
   }
 
   getFriends();
@@ -365,28 +381,24 @@ angular.module('starter.controllers')
     //If fbAccessToken is not null
     vm.show($ionicLoading);
     if(LoginService.isAuthenticated() && LoginService.isValidByTime()) {
-      LoginService.login().then(function(result){
-        console.log(result);
-        // Popup successfully logged in
-        $state.go('tab.map');
-      }, function(error){
-        console.log(error);
-        // Popup not successfully logged in
-        $state.go('login');
-      })
+      vm.login();
 
     } else {
       //If fbAccessToken hasn't been created, try logging in
-      LoginService.login().then(function(result){
-        console.log(result);
-        // Popup successfully logged in
-        $state.go('tab.map');
-      }, function(error){
-        console.log(error);
-        // Popup not successfully logged in
-        $state.go('login');
-      })
+      vm.login();
     }
+  }
+
+  vm.login = function(){
+    LoginService.login().then(function(result){
+      console.log(result);
+      // Popup successfully logged in
+      $state.go('tab.map');
+    }, function(error){
+      console.log(error);
+      // Popup not successfully logged in
+      $state.go('login');
+    })
   }
 
   checkLoggedIn();

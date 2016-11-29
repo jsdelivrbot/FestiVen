@@ -38,6 +38,7 @@ angular.module('starter')
   })
 
   .state('tab.friends', {
+    cache: false,
     url: '/friends',
     views: {
       'tab-friends': {
@@ -48,6 +49,7 @@ angular.module('starter')
     }
   })
   .state('tab.addFriends', {
+    cache: false,
     url: '/addFriends',
     views: {
       'tab-friends': {
@@ -68,6 +70,7 @@ angular.module('starter')
   // })
 
   .state('login', {
+    cache: false,
     url: '/login',
     templateUrl: 'templates/login.html',
     controller: 'LoginCtrl as vm'
@@ -78,7 +81,8 @@ angular.module('starter')
 
   $ionicConfigProvider.tabs.style('standard');
   $ionicConfigProvider.tabs.position('bottom');
+  $ionicConfigProvider.views.transition('none');
 
-  
+
 
 });

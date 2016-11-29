@@ -1,22 +1,35 @@
-.add-button-box{
-  display: inline-block;
-  position: absolute;
-  right: 25px;
+.add-button {
+  width: 32px;
+  height: 32px;
+  background:none;
+  border: 1px solid $roskilde;
+  border-radius: 5px;
+  font-size: 1rem;
+  color: orangered;
 
-  .add-button {
-    width: 32px;
-    height: 32px;
-    background:none;
-    border: 1px solid orangered;
-    border-radius: 5px;
+  .icon {
+    position: relative;
+    height: auto;
     font-size: 1rem;
-    color: orangered;
+    left: calc(50% - 9px);
+  }
+}
 
-    .icon {
-      position: relative;
-      height: auto;
-      font-size: 1rem;
-      left: calc(50% - 9px);
-    }
+.pill-btn{
+  position: absolute;
+  bottom: 10px;
+  margin: 0 1.25%;
+  width: 97.5%;
+  padding: 10px;
+  border-radius: 15px;
+  background-color: $roskilde;
+
+  a {
+    color: white;
+    text-transform: uppercase;
+    font-weight: bold;
+    display: block;
+    text-align: center;
+    text-decoration: none
   }
 }
