@@ -1,30 +1,41 @@
 <ion-view view-title="Friends">
   <ion-header-bar class="bar-assertive">
-  <div class="buttons">
-    <button class="button" ng-click="">Back Button</button>
-  </div>
   <h1 class="title">Friends</h1>
 </ion-header-bar>
-  <ion-content>
+<ion-subheader-bar class="bar bar-subheader pill-container">
+
+    <div class="pill-half left-pill-half">
+      <a href="#/tab/friends">Friends</a>
+    </div>
+    <div class="pill-half right-pill-half pill-active">
+      <a href="#/tab/requests">Requests</a>
+    </div>
+</ion-subheader-bar>
+  <ion-content class="has-big-subheader has-header">
+
+
     <div class="item item-divider">
       Sent requests
     </div>
-    <ion-list>
-      <ion-item class="item-remove-animate item-avatar item-icon-right" ng-repeat="friend in vm.friends" type="item-text-wrap">
-        <img ng-src="http://graph.facebook.com/{{friend.id}}/picture?width=32&height=32"/>
-        <h2>{{friend.name}}</h2>
+    <ion-list show-delete="true" ng-repeat="friend in vm.sent">
+      <ion-item class="person-list item-remove-animate item-icon-right"  type="item-text-wrap">
 
-        <friend-button type="delete" ng-click="disabled || addFriend(friend.id)">
-          <i class="icon ion-plus"></i>
-        </friend-button>
+
+        <img ng-src="http://graph.facebook.com/{{friend.id}}/picture?width=32&height=32"/>
+        <span>{{friend.name}}</span>
+        <i class="icon ion-trash-b assertive"></i>
+
+        <!-- <friend-button type="delete">
+          <i class="icon ion-plus assertive"></i>
+        </friend-button> -->
 
       </ion-item>
     </ion-list>
     <div class="item item-divider">
       Received requests
     </div>
-    <ion-list>
-      <ion-item class="item-remove-animate item-avatar item-icon-right" ng-repeat="friend in vm.friends" type="item-text-wrap">
+    <ion-list ng-repeat="friend in vm.received">
+      <ion-item class="item-remove-animate item-avatar item-icon-right"  type="item-text-wrap">
         <img ng-src="http://graph.facebook.com/{{friend.id}}/picture?width=32&height=32"/>
         <h2>{{friend.name}}</h2>
 
@@ -34,8 +45,5 @@
 
       </ion-item>
     </ion-list>
-    <div class="pill-btn">
-      <a href="#/tab/addFriends">Add Friend</a>
-    </div>
   </ion-content>
 </ion-view>

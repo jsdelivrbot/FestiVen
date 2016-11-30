@@ -4,6 +4,8 @@ angular.module('starter.services')
 
   var info = undefined;
   var friends = undefined;
+  var sent = undefined;
+  var received = undefined;
 
   this.getFriends = function(){
     var myId = $window.localStorage.getItem('id');
@@ -25,6 +27,51 @@ angular.module('starter.services')
     friends = deferred.promise;
 
     return $q.when(friends);
+  }
+
+  this.getReceived = function(){
+    var myId = $window.localStorage.getItem('id');
+    var deferred = $q.defer();
+
+    $http.post('http://188.166.58.138:3000/api/user/received',
+      {
+        id: myId
+      }).then(function(result) {
+      received = result;
+      deferred.resolve(received);
+    }, function(error) {
+      // Popup with error message
+      // Show the login screen
+      received = error;
+      deferred.reject(error);
+    })
+
+    received = deferred.promise;
+
+    return $q.when(received);
+
+  }
+
+  this.getSent = function(){
+    var myId = $window.localStorage.getItem('id');
+    var deferred = $q.defer();
+
+    $http.post('http://188.166.58.138:3000/api/user/sent',
+      {
+        id: myId
+      }).then(function(result) {
+      sent = result;
+      deferred.resolve(sent);
+    }, function(error) {
+      // Popup with error message
+      // Show the login screen
+      sent = error;
+      deferred.reject(error);
+    })
+
+    sent = deferred.promise;
+
+    return $q.when(sent);
 
   }
 

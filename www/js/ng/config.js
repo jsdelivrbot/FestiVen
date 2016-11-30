@@ -59,15 +59,16 @@ angular.module('starter')
     }
   })
 
-  // .state('tab.requests', {
-  //   url: '/requests',
-  //   views: {
-  //     'tab-friends': {
-  //       templateUrl: 'templates/tab-requests.html',
-  //       controller: 'RequestsCtrl'
-  //     }
-  //   }
-  // })
+  .state('tab.requests', {
+    cache: false,
+    url: '/requests',
+    views: {
+      'tab-friends': {
+        templateUrl: 'templates/tab-requests.html',
+        controller: 'RequestsCtrl as vm'
+      }
+    }
+  })
 
   .state('login', {
     cache: false,
