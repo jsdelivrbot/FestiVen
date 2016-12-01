@@ -1,5 +1,5 @@
 angular.module('starter.controllers')
-.controller('LoginCtrl', function($scope, $state, ngFB, $ionicLoading, LoginService, UserService) {
+.controller('LoginCtrl', function($scope, $state, ngFB, $ionicLoading, LoginService, UserService, $window) {
   var vm = this;
 
   vm.show = function() {
@@ -14,8 +14,8 @@ angular.module('starter.controllers')
 
   var checkLoggedIn = function() {
     //If fbAccessToken is not null
-    vm.show($ionicLoading);
-    if(LoginService.isAuthenticated() && LoginService.isValidByTime()) {
+    //vm.show($ionicLoading);
+    if(LoginService.isAuthenticated()) {
       vm.login();
 
     } else {
@@ -31,6 +31,7 @@ angular.module('starter.controllers')
       $state.go('tab.map');
     }, function(error){
       console.log(error);
+      alert(error.message);
       // Popup not successfully logged in
       $state.go('login');
     })

@@ -11,8 +11,13 @@
     position: relative;
     height: auto;
     font-size: 1rem;
-    left: calc(50% - 9px);
+    width: 16px;
+    left: calc(50% - 8px);
   }
+}
+
+.item-button-right > .centered-button {
+  top: 15px;
 }
 
 .pill-btn{

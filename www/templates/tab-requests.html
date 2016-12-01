@@ -18,30 +18,36 @@
       Sent requests
     </div>
     <ion-list show-delete="true" ng-repeat="friend in vm.sent">
-      <ion-item class="person-list item-remove-animate item-icon-right"  type="item-text-wrap">
+      <div class="item person-list item-remove-animate item-button-right"  type="item-text-wrap">
 
 
         <img ng-src="http://graph.facebook.com/{{friend.id}}/picture?width=32&height=32"/>
         <span>{{friend.name}}</span>
-        <i class="icon ion-trash-b assertive"></i>
+        <!-- <i class="icon ion-trash-b assertive"></i> -->
 
-        <!-- <friend-button type="delete">
-          <i class="icon ion-plus assertive"></i>
-        </friend-button> -->
+        <button friend-button class="button button-assertive" ng-click="disabled">
+            <i class="icon ion-close"></i>
+        </button>
 
-      </ion-item>
+      </div>
     </ion-list>
     <div class="item item-divider">
       Received requests
     </div>
-    <ion-list ng-repeat="friend in vm.received">
-      <ion-item class="item-remove-animate item-avatar item-icon-right"  type="item-text-wrap">
-        <img ng-src="http://graph.facebook.com/{{friend.id}}/picture?width=32&height=32"/>
-        <h2>{{friend.name}}</h2>
+    <ion-list>
+      <ion-item ng-repeat="friend in vm.received" class="item-remove-animate item-avatar item-button-right"  type="item-text-wrap">
+          <img ng-src="http://graph.facebook.com/{{friend.id}}/picture?width=32&height=32"/>
+          <span>{{friend.name}}</span>
 
-        <friend-button type="add" ng-click="disabled || addFriend(friend.id)">
-          <i class="icon ion-plus"></i>
-        </friend-button>
+        <div class="buttons">
+    <button friend-button class="button button-balanced" ng-click="disabled || acceptRequest(friend.id)">
+        <i class="icon ion-checkmark"></i>
+    </button>
+    <button friend-button class="button button-assertive" ng-click="disabled || declineRequest(friend.id)">
+        <i class="icon ion-close"></i>
+    </button>
+  </div>
+
 
       </ion-item>
     </ion-list>

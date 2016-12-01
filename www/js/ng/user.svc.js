@@ -6,6 +6,56 @@ angular.module('starter.services')
   var friends = undefined;
   var sent = undefined;
   var received = undefined;
+  var accept = undefined;
+  var decline = undefined;
+
+
+  this.acceptRequest = function(id){
+    var myId = $window.localStorage.getItem('id');
+    var deferred = $q.defer();
+
+    $http.post('http://188.166.58.138:3000/api/acceptRequest',
+      {
+        from: myId,
+        accept_id: id
+      }).then(function(result) {
+      accept = result;
+      deferred.resolve(accept);
+    }, function(error) {
+      // Popup with error message
+      // Show the login screen
+      accept = error;
+      deferred.reject(error);
+    })
+
+    accept = deferred.promise;
+
+    return $q.when(accept);
+
+  }
+
+  this.declineRequest = function(id){
+    var myId = $window.localStorage.getItem('id');
+    var deferred = $q.defer();
+
+    $http.post('http://188.166.58.138:3000/api/declinerequest',
+      {
+        from: myId,
+        decline_id: id
+      }).then(function(result) {
+      decline = result;
+      deferred.resolve(decline);
+    }, function(error) {
+      // Popup with error message
+      // Show the login screen
+      decline = error;
+      deferred.reject(error);
+    })
+
+    decline = deferred.promise;
+
+    return $q.when(decline);
+  }
 
   this.getFriends = function(){
     var myId = $window.localStorage.getItem('id');

@@ -118,11 +118,12 @@ angular.module('starter')
 
 .directive('friendButton', function() {
     return {
+        // replace: true,
         restrict: 'AEC',
-        templateUrl: function(elem, attr) {
-          return '/templates/' + attr.type +  '-friend-btn.html';
-        },
-        controller: function($scope, $element, $rootScope, $http, $window) {
+        // templateUrl: function(elem, attr) {
+        //   return '/templates/' + attr.type +  '-friend-btn.html';
+        // },
+        controller: function($scope, $element, $rootScope, $http, $window, UserService) {
           $scope.addFriend = function(id){
             $scope.disabled = false;
 
@@ -140,6 +141,23 @@ angular.module('starter')
               // Keep the dom as it is
               // Error message
             });
+          }
+
+
+          $scope.acceptRequest = function(id){
+            console.log('Accepting request');
+            UserService.acceptRequest(id).then(function() {
+              $element.parent().html('Accepted');
+            });
+
+          }
+
+          $scope.declineRequest = function(id){
+            console.log('Decline request');
+            UserService.declineRequest(id).then(function() {
+              $element.parent().html('Declined');
+            });
+
 
           }
         }
@@ -151,26 +169,35 @@ angular.module('starter.services')
 .service('LoginService', function($window, $http, $state, UserService, $q, ngFB) {
 
   this.isValidByTime  = function(){
+    alert('time');
     var date = $window.localStorage.getItem('createdAt');
     var now = new Date();
 
     // Date was stored in ms in localStorage
-    var diff = now.getTime() - date;
+    if (date != undefined && date != null){
+      var diff = now.getTime() - date;
 
-    var msIn5days = 1000 * 60 * 60 * 24 * 5
+      var msIn5days = 1000 * 60 * 60 * 24 * 5
 
-    if (diff >= msIn5days){
-      return false;
+      if (diff < msIn5days){
+        return true;
+      }
     }
-    return true;
+
+    return false;
   }
 
   this.isAuthenticated = function() {
     // Get fbAccessToken from localStorage
     var token = $window.localStorage.getItem('fbAccessToken');
-    $window.sessionStorage.setItem('fbAccessToken', token);
+
     // Check whether token is not null
     var found = (token !== null && token !== "");
+
+    if(found){
+      $window.sessionStorage.setItem('fbAccessToken', token);
+    }
+
     return found;
   }
 
@@ -187,6 +214,7 @@ angular.module('starter.services')
         if(response.status === 'connected') {
           // Get the user's id and name
 
+
           UserService.getInfo().then(function(data){
             console.log(data);
             $http.post('http://188.166.58.138:3000/api/register', {
@@ -196,12 +224,14 @@ angular.module('starter.services')
               registered = result;
               deferred.resolve(registered);
             }, function(error) {
+              alert("error -registering");
               // Popup with error message
               // Show the login screen
               registered = error;
               deferred.reject(error);
             })
           }, function(error){
+            alert("error - getting info");
             registered = error;
             deferred.reject(error);
           })
@@ -239,6 +269,56 @@ angular.module('starter.services')
   var friends = undefined;
   var sent = undefined;
   var received = undefined;
+  var accept = undefined;
+  var decline = undefined;
+
+
+  this.acceptRequest = function(id){
+    var myId = $window.localStorage.getItem('id');
+    var deferred = $q.defer();
+
+    $http.post('http://188.166.58.138:3000/api/acceptRequest',
+      {
+        from: myId,
+        accept_id: id
+      }).then(function(result) {
+      accept = result;
+      deferred.resolve(accept);
+    }, function(error) {
+      // Popup with error message
+      // Show the login screen
+      accept = error;
+      deferred.reject(error);
+    })
+
+    accept = deferred.promise;
+
+    return $q.when(accept);
+
+  }
+
+  this.declineRequest = function(id){
+    var myId = $window.localStorage.getItem('id');
+    var deferred = $q.defer();
+
+    $http.post('http://188.166.58.138:3000/api/declinerequest',
+      {
+        from: myId,
+        decline_id: id
+      }).then(function(result) {
+      decline = result;
+      deferred.resolve(decline);
+    }, function(error) {
+      // Popup with error message
+      // Show the login screen
+      decline = error;
+      deferred.reject(error);
+    })
+
+    decline = deferred.promise;
+
+    return $q.when(decline);
+  }
 
   this.getFriends = function(){
     var myId = $window.localStorage.getItem('id');
@@ -350,15 +430,30 @@ angular.module('starter.controllers')
         $http.post('http://188.166.58.138:3000/api/user/sent', {
           id: myId
         }),
-        ngFB.api({path: '/me/friends'})
+        ngFB.api({path: '/me/friends'}),
+        $http.post('http://188.166.58.138:3000/api/user/received', {
+          id: myId
+        }),
+        $http.post('http://188.166.58.138:3000/api/user/friends', {
+          id: myId
+        })
       ]).then(function(data){
         var requests = data[0];
+        console.log('sent');
         console.log(requests);
         var fbFriends = data[1];
+        console.log('FB');
         console.log(fbFriends);
 
+        console.log('Received');
+        var received = data[2];
 
-        vm.filteredFriends = showUnique(requests.data, fbFriends.data);
+        console.log('Friends');
+        var friends = data[3];
+
+        vm.filteredFriends = showUnique(friends, showUnique(received.data, showUnique(requests.data, fbFriends.data)));
+        console.log('FILTERED')
+        console.log(vm.filteredFriends);
       })
 
   }
@@ -412,7 +507,7 @@ angular.module('starter.controllers')
 })
 
 angular.module('starter.controllers')
-.controller('LoginCtrl', function($scope, $state, ngFB, $ionicLoading, LoginService, UserService) {
+.controller('LoginCtrl', function($scope, $state, ngFB, $ionicLoading, LoginService, UserService, $window) {
   var vm = this;
 
   vm.show = function() {
@@ -427,8 +522,8 @@ angular.module('starter.controllers')
 
   var checkLoggedIn = function() {
     //If fbAccessToken is not null
-    vm.show($ionicLoading);
-    if(LoginService.isAuthenticated() && LoginService.isValidByTime()) {
+    //vm.show($ionicLoading);
+    if(LoginService.isAuthenticated()) {
       vm.login();
 
     } else {
@@ -444,6 +539,7 @@ angular.module('starter.controllers')
       $state.go('tab.map');
     }, function(error){
       console.log(error);
+      alert(error.message);
       // Popup not successfully logged in
       $state.go('login');
     })
