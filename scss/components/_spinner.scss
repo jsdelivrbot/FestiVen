@@ -1,42 +1,42 @@
 .center {
+  align-items: center;
   background: rgba(0, 0, 0, .5);
   display: flex;
-  align-items: center;
-  justify-content: center;
-  position: fixed;
-  width: 100%;
   height: 100%;
-  z-index: 99999999999;
-  top: 0;
+  justify-content: center;
   left: 0;
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 999;
 }
 
 .spinner {
-  width: 100px;
-  height: 100px;
   background: #eee;
   border-radius: 50%;
-  position: relative;
-  margin: 50px;
   display: inline-block;
+  height: 100px;
+  margin: 50px;
+  position: relative;
+  width: 100px;
 
   &:after, &:before {
+    border-radius: 50%;
     content: '';
     display: block;
-    width: 100px;
     height: 100px;
-    border-radius: 50%;
+    width: 100px;
   }
 }
 
 .spinner-1:after {
+  animation: spinny 1s linear infinite;
+  border-bottom-color: $roskilde;
+  border-top-color: $roskilde;
+  border: 4px solid transparent;
+  left: 0;
   position: absolute;
   top: 0;
-  left: 0;
-  border: 4px solid transparent;
-  border-top-color: $roskilde;
-  border-bottom-color: $roskilde;
-  animation: spinny 1s linear infinite;
 }
 
 @keyframes spinny {
