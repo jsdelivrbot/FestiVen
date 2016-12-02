@@ -9,12 +9,10 @@ angular.module('starter')
     if(window.cordova && window.cordova.plugins && window.cordova.plugins.Keyboard) {
       cordova.plugins.Keyboard.hideKeyboardAccessoryBar(true);
       cordova.plugins.Keyboard.disableScroll(true);
-
     }
-    
+
     // Style the status bar
     if(window.StatusBar) {
-      // org.apache.cordova.statusbar required
       StatusBar.backgroundColorByHexString("#ec4940");
     }
   });
@@ -31,10 +29,9 @@ angular.module('starter')
   // Ionic uses AngularUI Router which uses the concept of states
   // Learn more here: https://github.com/angular-ui/ui-router
   // Set up the various states which the app can be in.
-  // Each state's controller can be found in controllers.js
   $stateProvider
 
-  // setup an abstract state for the tabs directive
+  // Setup an abstract state for the tabs directive
   .state('tab', {
     url: '/tab',
     abstract: true,
@@ -103,14 +100,12 @@ angular.module('starter')
     controller: 'LoginCtrl as vm'
   });
 
-  // if none of the above states are matched, use this as the fallback
+  // If none of the above states are matched, use this as the fallback
   $urlRouterProvider.otherwise('/login');
 
   $ionicConfigProvider.tabs.style('standard');
   $ionicConfigProvider.tabs.position('bottom');
   $ionicConfigProvider.views.transition('none');
-
-
 
 });
 
@@ -510,12 +505,14 @@ angular.module('starter.controllers')
 .controller('LoginCtrl', function($scope, $state, ngFB, $ionicLoading, LoginService, UserService, $window) {
   var vm = this;
 
+  // Show the spinner
   vm.show = function() {
     $ionicLoading.show({
       template: '<div class="center"><div class="spinner spinner-1"></div></div>'
     });
   };
 
+  // Hide the spinner
   vm.hide = function(){
       $ionicLoading.hide();
   };
@@ -708,18 +705,17 @@ angular.module('starter.controllers')
   var vm = this;
 
   vm.sent = [];
-
   vm.received = [];
 
   var getSent = function() {
-    // Ask the database for the user's friends
+    // Ask the database for the user's sent friend requests
     UserService.getSent().then(function(result){
       vm.sent = result.data;
     })
   }
 
   var getReceived = function() {
-    // Ask the database for the user's friends
+    // Ask the database for the user's received friend requests
     UserService.getReceived().then(function(result){
       vm.received = result.data;
     })

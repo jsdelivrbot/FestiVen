@@ -2,12 +2,14 @@ angular.module('starter.controllers')
 .controller('LoginCtrl', function($scope, $state, ngFB, $ionicLoading, LoginService, UserService, $window) {
   var vm = this;
 
+  // Show the spinner
   vm.show = function() {
     $ionicLoading.show({
       template: '<div class="center"><div class="spinner spinner-1"></div></div>'
     });
   };
 
+  // Hide the spinner
   vm.hide = function(){
       $ionicLoading.hide();
   };

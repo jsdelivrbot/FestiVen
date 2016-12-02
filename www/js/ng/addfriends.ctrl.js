@@ -1,30 +1,30 @@
 angular.module('starter.controllers')
 .controller('AddFriendsCtrl', function(ngFB, $rootScope, $http, $document, $q, $window, $state) {
   var vm = this;
+
   vm.filteredFriends = [];
+
   vm.getFbFriends = function() {
-    // Ask the database for the user's friends
-
-      // Get the people that are not friends yet and you are friends with on facebook
-
-      // API Request to get list of sent requests
+      // Check localStorage for an id
       var myId = $window.localStorage.getItem('id');
       console.log(myId);
+      // For the id in localStorage, get the friends,  sent friend requests and received friend requests
       $q.all([
+        $http.post('http://188.166.58.138:3000/api/user/friends', {
+          id: myId
+        }),
         $http.post('http://188.166.58.138:3000/api/user/sent', {
           id: myId
         }),
         ngFB.api({path: '/me/friends'}),
         $http.post('http://188.166.58.138:3000/api/user/received', {
           id: myId
-        }),
-        $http.post('http://188.166.58.138:3000/api/user/friends', {
-          id: myId
         })
       ]).then(function(data){
         var requests = data[0];
-        console.log('sent');
+        console.log('Sent');
         console.log(requests);
+
         var fbFriends = data[1];
         console.log('FB');
         console.log(fbFriends);
@@ -35,8 +35,9 @@ angular.module('starter.controllers')
         console.log('Friends');
         var friends = data[3];
 
+        // Show only those Facebook friends who are registered
         vm.filteredFriends = showUnique(friends, showUnique(received.data, showUnique(requests.data, fbFriends.data)));
-        console.log('FILTERED')
+        console.log('Filtered')
         console.log(vm.filteredFriends);
       })
 
@@ -44,22 +45,19 @@ angular.module('starter.controllers')
 
   var showUnique = function(req, fb) {
     var filtered = [];
-    // Loop over fb array first
-    for (i = 0; i < fb.length; i++){
-      var found = false;
-      for (j = 0; j < req.length; j++){
 
-        if (req[j].id == fb[i].id){
+    for (i = 0; i < fb.length; i++) {
+      var found = false;
+      for (j = 0; j < req.length; j++) {
+        if (req[j].id == fb[i].id) {
           found = true;
         }
       }
-      if (!found){
+      if(!found){
         filtered.push(fb[i]);
       }
-
     }
     return filtered;
-
   }
 
   vm.getFbFriends();
@@ -68,7 +66,6 @@ angular.module('starter.controllers')
     $state.go('tab.friends');
   }
 
-    // Change the dom INSTANTLY from button to text, so that the user cannot send multiple requests
-
+  // Change the dom INSTANTLY from button to text, so that the user cannot send multiple requests
 
 })

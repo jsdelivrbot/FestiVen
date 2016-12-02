@@ -1,5 +1,4 @@
 angular.module('starter.services')
-
 .service('UserService', function($q, $http, $window, ngFB) {
 
   var info = undefined;
@@ -9,6 +8,30 @@ angular.module('starter.services')
   var accept = undefined;
   var decline = undefined;
 
+  this.getInfo = function() {
+    var deferred = $q.defer();
+
+    // Check for a currently logged in user
+    ngFB.api({
+      path: '/me',
+      params: {
+        fields: 'id, name'
+      }
+    }).then(function(data){
+      info = data;
+      deferred.resolve(info);
+      // Save the user's id and name to localStorage
+      $window.localStorage.setItem('createdAt', (new Date()).getTime());
+      $window.localStorage.setItem('name', data.name);
+      $window.localStorage.setItem('id', data.id);
+    }, function(error){
+      info = error;
+      deferred.reject(error);
+    })
+
+    info = deferred.promise;
+    return $q.when(info);
+  }
 
   this.acceptRequest = function(id){
     var myId = $window.localStorage.getItem('id');
@@ -29,9 +52,7 @@ angular.module('starter.services')
     })
 
     accept = deferred.promise;
-
     return $q.when(accept);
-
   }
 
   this.declineRequest = function(id){
@@ -53,7 +74,6 @@ angular.module('starter.services')
     })
 
     decline = deferred.promise;
-
     return $q.when(decline);
   }
 
@@ -75,7 +95,6 @@ angular.module('starter.services')
     })
 
     friends = deferred.promise;
-
     return $q.when(friends);
   }
 
@@ -97,9 +116,7 @@ angular.module('starter.services')
     })
 
     received = deferred.promise;
-
     return $q.when(received);
-
   }
 
   this.getSent = function(){
@@ -120,33 +137,7 @@ angular.module('starter.services')
     })
 
     sent = deferred.promise;
-
     return $q.when(sent);
-
-  }
-
-  this.getInfo = function(){
-    var deferred = $q.defer();
-    ngFB.api({
-      path: '/me',
-      params: {
-        fields: 'id, name'
-      }
-    }).then(function(data){
-      info = data;
-      deferred.resolve(info);
-      //Set the user's id and name to the local storage
-      $window.localStorage.setItem('createdAt', (new Date()).getTime());
-      $window.localStorage.setItem('name', data.name);
-      $window.localStorage.setItem('id', data.id);
-    }, function(error){
-      info = error;
-      deferred.reject(error);
-    })
-
-    info = deferred.promise;
-
-    return $q.when(info);
   }
 
 });

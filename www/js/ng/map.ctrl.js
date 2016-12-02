@@ -1,24 +1,22 @@
 angular.module('starter.controllers')
-
 // Controller for the map view
 .controller('MapCtrl', function($scope, $state, $cordovaGeolocation, $cordovaDeviceOrientation, $ionicLoading) {
 
   //document.addEventListener("deviceready", function() {
 
-  $scope.show = function() {
-    $ionicLoading.show({
-      template: '<div class="center"><div class="spinner spinner-1"></div></div>'
-    });
-  };
+    // Show the spinner
+    $scope.show = function() {
+      $ionicLoading.show({
+        template: '<div class="center"><div class="spinner spinner-1"></div></div>'
+      });
+    };
 
-  $scope.hide = function(){
+    // Hide the spinner
+    $scope.hide = function() {
         $ionicLoading.hide();
-  };
-
-
+    };
 
     var map = null;
-
     var currentPosition = null;
 
     // Center the map on the current location
@@ -29,13 +27,13 @@ angular.module('starter.controllers')
       }
     });
 
+    // Set the current position once the first time
     var singleOptions = {
       timeout: 10000,
       enableHighAccuracy: true
     };
 
     //$scope.show($ionicLoading);
-
 
     $cordovaGeolocation
     .getCurrentPosition(singleOptions).then(
@@ -106,7 +104,6 @@ angular.module('starter.controllers')
           map: $scope.map
         });
 
-
         // ngCordova Geolocation options
         var posOptions = {
           timeout: 3000,
@@ -121,10 +118,10 @@ angular.module('starter.controllers')
             //alert("watchPosition error " + error.message);
           },
           function(position) {
-
             // Create a Google Maps LatLng centered on the ngCordova position
             var newLatLng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
             currentPosition = newLatLng;
+            // Change the marker's position whenever the user's location changes
             marker.setPosition(newLatLng);
 
             $cordovaDeviceOrientation
