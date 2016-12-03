@@ -9,14 +9,14 @@ angular.module('starter.controllers')
       console.log(myId);
       // For the id in localStorage, get the friends,  sent friend requests and received friend requests
       $q.all([
-        $http.post('http://188.166.58.138:3000/api/user/friends', {
-          id: myId
-        }),
         $http.post('http://188.166.58.138:3000/api/user/sent', {
           id: myId
         }),
         ngFB.api({path: '/me/friends'}),
         $http.post('http://188.166.58.138:3000/api/user/received', {
+          id: myId
+        }),
+        $http.post('http://188.166.58.138:3000/api/user/friends', {
           id: myId
         })
       ]).then(function(data){
