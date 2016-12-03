@@ -1,6 +1,7 @@
 angular.module('starter.controllers')
 .controller('AddFriendsCtrl', function(ngFB, $rootScope, $http, $document, $q, $window, $state) {
   var vm = this;
+
   vm.filteredFriends = [];
 
   vm.getFbFriends = function() {
@@ -34,8 +35,14 @@ angular.module('starter.controllers')
         console.log('Friends');
         var friends = data[3];
 
+<<<<<<< Updated upstream
+        // Show only those Facebook friends who are registered
+        vm.filteredFriends = showUnique(friends, showUnique(received.data, showUnique(requests.data, fbFriends.data)));
+        console.log('Filtered')
+=======
         vm.filteredFriends = showUnique(friends.data, showUnique(received.data, showUnique(requests.data, fbFriends.data)));
         console.log('FILTERED')
+>>>>>>> Stashed changes
         console.log(vm.filteredFriends);
       })
 

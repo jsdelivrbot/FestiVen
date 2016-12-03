@@ -5,7 +5,8 @@ angular.module('starter.controllers')
   // Show the spinner
   vm.show = function() {
     $ionicLoading.show({
-      template: '<div class="center"><div class="spinner spinner-1"></div></div>'
+      template: '<div class="center"><div class="spinner spinner-1"></div></div>',
+      showBackdrop: false
     });
   };
 
@@ -16,7 +17,7 @@ angular.module('starter.controllers')
 
   var checkLoggedIn = function() {
     //If fbAccessToken is not null
-    //vm.show($ionicLoading);
+    vm.show($ionicLoading);
     if(LoginService.isAuthenticated()) {
       vm.login();
 
@@ -27,6 +28,7 @@ angular.module('starter.controllers')
   }
 
   vm.login = function(){
+    vm.show($ionicLoading);
     LoginService.login().then(function(result){
       console.log(result);
       // Popup successfully logged in
@@ -39,6 +41,6 @@ angular.module('starter.controllers')
     })
   }
 
-  checkLoggedIn();
+  //checkLoggedIn();
 
 })

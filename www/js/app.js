@@ -1,6 +1,4 @@
-angular.module('starter', ['ionic', 'starter.controllers', 'starter.services', 'ngCordova', 'ngOpenFB'])
-angular.module('starter.services', [])
-angular.module('starter.controllers', ['ionic', 'starter.services', 'ngOpenFB'])
+
 
 angular.module('starter')
 .run(function($ionicPlatform, ngFB) {
@@ -8,11 +6,11 @@ angular.module('starter')
     // Style the keyboard
     if(window.cordova && window.cordova.plugins && window.cordova.plugins.Keyboard) {
       cordova.plugins.Keyboard.hideKeyboardAccessoryBar(true);
-      cordova.plugins.Keyboard.disableScroll(true);
-    }
 
+
+    
     // Style the status bar
-    if(window.StatusBar) {
+      // org.apache.cordova.statusbar required
       StatusBar.backgroundColorByHexString("#ec4940");
     }
   });
@@ -28,10 +26,10 @@ angular.module('starter')
 
   // Ionic uses AngularUI Router which uses the concept of states
   // Learn more here: https://github.com/angular-ui/ui-router
-  // Set up the various states which the app can be in.
+  // Each state's controller can be found in controllers.js
   $stateProvider
-
   // Setup an abstract state for the tabs directive
+  // setup an abstract state for the tabs directive
   .state('tab', {
     url: '/tab',
     abstract: true,
@@ -99,14 +97,13 @@ angular.module('starter')
     templateUrl: 'templates/login.html',
     controller: 'LoginCtrl as vm'
   });
-
   // If none of the above states are matched, use this as the fallback
+  // if none of the above states are matched, use this as the fallback
   $urlRouterProvider.otherwise('/login');
 
   $ionicConfigProvider.tabs.style('standard');
   $ionicConfigProvider.tabs.position('bottom');
   $ionicConfigProvider.views.transition('none');
-
 });
 
 angular.module('starter')
@@ -152,8 +149,8 @@ angular.module('starter')
       }
     }
   };
-});
 
+});
 angular.module('starter.services')
 // The $window service is a reference to the browser's window object
 // The $http service facilitates communication with the remote HTTP server
@@ -250,7 +247,6 @@ angular.module('starter.services')
   }
 
 });
-
 angular.module('starter.services')
 .service('UserService', function($q, $http, $window, ngFB) {
 
@@ -394,7 +390,6 @@ angular.module('starter.services')
   }
 
 });
-
 angular.module('starter.controllers')
 .controller('AddFriendsCtrl', function(ngFB, $rootScope, $http, $document, $q, $window, $state) {
   var vm = this;
@@ -467,6 +462,9 @@ angular.module('starter.controllers')
 
 })
 
+
+})
+
 angular.module('starter.controllers')
 .controller('FriendsCtrl', function(ngFB, UserService) {
   var vm = this;
@@ -488,13 +486,54 @@ angular.module('starter.controllers')
 .controller('LoginCtrl', function($scope, $state, ngFB, $ionicLoading, LoginService, UserService, $window) {
   var vm = this;
 
-  // Show the spinner
   vm.show = function() {
     $ionicLoading.show({
-      template: '<div class="center"><div class="spinner spinner-1"></div></div>'
+      template: '<div class="center"><div class="spinner spinner-1"></div></div>',
+      showBackdrop: false
     });
   };
 
+  vm.hide = function(){
+      $ionicLoading.hide();
+  };
+
+  var checkLoggedIn = function() {
+    //If fbAccessToken is not null
+    vm.show($ionicLoading);
+    if(LoginService.isAuthenticated()) {
+      vm.login();
+
+    } else {
+      //If fbAccessToken hasn't been created, try logging in
+      vm.login();
+    }
+  }
+
+  vm.login = function(){
+    vm.show($ionicLoading);
+    LoginService.login().then(function(result){
+      console.log(result);
+      // Popup successfully logged in
+      $state.go('tab.map');
+    }, function(error){
+      console.log(error);
+      alert(error.message);
+      // Popup not successfully logged in
+      $state.go('login');
+    })
+  }
+
+  //checkLoggedIn();
+.controller('LoginCtrl', function($scope, $state, ngFB, $ionicLoading, LoginService, UserService, $window) {
+  var vm = this;
+
+  // Show the spinner
+  vm.show = function() {
+
+  //document.addEventListener("deviceready", function() {
+
+  $scope.show = function() {
+    $ionicLoading.show({
   // Hide the spinner
   vm.hide = function(){
       $ionicLoading.hide();
@@ -505,13 +544,13 @@ angular.module('starter.controllers')
     //vm.show($ionicLoading);
     if(LoginService.isAuthenticated()) {
       vm.login();
-
+  $scope.hide = function(){
     } else {
       //If fbAccessToken hasn't been created, try logging in
       vm.login();
     }
   }
-
+        $ionicLoading.hide();
   vm.login = function(){
     LoginService.login().then(function(result){
       console.log(result);
@@ -548,23 +587,27 @@ angular.module('starter.controllers')
     };
 
     var map = null;
+
+
+    var map = null;
+
     var currentPosition = null;
 
     // Center the map on the current location
     $(".center-map").click(function() {
       if(map && currentPosition) {
         // Buggy when clicked before all tiles are loaded
+    // Set the current position once the first time
         map.panTo(currentPosition);
       }
     });
 
-    // Set the current position once the first time
     var singleOptions = {
       timeout: 10000,
       enableHighAccuracy: true
-    };
 
     //$scope.show($ionicLoading);
+
 
     $cordovaGeolocation
     .getCurrentPosition(singleOptions).then(
@@ -631,9 +674,9 @@ angular.module('starter.controllers')
             scale: 6,
             rotation: 0
           },
-          draggable: false,
           map: $scope.map
         });
+
 
         // ngCordova Geolocation options
         var posOptions = {
@@ -645,14 +688,14 @@ angular.module('starter.controllers')
         var watchPos = $cordovaGeolocation.watchPosition(posOptions);
         watchPos.then(
           null,
-          function(error) {
             //alert("watchPosition error " + error.message);
           },
           function(position) {
+            // Change the marker's position whenever the user's location changes
+
             // Create a Google Maps LatLng centered on the ngCordova position
             var newLatLng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
             currentPosition = newLatLng;
-            // Change the marker's position whenever the user's location changes
             marker.setPosition(newLatLng);
 
             $cordovaDeviceOrientation
@@ -676,14 +719,10 @@ angular.module('starter.controllers')
           } // End watchPosition then succes
         ); // End watchPosition then
       } // End getCurrentPosition then success
-    ); // End getCurrentPosition then
-  //}); // End deviceready
-}) // End MapCtrl
-
-angular.module('starter.controllers')
+  getSent();
 .controller('RequestsCtrl', function(UserService) {
   var vm = this;
-
+  getReceived();
   vm.sent = [];
   vm.received = [];
 
@@ -706,6 +745,10 @@ angular.module('starter.controllers')
 })
 
 angular.module('starter.controllers')
+})
+
+angular.module('starter.controllers')
+
 // Controller for the settings view
 .controller('SettingsCtrl', function(ngFB, $rootScope, $window) {
   var vm = this;
