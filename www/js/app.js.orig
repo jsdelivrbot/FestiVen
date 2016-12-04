@@ -122,7 +122,7 @@ angular.module('starter')
         $scope.addFriend = function(id) {
           $scope.disabled = false;
           // Send a friend request from the id in localStorage to the clicked friend's id
-          $http.post('http://188.166.58.138:3000/api/addrequest', {
+          $http.post('http://188.166.58.138:8080/api/addrequest', {
             origin: $window.localStorage.getItem('id'),
             to: id
           })
@@ -211,7 +211,7 @@ angular.module('starter.services')
         UserService.getInfo().then(function(data) {
           console.log(data);
           // Try to register the user
-          $http.post('http://188.166.58.138:3000/api/register', {
+          $http.post('http://188.166.58.138:8080/api/register', {
             id: data.id,
             name: data.name
           }).then(function(result) {
@@ -290,7 +290,7 @@ angular.module('starter.services')
     var myId = $window.localStorage.getItem('id');
     var deferred = $q.defer();
 
-    $http.post('http://188.166.58.138:3000/api/acceptRequest',
+    $http.post('http://188.166.58.138:8080/api/acceptRequest',
       {
         from: myId,
         accept_id: id
@@ -312,7 +312,7 @@ angular.module('starter.services')
     var myId = $window.localStorage.getItem('id');
     var deferred = $q.defer();
 
-    $http.post('http://188.166.58.138:3000/api/declinerequest',
+    $http.post('http://188.166.58.138:8080/api/declinerequest',
       {
         from: myId,
         decline_id: id
@@ -334,7 +334,7 @@ angular.module('starter.services')
     var myId = $window.localStorage.getItem('id');
     var deferred = $q.defer();
 
-    $http.post('http://188.166.58.138:3000/api/user/friends',
+    $http.post('http://188.166.58.138:8080/api/user/friends',
       {
         id: myId
       }).then(function(result) {
@@ -355,7 +355,7 @@ angular.module('starter.services')
     var myId = $window.localStorage.getItem('id');
     var deferred = $q.defer();
 
-    $http.post('http://188.166.58.138:3000/api/user/received',
+    $http.post('http://188.166.58.138:8080/api/user/received',
       {
         id: myId
       }).then(function(result) {
@@ -376,7 +376,7 @@ angular.module('starter.services')
     var myId = $window.localStorage.getItem('id');
     var deferred = $q.defer();
 
-    $http.post('http://188.166.58.138:3000/api/user/sent',
+    $http.post('http://188.166.58.138:8080/api/user/sent',
       {
         id: myId
       }).then(function(result) {
@@ -407,14 +407,14 @@ angular.module('starter.controllers')
       console.log(myId);
       // For the id in localStorage, get the friends,  sent friend requests and received friend requests
       $q.all([
-        $http.post('http://188.166.58.138:3000/api/user/friends', {
+        $http.post('http://188.166.58.138:8080/api/user/friends', {
           id: myId
         }),
-        $http.post('http://188.166.58.138:3000/api/user/sent', {
+        $http.post('http://188.166.58.138:8080/api/user/sent', {
           id: myId
         }),
         ngFB.api({path: '/me/friends'}),
-        $http.post('http://188.166.58.138:3000/api/user/received', {
+        $http.post('http://188.166.58.138:8080/api/user/received', {
           id: myId
         })
       ]).then(function(data){

@@ -1,4 +1,6 @@
-
+angular.module('starter', ['ionic', 'starter.controllers', 'starter.services', 'ngCordova', 'ngOpenFB'])
+angular.module('starter.services', [])
+angular.module('starter.controllers', ['ionic', 'starter.services', 'ngOpenFB'])
 
 angular.module('starter')
 .run(function($ionicPlatform, ngFB) {
@@ -6,11 +8,11 @@ angular.module('starter')
     // Style the keyboard
     if(window.cordova && window.cordova.plugins && window.cordova.plugins.Keyboard) {
       cordova.plugins.Keyboard.hideKeyboardAccessoryBar(true);
+      cordova.plugins.Keyboard.disableScroll(true);
+    }
 
-
-    
     // Style the status bar
-      // org.apache.cordova.statusbar required
+    if(window.StatusBar) {
       StatusBar.backgroundColorByHexString("#ec4940");
     }
   });
@@ -26,10 +28,10 @@ angular.module('starter')
 
   // Ionic uses AngularUI Router which uses the concept of states
   // Learn more here: https://github.com/angular-ui/ui-router
-  // Each state's controller can be found in controllers.js
+  // Set up the various states which the app can be in.
   $stateProvider
+
   // Setup an abstract state for the tabs directive
-  // setup an abstract state for the tabs directive
   .state('tab', {
     url: '/tab',
     abstract: true,
@@ -97,13 +99,14 @@ angular.module('starter')
     templateUrl: 'templates/login.html',
     controller: 'LoginCtrl as vm'
   });
+
   // If none of the above states are matched, use this as the fallback
-  // if none of the above states are matched, use this as the fallback
   $urlRouterProvider.otherwise('/login');
 
   $ionicConfigProvider.tabs.style('standard');
   $ionicConfigProvider.tabs.position('bottom');
   $ionicConfigProvider.views.transition('none');
+
 });
 
 angular.module('starter')
@@ -115,7 +118,7 @@ angular.module('starter')
     // templateUrl: function(elem, attr) {
     //   return '/templates/' + attr.type +  '-friend-btn.html';
     // },
-    controller: function($scope, $element, $rootScope, $http, $window, UserService) {
+    controller: function($scope, $element, $rootScope, $http, $window, UserService, socket) {
         $scope.addFriend = function(id) {
           $scope.disabled = false;
           // Send a friend request from the id in localStorage to the clicked friend's id
@@ -137,6 +140,7 @@ angular.module('starter')
       $scope.acceptRequest = function(id) {
         console.log('Accepting request');
         UserService.acceptRequest(id).then(function() {
+          socket.emit('add-friend', {id: id});
           $element.parent().html('Accepted');
         });
       }
@@ -149,8 +153,8 @@ angular.module('starter')
       }
     }
   };
-
 });
+
 angular.module('starter.services')
 // The $window service is a reference to the browser's window object
 // The $http service facilitates communication with the remote HTTP server
@@ -208,7 +212,7 @@ angular.module('starter.services')
         UserService.getInfo().then(function(data) {
           console.log(data);
           // Try to register the user
-          $http.post('http://188.166.58.138:3000/api/register', {
+          $http.post('http://188.166.58.138:8080/api/register', {
             id: data.id,
             name: data.name
           }).then(function(result) {
@@ -247,6 +251,32 @@ angular.module('starter.services')
   }
 
 });
+
+angular.module('starter.services')
+.factory('socket', function ($rootScope) {
+  var socket = io.connect('http://188.166.58.138:8080');
+  return {
+    on: function (eventName, callback) {
+      socket.on(eventName, function () {
+        var args = arguments;
+        $rootScope.$apply(function () {
+          callback.apply(socket, args);
+        });
+      });
+    },
+    emit: function (eventName, data, callback) {
+      socket.emit(eventName, data, function () {
+        var args = arguments;
+        $rootScope.$apply(function () {
+          if (callback) {
+            callback.apply(socket, args);
+          }
+        });
+      })
+    }
+  };
+});
+
 angular.module('starter.services')
 .service('UserService', function($q, $http, $window, ngFB) {
 
@@ -286,7 +316,7 @@ angular.module('starter.services')
     var myId = $window.localStorage.getItem('id');
     var deferred = $q.defer();
 
-    $http.post('http://188.166.58.138:3000/api/acceptRequest',
+    $http.post('http://188.166.58.138:8080/api/acceptRequest',
       {
         from: myId,
         accept_id: id
@@ -308,7 +338,7 @@ angular.module('starter.services')
     var myId = $window.localStorage.getItem('id');
     var deferred = $q.defer();
 
-    $http.post('http://188.166.58.138:3000/api/declinerequest',
+    $http.post('http://188.166.58.138:8080/api/declinerequest',
       {
         from: myId,
         decline_id: id
@@ -330,7 +360,7 @@ angular.module('starter.services')
     var myId = $window.localStorage.getItem('id');
     var deferred = $q.defer();
 
-    $http.post('http://188.166.58.138:3000/api/user/friends',
+    $http.post('http://188.166.58.138:8080/api/user/friends',
       {
         id: myId
       }).then(function(result) {
@@ -351,7 +381,7 @@ angular.module('starter.services')
     var myId = $window.localStorage.getItem('id');
     var deferred = $q.defer();
 
-    $http.post('http://188.166.58.138:3000/api/user/received',
+    $http.post('http://188.166.58.138:8080/api/user/received',
       {
         id: myId
       }).then(function(result) {
@@ -372,7 +402,7 @@ angular.module('starter.services')
     var myId = $window.localStorage.getItem('id');
     var deferred = $q.defer();
 
-    $http.post('http://188.166.58.138:3000/api/user/sent',
+    $http.post('http://188.166.58.138:8080/api/user/sent',
       {
         id: myId
       }).then(function(result) {
@@ -390,10 +420,10 @@ angular.module('starter.services')
   }
 
 });
+
 angular.module('starter.controllers')
 .controller('AddFriendsCtrl', function(ngFB, $rootScope, $http, $document, $q, $window, $state) {
   var vm = this;
-
   vm.filteredFriends = [];
 
   vm.getFbFriends = function() {
@@ -402,14 +432,14 @@ angular.module('starter.controllers')
       console.log(myId);
       // For the id in localStorage, get the friends,  sent friend requests and received friend requests
       $q.all([
-        $http.post('http://188.166.58.138:3000/api/user/friends', {
-          id: myId
-        }),
-        $http.post('http://188.166.58.138:3000/api/user/sent', {
+        $http.post('http://188.166.58.138:8080/api/user/sent', {
           id: myId
         }),
         ngFB.api({path: '/me/friends'}),
-        $http.post('http://188.166.58.138:3000/api/user/received', {
+        $http.post('http://188.166.58.138:8080/api/user/received', {
+          id: myId
+        }),
+        $http.post('http://188.166.58.138:8080/api/user/friends', {
           id: myId
         })
       ]).then(function(data){
@@ -427,9 +457,8 @@ angular.module('starter.controllers')
         console.log('Friends');
         var friends = data[3];
 
-        // Show only those Facebook friends who are registered
-        vm.filteredFriends = showUnique(friends, showUnique(received.data, showUnique(requests.data, fbFriends.data)));
-        console.log('Filtered')
+        vm.filteredFriends = showUnique(friends.data, showUnique(received.data, showUnique(requests.data, fbFriends.data)));
+        console.log('FILTERED')
         console.log(vm.filteredFriends);
       })
 
@@ -463,7 +492,6 @@ angular.module('starter.controllers')
 })
 
 
-})
 
 angular.module('starter.controllers')
 .controller('FriendsCtrl', function(ngFB, UserService) {
@@ -486,6 +514,7 @@ angular.module('starter.controllers')
 .controller('LoginCtrl', function($scope, $state, ngFB, $ionicLoading, LoginService, UserService, $window) {
   var vm = this;
 
+  // Show the spinner
   vm.show = function() {
     $ionicLoading.show({
       template: '<div class="center"><div class="spinner spinner-1"></div></div>',
@@ -493,6 +522,7 @@ angular.module('starter.controllers')
     });
   };
 
+  // Hide the spinner
   vm.hide = function(){
       $ionicLoading.hide();
   };
@@ -524,55 +554,24 @@ angular.module('starter.controllers')
   }
 
   //checkLoggedIn();
-.controller('LoginCtrl', function($scope, $state, ngFB, $ionicLoading, LoginService, UserService, $window) {
-  var vm = this;
-
-  // Show the spinner
-  vm.show = function() {
-
-  //document.addEventListener("deviceready", function() {
-
-  $scope.show = function() {
-    $ionicLoading.show({
-  // Hide the spinner
-  vm.hide = function(){
-      $ionicLoading.hide();
-  };
-
-  var checkLoggedIn = function() {
-    //If fbAccessToken is not null
-    //vm.show($ionicLoading);
-    if(LoginService.isAuthenticated()) {
-      vm.login();
-  $scope.hide = function(){
-    } else {
-      //If fbAccessToken hasn't been created, try logging in
-      vm.login();
-    }
-  }
-        $ionicLoading.hide();
-  vm.login = function(){
-    LoginService.login().then(function(result){
-      console.log(result);
-      // Popup successfully logged in
-      $state.go('tab.map');
-    }, function(error){
-      console.log(error);
-      alert(error.message);
-      // Popup not successfully logged in
-      $state.go('login');
-    })
-  }
-
-  checkLoggedIn();
 
 })
 
 angular.module('starter.controllers')
 // Controller for the map view
-.controller('MapCtrl', function($scope, $state, $cordovaGeolocation, $cordovaDeviceOrientation, $ionicLoading) {
+.controller('MapCtrl', function($scope, $state, $cordovaGeolocation, $cordovaDeviceOrientation, $ionicLoading, socket, $window) {
+
+
 
   //document.addEventListener("deviceready", function() {
+
+  // Connect to socket - maybe move this to success in login controller
+  var socket = io.connect('http://188.166.58.138:8080');
+
+    // Emit on connect, store the fb id in socket
+    socket.on('connect', function (data) {
+        socket.emit('storeClientInfo', { customId: $window.localStorage.getItem('id') });
+    });
 
     // Show the spinner
     $scope.show = function() {
@@ -587,27 +586,23 @@ angular.module('starter.controllers')
     };
 
     var map = null;
-
-
-    var map = null;
-
     var currentPosition = null;
 
     // Center the map on the current location
     $(".center-map").click(function() {
       if(map && currentPosition) {
         // Buggy when clicked before all tiles are loaded
-    // Set the current position once the first time
         map.panTo(currentPosition);
       }
     });
 
+    // Set the current position once the first time
     var singleOptions = {
       timeout: 10000,
       enableHighAccuracy: true
+    };
 
     //$scope.show($ionicLoading);
-
 
     $cordovaGeolocation
     .getCurrentPosition(singleOptions).then(
@@ -674,9 +669,9 @@ angular.module('starter.controllers')
             scale: 6,
             rotation: 0
           },
+          draggable: false,
           map: $scope.map
         });
-
 
         // ngCordova Geolocation options
         var posOptions = {
@@ -688,14 +683,14 @@ angular.module('starter.controllers')
         var watchPos = $cordovaGeolocation.watchPosition(posOptions);
         watchPos.then(
           null,
+          function(error) {
             //alert("watchPosition error " + error.message);
           },
           function(position) {
-            // Change the marker's position whenever the user's location changes
-
             // Create a Google Maps LatLng centered on the ngCordova position
             var newLatLng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
             currentPosition = newLatLng;
+            // Change the marker's position whenever the user's location changes
             marker.setPosition(newLatLng);
 
             $cordovaDeviceOrientation
@@ -719,10 +714,14 @@ angular.module('starter.controllers')
           } // End watchPosition then succes
         ); // End watchPosition then
       } // End getCurrentPosition then success
-  getSent();
+    ); // End getCurrentPosition then
+  //}); // End deviceready
+}) // End MapCtrl
+
+angular.module('starter.controllers')
 .controller('RequestsCtrl', function(UserService) {
   var vm = this;
-  getReceived();
+
   vm.sent = [];
   vm.received = [];
 
@@ -745,10 +744,6 @@ angular.module('starter.controllers')
 })
 
 angular.module('starter.controllers')
-})
-
-angular.module('starter.controllers')
-
 // Controller for the settings view
 .controller('SettingsCtrl', function(ngFB, $rootScope, $window) {
   var vm = this;
