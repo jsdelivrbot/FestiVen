@@ -5,3 +5,5 @@ node_modules/
 platforms/
 plugins/
 sass-lint.yml
+www/css
+www/js/app.js
