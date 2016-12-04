@@ -155,6 +155,29 @@ angular.module('starter')
   };
 });
 
+angular.module('starter')
+.directive('marker', function() {
+        return {
+          replace: true,
+            restrict:'AEC',
+            scope: {
+              value: '=value'
+            },
+
+            link: function (scope, element, attrs) {
+              var update = function(value) {
+                scope.value = value;
+              };
+
+              scope.$watch("value", function(value) {
+                update(value);
+              });
+              update(scope.value);
+            },
+            template: '<div><img width="32px" src="../img/icons/{{value}}.svg"/></div>'
+        };
+    });;
+
 angular.module('starter.services')
 // The $window service is a reference to the browser's window object
 // The $http service facilitates communication with the remote HTTP server
@@ -560,6 +583,8 @@ angular.module('starter.controllers')
 angular.module('starter.controllers')
 // Controller for the map view
 .controller('MapCtrl', function($scope, $state, $cordovaGeolocation, $cordovaDeviceOrientation, $ionicLoading, socket, $window) {
+
+  $scope.radio = 'marker';
 
 
 

@@ -10023,3 +10023,9 @@ a.button {
     .roskilde-bg .fb-login label {
       border: none;
       background-color: transparent; }
+
+.center-marker {
+  position: absolute;
+  top: calc(50% - 16px);
+  left: calc(50% - 16px);
+  z-index: 3; }

@@ -4,23 +4,27 @@
 
 <div class="pill-menu pill-menu-top pill-menu-right">
       <label class="pill" for="marker">
-        <input checked class="radio-pill" type='radio' name="marker" id="marker"/>
+        <input checked="checked" class="radio-pill" type='radio' name="marker" id="marker" ng-model='radio' value="marker"/>
         <img src="img/icons/marker.svg" alt="Marker">
       </label>
       <label class="pill" for="tent">
-        <input class="radio-pill" type='radio' name="marker" id="tent"/>
+        <input class="radio-pill" type='radio' name="marker" id="tent" ng-model='radio' value="tent"/>
         <img src="img/icons/tent.svg" alt="Tent">
       </label>
       <label class="pill" for="car">
-        <input class="radio-pill" type='radio' name="marker" id="car"/>
+        <input class="radio-pill" type='radio' name="marker" id="car" ng-model='radio' value="car"/>
         <img src="img/icons/car.svg" alt="Car">
       </label>
     </div>
+
+
 
     <div class="pill-menu pill-menu-bottom pill-menu-right">
       <a class="pill center-map" title="Center the map on your current position">
         <img src="img/icons/center.svg" alt="Center">
       </a>
     </div>
+
+    <marker class="center-marker" value="radio"></marker>
   </ion-content>
 </ion-view>

@@ -2,6 +2,8 @@ angular.module('starter.controllers')
 // Controller for the map view
 .controller('MapCtrl', function($scope, $state, $cordovaGeolocation, $cordovaDeviceOrientation, $ionicLoading, socket, $window) {
 
+  $scope.radio = 'marker';
+
 
 
   //document.addEventListener("deviceready", function() {
