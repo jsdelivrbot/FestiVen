@@ -9949,6 +9949,7 @@ a.button {
 
 .pill-container {
   background-image: none;
+  border-bottom: none;
   height: auto;
   margin: 10px 1.25%;
   width: 97.5%; }

@@ -37,7 +37,7 @@ angular.module('starter.services')
     var myId = $window.localStorage.getItem('id');
     var deferred = $q.defer();
 
-    $http.post('http://188.166.58.138:3000/api/acceptRequest',
+    $http.post('http://188.166.58.138:8080/api/acceptRequest',
       {
         from: myId,
         accept_id: id
@@ -59,7 +59,7 @@ angular.module('starter.services')
     var myId = $window.localStorage.getItem('id');
     var deferred = $q.defer();
 
-    $http.post('http://188.166.58.138:3000/api/declinerequest',
+    $http.post('http://188.166.58.138:8080/api/declinerequest',
       {
         from: myId,
         decline_id: id
@@ -81,7 +81,7 @@ angular.module('starter.services')
     var myId = $window.localStorage.getItem('id');
     var deferred = $q.defer();
 
-    $http.post('http://188.166.58.138:3000/api/user/friends',
+    $http.post('http://188.166.58.138:8080/api/user/friends',
       {
         id: myId
       }).then(function(result) {
@@ -102,7 +102,7 @@ angular.module('starter.services')
     var myId = $window.localStorage.getItem('id');
     var deferred = $q.defer();
 
-    $http.post('http://188.166.58.138:3000/api/user/received',
+    $http.post('http://188.166.58.138:8080/api/user/received',
       {
         id: myId
       }).then(function(result) {
@@ -123,7 +123,7 @@ angular.module('starter.services')
     var myId = $window.localStorage.getItem('id');
     var deferred = $q.defer();
 
-    $http.post('http://188.166.58.138:3000/api/user/sent',
+    $http.post('http://188.166.58.138:8080/api/user/sent',
       {
         id: myId
       }).then(function(result) {
