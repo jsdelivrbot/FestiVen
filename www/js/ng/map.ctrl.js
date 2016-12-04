@@ -1,8 +1,18 @@
 angular.module('starter.controllers')
 // Controller for the map view
-.controller('MapCtrl', function($scope, $state, $cordovaGeolocation, $cordovaDeviceOrientation, $ionicLoading) {
+.controller('MapCtrl', function($scope, $state, $cordovaGeolocation, $cordovaDeviceOrientation, $ionicLoading, socket) {
+
+
 
   //document.addEventListener("deviceready", function() {
+
+  // Connect to socket - maybe move this to success in login controller
+  var socket = io.connect('http://localhost', {port: 8080});
+
+    // Emit on connect, store the fb id in socket
+    socket.on('connect', function (data) {
+        socket.emit('storeClientInfo', { customId: $window.localStorage.getItem('id'); });
+    });
 
     // Show the spinner
     $scope.show = function() {

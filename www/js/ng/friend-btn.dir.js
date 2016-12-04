@@ -7,7 +7,7 @@ angular.module('starter')
     // templateUrl: function(elem, attr) {
     //   return '/templates/' + attr.type +  '-friend-btn.html';
     // },
-    controller: function($scope, $element, $rootScope, $http, $window, UserService) {
+    controller: function($scope, $element, $rootScope, $http, $window, UserService, socket) {
         $scope.addFriend = function(id) {
           $scope.disabled = false;
           // Send a friend request from the id in localStorage to the clicked friend's id
@@ -29,6 +29,7 @@ angular.module('starter')
       $scope.acceptRequest = function(id) {
         console.log('Accepting request');
         UserService.acceptRequest(id).then(function() {
+          socket.emit('add-friend', {id: id});
           $element.parent().html('Accepted');
         });
       }
