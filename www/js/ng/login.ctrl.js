@@ -5,7 +5,7 @@ angular.module('starter.controllers')
   // Show the spinner
   vm.show = function() {
     $ionicLoading.show({
-      template: '<div class="center"><div class="spinner spinner-1"></div></div>',
+      template: '<div class="bottom-center"><div class="spinner spinner-1"></div></div>',
       showBackdrop: false
     });
   };
@@ -32,11 +32,13 @@ angular.module('starter.controllers')
     LoginService.login().then(function(result){
       console.log(result);
       // Popup successfully logged in
+      vm.hide($ionicLoading);
       $state.go('tab.map');
     }, function(error){
       console.log(error);
       alert(error.message);
       // Popup not successfully logged in
+      vm.hide($ionicLoading);
       $state.go('login');
     })
   }

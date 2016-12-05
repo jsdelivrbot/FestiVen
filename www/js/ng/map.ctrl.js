@@ -19,7 +19,8 @@ angular.module('starter.controllers')
     // Show the spinner
     $scope.show = function() {
       $ionicLoading.show({
-        template: '<div class="center"><div class="spinner spinner-1"></div></div>'
+        showBackdrop: false,
+        template: '<div class="center"><div class="spinner spinner-1 spinner-roskilde"></div></div>'
       });
     };
 
@@ -27,6 +28,8 @@ angular.module('starter.controllers')
     $scope.hide = function() {
         $ionicLoading.hide();
     };
+
+    $scope.show($ionicLoading);
 
     var map = null;
     var currentPosition = null;
