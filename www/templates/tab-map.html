@@ -2,7 +2,7 @@
   <ion-content>
     <div id="map" data-tap-disabled="true"></div>
 
-<div class="pill-menu pill-menu-top pill-menu-right">
+    <div class="pill-menu pill-menu-top pill-menu-right">
       <label class="pill" for="marker">
         <input checked="checked" class="radio-pill" type='radio' name="marker" id="marker" ng-model='radio' value="marker"/>
         <img src="img/icons/marker.svg" alt="Marker">
@@ -17,8 +17,6 @@
       </label>
     </div>
 
-
-
     <div class="pill-menu pill-menu-bottom pill-menu-right">
       <a class="pill center-map" title="Center the map on your current position">
         <img src="img/icons/center.svg" alt="Center">
@@ -26,5 +24,25 @@
     </div>
 
     <marker class="center-marker" value="radio"></marker>
+
+    <div class="dialog">
+      <div class="dialog-text">
+        <p>
+          Move the marker by dragging the map to the desired position.
+        </p>
+        <p>
+          Press "Place" when you are done.
+        </p>
+      </div>
+      <div class="dialog-options">
+        <button class="place-marker">
+          Place
+        </button><!--
+          Commenting out the newline between these buttons to get them to display inline
+        --><button class="cancel-marker">
+          Cancel
+        </button>
+      </div>
+    </div>
   </ion-content>
 </ion-view>
