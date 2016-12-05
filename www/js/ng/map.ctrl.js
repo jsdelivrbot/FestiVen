@@ -6,7 +6,7 @@ angular.module('starter.controllers')
 
 
 
-  //document.addEventListener("deviceready", function() {
+  document.addEventListener("deviceready", function() {
 
   // Connect to socket - maybe move this to success in login controller
   var socket = io.connect('http://188.166.58.138:8080');
@@ -161,5 +161,5 @@ angular.module('starter.controllers')
         ); // End watchPosition then
       } // End getCurrentPosition then success
     ); // End getCurrentPosition then
-  //}); // End deviceready
+  }); // End deviceready
 }) // End MapCtrl

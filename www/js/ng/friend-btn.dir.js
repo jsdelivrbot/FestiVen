@@ -25,6 +25,20 @@ angular.module('starter')
           });
       }
 
+      $scope.deleteFriend = function(id){
+        console.log('Deleting friend');
+        UserService.deleteFriend(id).then(function(){
+          $element.html('Deleted');
+        })
+      }
+
+      $scope.cancelRequest = function(id){
+        console.log('Canceling request');
+        UserService.cancelRequest(id).then(function(){
+          $element.html('Canceled');
+        })
+      }
+
       $scope.acceptRequest = function(id) {
         console.log('Accepting request');
         UserService.acceptRequest(id).then(function() {

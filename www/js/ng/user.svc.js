@@ -7,6 +7,8 @@ angular.module('starter.services')
   var received = undefined;
   var accept = undefined;
   var decline = undefined;
+  var cancel = undefined;
+  var deleting = undefined;
 
   this.getInfo = function() {
     var deferred = $q.defer();
@@ -54,14 +56,47 @@ angular.module('starter.services')
     return $q.when(accept);
   }
 
+  this.deleteFriend = function(id){
+    var myId = $window.localStorage.getItem('id');
+    var deferred = $q.defer();
+
+    $http.delete('http://188.166.58.138:8080/api/users/' + myId + '/friends/' + id).then(function(result) {
+      deleting = result;
+      deferred.resolve(deleting);
+    }, function(error) {
+      // Popup with error message
+      // Show the login screen
+      deleting = error;
+      deferred.reject(error);
+    })
+
+    deleting = deferred.promise;
+    return $q.when(deleting);
+  }
+
+  this.cancelRequest = function(id){
+    var myId = $window.localStorage.getItem('id');
+    var deferred = $q.defer();
+
+    $http.delete('http://188.166.58.138:8080/api/users/' + myId + '/sent/' + id).then(function(result) {
+      cancel = result;
+      deferred.resolve(cancel);
+    }, function(error) {
+      // Popup with error message
+      // Show the login screen
+      cancel = error;
+      deferred.reject(error);
+    })
+
+    cancel = deferred.promise;
+    return $q.when(cancel);
+  }
+
   this.declineRequest = function(id){
     var myId = $window.localStorage.getItem('id');
     var deferred = $q.defer();
 
-    $http.delete('http://188.166.58.138:8080/api/users/' + myId + '/received',
-      {
-        decline_id: id
-      }).then(function(result) {
+    $http.delete('http://188.166.58.138:8080/api/users/' + myId + '/received/' + id).then(function(result) {
       decline = result;
       deferred.resolve(decline);
     }, function(error) {

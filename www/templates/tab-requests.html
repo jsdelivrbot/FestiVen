@@ -25,7 +25,7 @@
         <span>{{friend.name}}</span>
         <!-- <i class="icon ion-trash-b assertive"></i> -->
 
-        <button friend-button class="button button-assertive" ng-click="disabled">
+        <button friend-button class="button button-assertive" ng-click="disabled || cancelRequest(friend.id)">
             <i class="icon ion-close"></i>
         </button>
 
@@ -40,13 +40,13 @@
           <span>{{friend.name}}</span>
 
         <div class="buttons">
-    <button friend-button class="button button-balanced" ng-click="disabled || acceptRequest(friend.id)">
-        <i class="icon ion-checkmark"></i>
-    </button>
-    <button friend-button class="button button-assertive" ng-click="disabled || declineRequest(friend.id)">
-        <i class="icon ion-close"></i>
-    </button>
-  </div>
+          <button friend-button class="button button-balanced" ng-click="disabled || acceptRequest(friend.id)">
+              <i class="icon ion-checkmark"></i>
+          </button>
+          <button friend-button class="button button-assertive" ng-click="disabled || declineRequest(friend.id)">
+              <i class="icon ion-close"></i>
+          </button>
+        </div>
 
 
       </ion-item>
