@@ -37,9 +37,8 @@ angular.module('starter.services')
     var myId = $window.localStorage.getItem('id');
     var deferred = $q.defer();
 
-    $http.post('http://188.166.58.138:8080/api/acceptRequest',
+    $http.post('http://188.166.58.138:8080/api/users/' + myId + '/friends',
       {
-        from: myId,
         accept_id: id
       }).then(function(result) {
       accept = result;
@@ -59,9 +58,8 @@ angular.module('starter.services')
     var myId = $window.localStorage.getItem('id');
     var deferred = $q.defer();
 
-    $http.post('http://188.166.58.138:8080/api/declinerequest',
+    $http.delete('http://188.166.58.138:8080/api/users/' + myId + '/received',
       {
-        from: myId,
         decline_id: id
       }).then(function(result) {
       decline = result;
@@ -81,10 +79,7 @@ angular.module('starter.services')
     var myId = $window.localStorage.getItem('id');
     var deferred = $q.defer();
 
-    $http.post('http://188.166.58.138:8080/api/user/friends',
-      {
-        id: myId
-      }).then(function(result) {
+    $http.get('http://188.166.58.138:8080/api/users/' + myId + '/friends').then(function(result) {
       friends = result;
       deferred.resolve(friends);
     }, function(error) {
@@ -102,10 +97,7 @@ angular.module('starter.services')
     var myId = $window.localStorage.getItem('id');
     var deferred = $q.defer();
 
-    $http.post('http://188.166.58.138:8080/api/user/received',
-      {
-        id: myId
-      }).then(function(result) {
+    $http.get('http://188.166.58.138:8080/api/users/' + myId + '/received').then(function(result) {
       received = result;
       deferred.resolve(received);
     }, function(error) {
@@ -123,10 +115,7 @@ angular.module('starter.services')
     var myId = $window.localStorage.getItem('id');
     var deferred = $q.defer();
 
-    $http.post('http://188.166.58.138:8080/api/user/sent',
-      {
-        id: myId
-      }).then(function(result) {
+    $http.get('http://188.166.58.138:8080/api/users/' + myId + '/sent').then(function(result) {
       sent = result;
       deferred.resolve(sent);
     }, function(error) {

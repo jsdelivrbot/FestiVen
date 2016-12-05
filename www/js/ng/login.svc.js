@@ -55,7 +55,7 @@ angular.module('starter.services')
         UserService.getInfo().then(function(data) {
           console.log(data);
           // Try to register the user
-          $http.post('http://188.166.58.138:8080/api/register', {
+          $http.post('http://188.166.58.138:8080/api/users', {
             id: data.id,
             name: data.name
           }).then(function(result) {

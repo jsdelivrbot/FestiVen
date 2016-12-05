@@ -11,8 +11,7 @@ angular.module('starter')
         $scope.addFriend = function(id) {
           $scope.disabled = false;
           // Send a friend request from the id in localStorage to the clicked friend's id
-          $http.post('http://188.166.58.138:3000/api/addrequest', {
-            origin: $window.localStorage.getItem('id'),
+          $http.post('http://188.166.58.138:3000/api/users/' + $window.localStorage.getItem('id') + '/sent', {
             to: id
           })
           .success(function() {
