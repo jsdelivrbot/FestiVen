@@ -11,7 +11,7 @@ angular.module('starter')
         $scope.addFriend = function(id) {
           $scope.disabled = false;
           // Send a friend request from the id in localStorage to the clicked friend's id
-          $http.post('http://188.166.58.138:3000/api/users/' + $window.localStorage.getItem('id') + '/sent', {
+          $http.post('http://188.166.58.138:8080/api/users/' + $window.localStorage.getItem('id') + '/sent', {
             to: id
           })
           .success(function() {
@@ -28,7 +28,7 @@ angular.module('starter')
       $scope.deleteFriend = function(id){
         console.log('Deleting friend');
         UserService.deleteFriend(id).then(function(){
-          $element.html('Deleted');
+          $element.parent().html('Deleted');
         })
       }
 
@@ -42,7 +42,7 @@ angular.module('starter')
       $scope.acceptRequest = function(id) {
         console.log('Accepting request');
         UserService.acceptRequest(id).then(function() {
-          socket.emit('add-friend', {id: id});
+          //socket.emit('add-friend', {id: id});
           $element.parent().html('Accepted');
         });
       }
