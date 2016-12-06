@@ -17,19 +17,20 @@
     <div class="item item-divider">
       Sent requests
     </div>
-    <ion-list show-delete="true" ng-repeat="friend in vm.sent">
-      <div class="item person-list item-remove-animate item-button-right"  type="item-text-wrap">
+    <ion-list>
+      <ion-item ng-repeat="friend in vm.sent" class="item-remove-animate item-avatar item-button-right"  type="item-text-wrap">
 
 
         <img ng-src="http://graph.facebook.com/{{friend.id}}/picture?width=32&height=32"/>
         <span>{{friend.name}}</span>
-        <!-- <i class="icon ion-trash-b assertive"></i> -->
+        <div class="buttons">
+          <button friend-button class="button button-assertive" ng-click="cancelRequest(friend.id)">
+              <i class="icon ion-close"></i>
+          </button>
+        </div>
 
-        <button friend-button class="button button-assertive" ng-click="disabled || cancelRequest(friend.id)">
-            <i class="icon ion-close"></i>
-        </button>
 
-      </div>
+      </ion-item>
     </ion-list>
     <div class="item item-divider">
       Received requests
@@ -40,10 +41,10 @@
           <span>{{friend.name}}</span>
 
         <div class="buttons">
-          <button friend-button class="button button-balanced" ng-click="disabled || acceptRequest(friend.id)">
+          <button friend-button class="button button-balanced" ng-click="acceptRequest(friend.id)">
               <i class="icon ion-checkmark"></i>
           </button>
-          <button friend-button class="button button-assertive" ng-click="disabled || declineRequest(friend.id)">
+          <button friend-button class="button button-assertive" ng-click="declineRequest(friend.id)">
               <i class="icon ion-close"></i>
           </button>
         </div>

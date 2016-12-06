@@ -1,6 +1,6 @@
 angular.module('starter.controllers')
 // Controller for the map view
-.controller('MapCtrl', function($scope, $state, $cordovaGeolocation, $cordovaDeviceOrientation, $ionicLoading, socket, $window) {
+.controller('MapCtrl', function($scope, $state, $cordovaGeolocation, $cordovaDeviceOrientation, $ionicLoading, socket, $window, $timeout) {
 
   $scope.radio = 'marker';
 
@@ -31,8 +31,82 @@ angular.module('starter.controllers')
 
     $scope.show($ionicLoading);
 
+
     var map = null;
     var currentPosition = null;
+    var latLng = null;
+    var lat = null;
+    var long = null;
+    var friendsMarkers = [];
+
+    var getMarkerIndex = function(id){
+      for (var i = 0; i < friendsMarkers.length; i++){
+        if (friendsMarkers[i].get('id') == id){
+          return i;
+        }
+      }
+      return -1;
+    }
+
+    var emitLocation = function(){
+      if (latLng !== null){
+        console.log('Emiting');
+        socket.emit('sendLocation', {
+          location: {
+            latitude: lat,
+            longitude: long
+          },
+          id: $window.localStorage.getItem('id')
+        });
+      }
+      $timeout(emitLocation, 2000);
+    }
+    emitLocation();
+
+    socket.on('receive-location', function(data){
+      console.log(data.location.latitude + ':' + data.location.longitude + " - " + data.id);
+
+      if (map !== null){
+        var newLatLng = new google.maps.LatLng(data.location.latitude, data.location.longitude);
+
+        var markerIndex = getMarkerIndex(data.id);
+
+        if (markerIndex != -1){
+          friendsMarkers[markerIndex].setPosition(newLatLng);
+          //friendsMarkers.splice(markerIndex, 1);
+        }
+        else {
+          var newMarker = new google.maps.Marker({
+          // Set the marker at the center of the map
+            position: newLatLng,
+            icon: {
+              path: google.maps.SymbolPath.CIRCLE,
+              strokeColor: '#f65338',
+              strokeWeight: 0,
+              fillColor: '#f65338',
+              fillOpacity: 1,
+              scale: 4,
+              rotation: 0
+            },
+            draggable: false,
+            map: $scope.map
+          });
+          newMarker.set(id: data.id);
+          friendsMarkers.push(newMarker);
+        }
+        $timeout(function(){
+          var index = getMarkerIndex(data.id);
+          var pos = friendsMarkers[index].getPosition();
+
+          if (pos.lat() == data.location.latitude && pos.lng() == data.location.longitude){
+              // This means the person with this id, hasn't transmitted his/her location in 5 seconds
+
+              // We will get rid of the marker
+              friendsMarkers.splice(index, 1);
+          }
+        }, 5000)
+      }
+    })
 
     // Center the map on the current location
     $(".center-map").click(function() {
@@ -55,8 +129,10 @@ angular.module('starter.controllers')
       function(position) {
 
         // Get current position once
-        var latLng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
+        latLng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
         currentPosition = latLng;
+        lat = position.coords.latitude;
+        long = position.coords.longitude;
 
         // Set map options
         var mapOptions = {
@@ -134,10 +210,14 @@ angular.module('starter.controllers')
           },
           function(position) {
             // Create a Google Maps LatLng centered on the ngCordova position
-            var newLatLng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
-            currentPosition = newLatLng;
+            latLng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
+            currentPosition = latLng;
+            lat = position.coords.latitude;
+            long = position.coords.longitude;
             // Change the marker's position whenever the user's location changes
-            marker.setPosition(newLatLng);
+            marker.setPosition(latLng);
+
+
 
             $cordovaDeviceOrientation
             .getCurrentHeading().then(

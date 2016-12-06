@@ -35,14 +35,14 @@ angular.module('starter')
       $scope.cancelRequest = function(id){
         console.log('Canceling request');
         UserService.cancelRequest(id).then(function(){
-          $element.html('Canceled');
+          $element.parent().html('Canceled');
         })
       }
 
       $scope.acceptRequest = function(id) {
         console.log('Accepting request');
         UserService.acceptRequest(id).then(function() {
-          //socket.emit('add-friend', {id: id});
+          socket.emit('add-friend', {myId: $window.localStorage.getItem('id'), id: id});
           $element.parent().html('Accepted');
         });
       }
