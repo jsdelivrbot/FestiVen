@@ -48,20 +48,26 @@ angular.module('starter.controllers')
       return -1;
     }
 
-    var emitLocation = function(){
-      if (latLng !== null){
-        console.log('Emiting');
-        socket.emit('sendLocation', {
-          location: {
-            latitude: lat,
-            longitude: long
-          },
-          id: $window.localStorage.getItem('id')
-        });
+    socket.on('start-transmit', function(data){
+      var emitLocation = function(){
+        if (latLng !== null){
+          console.log('Emiting');
+          socket.emit('sendLocation', {
+            location: {
+              latitude: lat,
+              longitude: long
+            },
+            id: $window.localStorage.getItem('id')
+          });
+        }
+        $timeout(emitLocation, 2000);
       }
-      $timeout(emitLocation, 2000);
-    }
-    emitLocation();
+      emitLocation();
+    })
+
+
+
+
 
     socket.on('receive-location', function(data){
       console.log(data.location.latitude + ':' + data.location.longitude + " - " + data.id);
@@ -91,7 +97,7 @@ angular.module('starter.controllers')
             draggable: false,
             map: $scope.map
           });
-          newMarker.set(id: data.id);
+          newMarker.setValues({id: data.id});
           friendsMarkers.push(newMarker);
         }
         $timeout(function(){
