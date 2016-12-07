@@ -19,7 +19,7 @@ angular.module('starter.controllers')
 
     // Emit on connect, store the fb id in socket
     socket.on('connect', function (data) {
-        socket.emit('storeClientInfo', { customId: $window.localStorage.getItem('id') });
+        socket.emit('storeClientInfo', { customId: $window.localStorage.getItem('id')});
     });
 
     // Show the spinner
@@ -63,7 +63,8 @@ angular.module('starter.controllers')
               latitude: lat,
               longitude: long
             },
-            id: $window.localStorage.getItem('id')
+            id: $window.localStorage.getItem('id'),
+            name: $window.localStorage.getItem('name')
           });
         }
         $timeout(emitLocation, 2000);
@@ -101,6 +102,18 @@ angular.module('starter.controllers')
             draggable: false,
             map: $scope.map
           });
+
+          var contentString = '<div id="content">' + data.name + '</div>';
+
+          var infowindow = new google.maps.InfoWindow({
+            content: contentString
+          });
+
+          newMarker.addListener('click', function() {
+            infowindow.open(map, newMarker);
+          });
+          infowindow.open(map, newMarker);
+
           newMarker.setValues({id: data.id});
           friendsMarkers.push(newMarker);
         }
