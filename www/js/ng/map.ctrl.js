@@ -4,6 +4,12 @@ angular.module('starter.controllers')
 
   $scope.radio = 'marker';
 
+  var colours =
+  [
+    '#1abc9c', '#2ecc71', '#f1c40f', '#c0392b', '#2c3e50', '#9b59b6', '#8e44ad', '3b5999', '410093', '4E342E'
+  ]
+
+
 
 
   //document.addEventListener("deviceready", function() {
@@ -78,16 +84,18 @@ angular.module('starter.controllers')
           //friendsMarkers.splice(markerIndex, 1);
         }
         else {
+          var colourIndex = data.id.substr(data.id.length - 1);
+
           var newMarker = new google.maps.Marker({
           // Set the marker at the center of the map
             position: newLatLng,
             icon: {
               path: google.maps.SymbolPath.CIRCLE,
-              strokeColor: '#f65338',
+              strokeColor: colours[colourIndex],
               strokeWeight: 0,
-              fillColor: '#f65338',
+              fillColor: colours[colourIndex],
               fillOpacity: 1,
-              scale: 4,
+              scale: 6,
               rotation: 0
             },
             draggable: false,
