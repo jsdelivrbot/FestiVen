@@ -1,5 +1,5 @@
 angular.module('starter.controllers')
-.controller('AddFriendsCtrl', function(ngFB, $rootScope, $http, $document, $q, $window, $state) {
+.controller('AddFriendsCtrl', function(ngFB, $rootScope, $http, $document, $q, $window, $state, $timeout) {
   var vm = this;
   vm.filteredFriends = [];
 
@@ -53,6 +53,14 @@ angular.module('starter.controllers')
   }
 
   vm.getFbFriends();
+
+
+  var pollFbFriends = function(){
+    vm.getFbFriends();
+    $timeout(pollFbFriends, 2000);
+  }
+  pollFbFriends();
+
 
   vm.goBack = function(){
     $state.go('tab.friends');

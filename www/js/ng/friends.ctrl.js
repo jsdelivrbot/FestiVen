@@ -1,5 +1,5 @@
 angular.module('starter.controllers')
-.controller('FriendsCtrl', function(ngFB, UserService) {
+.controller('FriendsCtrl', function(ngFB, UserService, $timeout) {
   var vm = this;
 
   vm.friends = [];
@@ -11,6 +11,14 @@ angular.module('starter.controllers')
       vm.friends = result.data;
     })
   }
-
   getFriends();
+
+  var pollFriends = function(){
+    getFriends();
+    $timeout(pollFriends, 2000);
+  }
+  pollFriends();
+
+
+
 })

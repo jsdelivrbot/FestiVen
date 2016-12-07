@@ -1,5 +1,5 @@
 angular.module('starter.controllers')
-.controller('RequestsCtrl', function(UserService) {
+.controller('RequestsCtrl', function(UserService, $timeout) {
   var vm = this;
 
   vm.sent = [];
@@ -19,6 +19,21 @@ angular.module('starter.controllers')
     })
   }
 
-  getSent();
-  getReceived();
+  var getRequests = function(){
+    getSent();
+    getReceived();
+  }
+
+  getRequests();
+
+  var pollRequests = function(){
+    getRequests();
+    $timeout(pollRequests, 2000);
+  }
+  pollRequests();
+
+
+
+
+
 })
