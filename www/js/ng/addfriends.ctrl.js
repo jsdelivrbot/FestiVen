@@ -15,22 +15,11 @@ angular.module('starter.controllers')
         $http.get('http://188.166.58.138:8080/api/users/' + myId + '/friends')
       ]).then(function(data){
         var requests = data[0];
-        console.log('Sent');
-        console.log(requests);
-
         var fbFriends = data[1];
-        console.log('FB');
-        console.log(fbFriends);
-
-        console.log('Received');
         var received = data[2];
-
-        console.log('Friends');
         var friends = data[3];
 
         vm.filteredFriends = showUnique(friends.data, showUnique(received.data, showUnique(requests.data, fbFriends.data)));
-        console.log('FILTERED')
-        console.log(vm.filteredFriends);
       })
 
   }

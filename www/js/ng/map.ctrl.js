@@ -1,6 +1,12 @@
 angular.module('starter.controllers')
 // Controller for the map view
-.controller('MapCtrl', function($scope, $state, $cordovaGeolocation, $cordovaDeviceOrientation, $ionicLoading, socket, $window, $timeout) {
+.controller('MapCtrl', function($scope, $state, $cordovaGeolocation, $cordovaDeviceOrientation, $ionicLoading, socket, $window, $timeout, $q) {
+
+  $scope.placeMarker = false;
+
+  $scope.cancelPlace = function(){
+    $scope.placeMarker = false;
+  }
 
   $scope.radio = 'marker';
 
@@ -8,6 +14,7 @@ angular.module('starter.controllers')
   [
     '#1abc9c', '#2ecc71', '#f1c40f', '#c0392b', '#2c3e50', '#9b59b6', '#8e44ad', '3b5999', '410093', '4E342E'
   ]
+
 
 
 
@@ -44,6 +51,7 @@ angular.module('starter.controllers')
     var lat = null;
     var long = null;
     var friendsMarkers = [];
+
 
     var getMarkerIndex = function(id){
       for (var i = 0; i < friendsMarkers.length; i++){
@@ -198,6 +206,10 @@ angular.module('starter.controllers')
           $scope.hide($ionicLoading);
         })
 
+        google.maps.event.addListener(map, "click", function(event){
+          $scope.placeMarker = true;
+        })
+
         // Add map to the application scope
         $scope.map = map;
 
@@ -220,18 +232,19 @@ angular.module('starter.controllers')
 
         // ngCordova Geolocation options
         var posOptions = {
-          timeout: 3000,
-          frequency: 10,
+          timeout: 500,
+          //frequency: 100,
           enableHighAccuracy: true
         };
 
-        var watchPos = $cordovaGeolocation.watchPosition(posOptions);
-        watchPos.then(
-          null,
-          function(error) {
-            //alert("watchPosition error " + error.message);
-          },
-          function(position) {
+        var poll = function(){
+          $q.all([
+            $cordovaGeolocation.getCurrentPosition(posOptions),
+            $cordovaDeviceOrientation.getCurrentHeading()
+          ]).then(function(data){
+            var position = data[0];
+            var heading = data[1];
+
             // Create a Google Maps LatLng centered on the ngCordova position
             latLng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
             currentPosition = latLng;
@@ -240,28 +253,66 @@ angular.module('starter.controllers')
             // Change the marker's position whenever the user's location changes
             marker.setPosition(latLng);
 
+            var trueHeading = heading.trueHeading;
+            marker.setIcon({
+              path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW,
+              strokeColor: '#f65338',
+              strokeWeight: 0,
+              fillColor: '#f65338',
+              fillOpacity: 1,
+              scale: 6,
+              rotation: trueHeading
+            })
+
+          })
+          $timeout(poll, 500);
+        }
+        poll();
 
 
-            $cordovaDeviceOrientation
-            .getCurrentHeading().then(
-              function(result) {
-                var trueHeading = result.trueHeading;
-                marker.setIcon({
-                  path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW,
-                  strokeColor: '#f65338',
-                  strokeWeight: 0,
-                  fillColor: '#f65338',
-                  fillOpacity: 1,
-                  scale: 6,
-                  rotation: trueHeading
-                })
-              }, // End getCurrentHeading then success
-              function(error) {
-                //alert("getCurrentHeading error: " + error);
-              } // End getCurrentHeading then error
-            ); // End getCurrentHeading then
-          } // End watchPosition then succes
-        ); // End watchPosition then
+
+
+
+
+        // var watchPos = $cordovaGeolocation.watchPosition(posOptions);
+        // watchPos.then(
+        //   null,
+        //   function(error) {
+        //     //alert("watchPosition error " + error.message);
+        //   },
+        //   function(position) {
+        //     // Create a Google Maps LatLng centered on the ngCordova position
+        //     latLng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
+        //     currentPosition = latLng;
+        //     lat = position.coords.latitude;
+        //     long = position.coords.longitude;
+        //     // Change the marker's position whenever the user's location changes
+        //     marker.setPosition(latLng);
+        //
+        //     $cordovaDeviceOrientation
+        //     .getCurrentHeading().then(
+        //       function(result) {
+        //         var trueHeading = result.trueHeading;
+        //         marker.setIcon({
+        //           path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW,
+        //           strokeColor: '#f65338',
+        //           strokeWeight: 0,
+        //           fillColor: '#f65338',
+        //           fillOpacity: 1,
+        //           scale: 6,
+        //           rotation: trueHeading
+        //         })
+        //       }, // End getCurrentHeading then success
+        //       function(error) {
+        //         //alert("getCurrentHeading error: " + error);
+        //       } // End getCurrentHeading then error
+        //     ); // End getCurrentHeading then
+        //
+        //   } // End watchPosition then succes
+        // ); // End watchPosition then
+        //
+
+
       } // End getCurrentPosition then success
     ); // End getCurrentPosition then
   //}); // End deviceready

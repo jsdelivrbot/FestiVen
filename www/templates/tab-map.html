@@ -23,9 +23,9 @@
       </a>
     </div>
 
-    <marker class="center-marker" value="radio"></marker>
+    <marker ng-show="placeMarker" class="center-marker" value="radio"></marker>
 
-    <div class="dialog">
+    <div class="dialog" ng-show="placeMarker">
       <div class="dialog-text">
         <p>
           Move the marker by dragging the map to the desired position.
@@ -39,7 +39,7 @@
           Place
         </button><!--
           Commenting out the newline between these buttons to get them to display inline
-        --><button class="cancel-marker">
+        --><button ng-click="cancelPlace()" class="cancel-marker">
           Cancel
         </button>
       </div>
