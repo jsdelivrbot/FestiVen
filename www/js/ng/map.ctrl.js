@@ -65,10 +65,6 @@ angular.module('starter.controllers')
       emitLocation();
     })
 
-
-
-
-
     socket.on('receive-location', function(data){
       console.log(data.location.latitude + ':' + data.location.longitude + " - " + data.id);
 
