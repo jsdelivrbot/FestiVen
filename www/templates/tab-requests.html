@@ -18,7 +18,7 @@
       Sent requests
     </div>
     <ion-list>
-      <ion-item ng-repeat="friend in vm.sent" class="item-remove-animate item-avatar item-button-right"  type="item-text-wrap">
+      <ion-item ng-repeat="friend in vm.sent track by $index" class="item-remove-animate item-avatar item-button-right"  type="item-text-wrap">
 
 
         <img ng-src="http://graph.facebook.com/{{friend.id}}/picture?width=32&height=32"/>
@@ -36,7 +36,7 @@
       Received requests
     </div>
     <ion-list>
-      <ion-item ng-repeat="friend in vm.received" class="item-remove-animate item-avatar item-button-right"  type="item-text-wrap">
+      <ion-item ng-repeat="friend in vm.received track by $index" class="item-remove-animate item-avatar item-button-right"  type="item-text-wrap">
           <img ng-src="http://graph.facebook.com/{{friend.id}}/picture?width=32&height=32"/>
           <span>{{friend.name}}</span>
 
@@ -48,8 +48,6 @@
               <i class="icon ion-close"></i>
           </button>
         </div>
-
-
       </ion-item>
     </ion-list>
   </ion-content>

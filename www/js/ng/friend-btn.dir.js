@@ -16,7 +16,7 @@ angular.module('starter')
           })
           .success(function() {
             // Success message
-            $element.html('Added');
+            $element.parent().html('Added');
             $scope.disabled = true;
           })
           .error(function(error) {

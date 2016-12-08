@@ -18,13 +18,16 @@
 
 
     <ion-list>
-      <ion-item ng-repeat="friend in vm.filteredFriends" class="person-list item-remove-animate item-avatar item-button-right item-icon-right"  type="item-text-wrap">
+      <ion-item ng-repeat="friend in vm.filteredFriends track by $index" class="person-list item-remove-animate item-avatar item-button-right item-icon-right"  type="item-text-wrap">
         <img ng-src="http://graph.facebook.com/{{friend.id}}/picture?width=32&height=32"/>
         <span>{{friend.name}}</span>
 
-        <button friend-button class="button button-assertive" ng-click="disabled || addFriend(friend.id)">
-            <i class="icon ion-plus"></i>
-        </button>
+        <div class="buttons">
+          <button friend-button class="button button-assertive" ng-click="disabled || addFriend(friend.id)">
+              <i class="icon ion-plus"></i>
+          </button>
+        </div>
+
 
       </ion-item>
     </ion-list>
