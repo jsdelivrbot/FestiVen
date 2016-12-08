@@ -3,3 +3,12 @@
     margin-right: 10px;
     vertical-align: middle;
 }
+
+.select-list .item {
+  border-width: 0;
+}
+
+.checkbox input:checked:before, .checkbox input:checked + .checkbox-icon:before {
+  background-color: $roskilde;
+  border-color: $roskilde;
+}

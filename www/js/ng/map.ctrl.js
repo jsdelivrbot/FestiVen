@@ -8,16 +8,27 @@ angular.module('starter.controllers')
     $scope.placeMarker = false;
   }
 
+  $scope.addMarker = function(){
+    var coords = $scope.map.getCenter();
+    var coordinates = {
+      lat: coords.lat(),
+      lng: coords.lng()
+    }
+
+    $state.go('tab.friendSelection',
+      {
+        'coords': coordinates,
+        'markerType': $scope.radio
+      }
+    );
+  }
+
   $scope.radio = 'marker';
 
   var colours =
   [
     '#1abc9c', '#2ecc71', '#f1c40f', '#c0392b', '#2c3e50', '#9b59b6', '#8e44ad', '3b5999', '410093', '4E342E'
   ]
-
-
-
-
 
   //document.addEventListener("deviceready", function() {
 
