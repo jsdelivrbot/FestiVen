@@ -51,7 +51,6 @@ angular.module('starter')
   })
 
   .state('tab.friends', {
-    cache: false,
     url: '/friends',
     views: {
       'tab-friends': {
@@ -62,7 +61,6 @@ angular.module('starter')
     }
   })
   .state('tab.addFriends', {
-    cache: false,
     url: '/addFriends',
     views: {
       'tab-friends': {
@@ -73,7 +71,6 @@ angular.module('starter')
   })
 
   .state('tab.requests', {
-    cache: false,
     url: '/requests',
     views: {
       'tab-friends': {
@@ -84,7 +81,6 @@ angular.module('starter')
   })
 
   .state('login', {
-    cache: false,
     url: '/login',
     templateUrl: 'templates/login.html',
     controller: 'LoginCtrl as vm'

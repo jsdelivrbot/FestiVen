@@ -7,7 +7,6 @@ angular.module('starter.controllers')
   var getFriends = function() {
     // Ask the database for the user's friends
     UserService.getFriends().then(function(result){
-      console.log(result);
       vm.friends = result.data;
     })
   }

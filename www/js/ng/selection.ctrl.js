@@ -29,13 +29,15 @@ angular.module('starter.controllers')
   }
 
   vm.sendMarker = function(){
-    var people = [];
-    for (var i = 0; i < vm.friends; i++){
-      if (vm.friends[i].checked){
-        people.push(vm.friends[i].data.id);
-      }
-      vm.friends.push(user);
-    }
+    var people =
+    vm.friends
+    .filter(function(friend){
+      return friend.checked;
+    })
+    .map(function(friend){
+      return friend.data.id;
+    })
+
 
     MarkerService.addMarker(coords, people, markerType).then(function(result){
       $state.go('tab.map');

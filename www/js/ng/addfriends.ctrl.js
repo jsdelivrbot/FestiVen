@@ -6,7 +6,6 @@ angular.module('starter.controllers')
   vm.getFbFriends = function() {
       // Check localStorage for an id
       var myId = $window.localStorage.getItem('id');
-      console.log(myId);
       // For the id in localStorage, get the friends,  sent friend requests and received friend requests
       $q.all([
         $http.get('http://188.166.58.138:8080/api/users/' + myId + '/sent'),
@@ -14,31 +13,30 @@ angular.module('starter.controllers')
         $http.get('http://188.166.58.138:8080/api/users/' + myId + '/received'),
         $http.get('http://188.166.58.138:8080/api/users/' + myId + '/friends')
       ]).then(function(data){
-        var requests = data[0];
-        var fbFriends = data[1];
-        var received = data[2];
-        var friends = data[3];
+        var requests = data[0].data;
+        var fbFriends = data[1].data;
+        var received = data[2].data;
+        var friends = data[3].data;
 
-        vm.filteredFriends = showUnique(friends.data, showUnique(received.data, showUnique(requests.data, fbFriends.data)));
+        // Filter out the facebook friends that either
+        //    1. You sent a request to already
+        //    2. You received a request from already
+        //    3. Are already you friends
+
+        vm.filteredFriends = fbFriends.filter(function(friend){
+          return !(containsFriend(requests, friend) ||
+                   containsFriend(received, friend) ||
+                   containsFriend(friends, friend));
+        })
       })
 
   }
 
-  var showUnique = function(req, fb) {
-    var filtered = [];
-
-    for (i = 0; i < fb.length; i++) {
-      var found = false;
-      for (j = 0; j < req.length; j++) {
-        if (req[j].id == fb[i].id) {
-          found = true;
-        }
-      }
-      if(!found){
-        filtered.push(fb[i]);
-      }
-    }
-    return filtered;
+  // Helper function that checks if the array contains a friend object with an id of the facebook friend
+  var containsFriend = function(array, friend){
+    return array.some(function(element){
+      return element.id === friend.id;
+    })
   }
 
   vm.getFbFriends();

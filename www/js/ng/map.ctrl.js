@@ -76,7 +76,7 @@ angular.module('starter.controllers')
     socket.on('start-transmit', function(data){
       var emitLocation = function(){
         if (latLng !== null){
-          console.log('Emiting');
+
           socket.emit('sendLocation', {
             location: {
               latitude: lat,
@@ -92,8 +92,6 @@ angular.module('starter.controllers')
     })
 
     socket.on('receive-location', function(data){
-      console.log(data.location.latitude + ':' + data.location.longitude + " - " + data.id);
-
       if (map !== null){
         var newLatLng = new google.maps.LatLng(data.location.latitude, data.location.longitude);
 
@@ -147,6 +145,14 @@ angular.module('starter.controllers')
               friendsMarkers.splice(index, 1);
           }
         }, 5000)
+      }
+    })
+
+    socket.on('delete-location', function(data){
+      var markerIndex = getMarkerIndex(data);
+
+      if (markerIndex != -1){
+        friendsMarkers.splice(markerIndex, 1);
       }
     })
 
