@@ -18,15 +18,16 @@ angular.module('starter.controllers')
         var received = data[2].data;
         var friends = data[3].data;
 
+
+
         // Filter out the facebook friends that either
         //    1. You sent a request to already
         //    2. You received a request from already
         //    3. Are already you friends
+        // These arrays are concatenated together first
 
         vm.filteredFriends = fbFriends.filter(function(friend){
-          return !(containsFriend(requests, friend) ||
-                   containsFriend(received, friend) ||
-                   containsFriend(friends, friend));
+          return !(containsFriend(friends.concat(received, requests), friend));
         })
       })
 
