@@ -1,9 +1,11 @@
 angular.module('starter.controllers')
 .controller('SelectionCtrl', function(MarkerService, $stateParams, $state, UserService) {
   var vm = this;
+  console.log($stateParams);
 
-  var markerType = $stateParams.markerType;
-  var coords = $stateParams.coords
+  var markerType = $stateParams.obj.markerType;
+  console.log("Type marker in select ctrl: ", markerType);
+  var coords = $stateParams.obj.coords
 
   vm.friends = [];
 
@@ -38,6 +40,9 @@ angular.module('starter.controllers')
       return friend.data.id;
     })
 
+    console.log("Coords: ", coords);
+    console.log("People: ", people);
+    console.log("Marker: ", markerType);
 
     MarkerService.addMarker(coords, people, markerType).then(function(result){
       $state.go('tab.map');

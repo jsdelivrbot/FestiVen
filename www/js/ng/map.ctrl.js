@@ -1,11 +1,29 @@
 angular.module('starter.controllers')
 // Controller for the map view
-.controller('MapCtrl', function($scope, $state, $cordovaGeolocation, $cordovaDeviceOrientation, $ionicLoading, socket, $window, $timeout, $q) {
+.controller('MapCtrl', function($scope, $state, $cordovaGeolocation, $cordovaDeviceOrientation, $ionicLoading, socket, $window, $timeout, $q, MarkerService) {
+
+  var map = null;
+  var currentPosition = null;
+  var latLng = null;
+  var lat = null;
+  var long = null;
+  var friendsMarkers = [];
+  var sharedMarkers = [];
+
+  $scope.radio = {radioValue: 'marker'};
 
   $scope.placeMarker = false;
 
   $scope.cancelPlace = function(){
     $scope.placeMarker = false;
+  }
+
+  $scope.deleteMarker = function(id){
+    MarkerService.deleteMarker(id).then(function(result){
+      // Show success message
+    }, function(err){
+      // Do some error handling
+    })
   }
 
   $scope.addMarker = function(){
@@ -15,15 +33,18 @@ angular.module('starter.controllers')
       lng: coords.lng()
     }
 
-    $state.go('tab.friendSelection',
-      {
-        'coords': coordinates,
-        'markerType': $scope.radio
-      }
-    );
+    console.log('Type of marker at type of creation: ', this.radio);
+
+    var myObj = {
+      coords: coordinates,
+      markerType: $scope.radio.radioValue
+    }
+
+    $state.go('tab.friendSelection',{obj: myObj});
+    $scope.placeMarker = false;
   }
 
-  $scope.radio = 'marker';
+
 
   var colours =
   [
@@ -56,22 +77,74 @@ angular.module('starter.controllers')
     $scope.show($ionicLoading);
 
 
-    var map = null;
-    var currentPosition = null;
-    var latLng = null;
-    var lat = null;
-    var long = null;
-    var friendsMarkers = [];
+
+    var getSharedMarkers = function(){
+      MarkerService.getMarkers().then(function(result){
+        console.log(result);
+        result.data.forEach(function(marker){
+
+          var markerIndex = getMarkerIndex(marker._id, sharedMarkers);
+
+          if (markerIndex == -1){
+            var newLatLng = new google.maps.LatLng(marker.location[0], marker.location[1]);
+
+            console.log("Type of marker: ", marker.type);
+
+          	var myIcon = new google.maps.MarkerImage('../img/icons/' + marker.type + '_orange.svg', null, null, null, new google.maps.Size(32,32));
+
+            var newMarker = new google.maps.Marker({
+              position: newLatLng,
+              draggable: false,
+              map: $scope.map,
+              icon: myIcon
+            });
+            var contentString = '';
+
+            if (marker.owner.id === $window.localStorage.getItem('id')){
+              var content_text = '<p>You are the owner of this marker.<p>'
+
+              contentString = '<div id="content"><div><div>' + content_text + '<p>Press "Delete" if you want to get rid of this marker.</p></div><div><button class="info-delete" ng-click="deleteMarker(' + marker._id + ')">Delete</button></div></div></div>';
+            }
+            else {
+              var content_text = '<div id="content">This marker was shared by ' + marker.owner.name + '</div>';
+
+              contentString = '<div id="content"><div><div>' + content_text + '<p>Press "Delete" if you want to get rid of this marker.</p></div><div><button class="info-delete" ng-click="deleteMarker()">Delete</button></div></div></div>';
+
+            }
 
 
-    var getMarkerIndex = function(id){
-      for (var i = 0; i < friendsMarkers.length; i++){
-        if (friendsMarkers[i].get('id') == id){
+            var infowindow = new google.maps.InfoWindow({
+              content: contentString
+            });
+
+            newMarker.addListener('click', function() {
+              infowindow.open(map, newMarker);
+            });
+
+            newMarker.setValues({id: marker._id});
+
+            sharedMarkers.push(newMarker);
+          }
+        })
+      }, function(error){
+        // Do some error handling
+      })
+
+      $timeout(getSharedMarkers, 2000);
+    }
+
+
+
+    var getMarkerIndex = function(id, markerArray){
+      for (var i = 0; i < markerArray.length; i++){
+        if (markerArray[i].get('id') == id){
           return i;
         }
       }
       return -1;
     }
+
+
 
     socket.on('start-transmit', function(data){
       var emitLocation = function(){
@@ -95,7 +168,7 @@ angular.module('starter.controllers')
       if (map !== null){
         var newLatLng = new google.maps.LatLng(data.location.latitude, data.location.longitude);
 
-        var markerIndex = getMarkerIndex(data.id);
+        var markerIndex = getMarkerIndex(data.id, friendsMarkers);
 
         if (markerIndex != -1){
           friendsMarkers[markerIndex].setPosition(newLatLng);
@@ -135,7 +208,7 @@ angular.module('starter.controllers')
           friendsMarkers.push(newMarker);
         }
         $timeout(function(){
-          var index = getMarkerIndex(data.id);
+          var index = getMarkerIndex(data.id, friendsMarkers);
           var pos = friendsMarkers[index].getPosition();
 
           if (pos.lat() == data.location.latitude && pos.lng() == data.location.longitude){
@@ -149,7 +222,7 @@ angular.module('starter.controllers')
     })
 
     socket.on('delete-location', function(data){
-      var markerIndex = getMarkerIndex(data);
+      var markerIndex = getMarkerIndex(data, friendsMarkers);
 
       if (markerIndex != -1){
         friendsMarkers.splice(markerIndex, 1);
@@ -221,6 +294,7 @@ angular.module('starter.controllers')
         // Remove spinner when the tiles are loaded
         google.maps.event.addListenerOnce(map, "idle", function(event){
           $scope.hide($ionicLoading);
+          getSharedMarkers();
         })
 
         google.maps.event.addListener(map, "click", function(event){
@@ -236,8 +310,9 @@ angular.module('starter.controllers')
           position: $scope.map.getCenter(),
           icon: {
             path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW,
-            strokeColor: '#f65338',
+            strokeColor: '#fff',
             strokeWeight: 0,
+            strokeOpacity: 1,
             fillColor: '#f65338',
             fillOpacity: 1,
             scale: 6,
@@ -285,50 +360,6 @@ angular.module('starter.controllers')
           $timeout(poll, 500);
         }
         poll();
-
-
-
-
-
-
-        // var watchPos = $cordovaGeolocation.watchPosition(posOptions);
-        // watchPos.then(
-        //   null,
-        //   function(error) {
-        //     //alert("watchPosition error " + error.message);
-        //   },
-        //   function(position) {
-        //     // Create a Google Maps LatLng centered on the ngCordova position
-        //     latLng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
-        //     currentPosition = latLng;
-        //     lat = position.coords.latitude;
-        //     long = position.coords.longitude;
-        //     // Change the marker's position whenever the user's location changes
-        //     marker.setPosition(latLng);
-        //
-        //     $cordovaDeviceOrientation
-        //     .getCurrentHeading().then(
-        //       function(result) {
-        //         var trueHeading = result.trueHeading;
-        //         marker.setIcon({
-        //           path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW,
-        //           strokeColor: '#f65338',
-        //           strokeWeight: 0,
-        //           fillColor: '#f65338',
-        //           fillOpacity: 1,
-        //           scale: 6,
-        //           rotation: trueHeading
-        //         })
-        //       }, // End getCurrentHeading then success
-        //       function(error) {
-        //         //alert("getCurrentHeading error: " + error);
-        //       } // End getCurrentHeading then error
-        //     ); // End getCurrentHeading then
-        //
-        //   } // End watchPosition then succes
-        // ); // End watchPosition then
-        //
-
 
       } // End getCurrentPosition then success
     ); // End getCurrentPosition then

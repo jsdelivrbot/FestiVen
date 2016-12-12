@@ -37,16 +37,16 @@ angular.module('starter')
   })
 
   .state('tab.friendSelection', {
-    url: '/friend-selection',
+    url: '/friend-selection/:',
     views: {
       'tab-map': {
         templateUrl: 'templates/select-friends.html',
         controller: 'SelectionCtrl as vm',
-        params: {
-          coords: null,
-          markerType: null
-        }
+
       }
+    },
+    params: {
+      obj: null
     }
   })
 

@@ -4,17 +4,18 @@
 
     <div class="pill-menu pill-menu-top pill-menu-right">
       <label class="pill" for="marker">
-        <input checked="checked" class="radio-pill" type='radio' name="marker" id="marker" ng-model='radio' value="marker"/>
+        <input checked="checked" class="radio-pill" type='radio' name="marker" id="marker" ng-model='radio.radioValue' value="marker"/>
         <img src="img/icons/marker.svg" alt="Marker">
       </label>
       <label class="pill" for="tent">
-        <input class="radio-pill" type='radio' name="marker" id="tent" ng-model='radio' value="tent"/>
+        <input class="radio-pill" type='radio' name="marker" id="tent" ng-model='radio.radioValue' value="tent"/>
         <img src="img/icons/tent.svg" alt="Tent">
       </label>
       <label class="pill" for="car">
-        <input class="radio-pill" type='radio' name="marker" id="car" ng-model='radio' value="car"/>
+        <input class="radio-pill" type='radio' name="marker" id="car" ng-model='radio.radioValue' value="car"/>
         <img src="img/icons/car.svg" alt="Car">
       </label>
+      <p>{{radio}}</p>
     </div>
 
     <div class="pill-menu pill-menu-bottom pill-menu-right">
@@ -23,7 +24,7 @@
       </a>
     </div>
 
-    <marker ng-show="placeMarker" class="center-marker" value="radio"></marker>
+    <marker ng-show="placeMarker" class="center-marker" value="radio.radioValue"></marker>
 
     <div class="dialog" ng-show="placeMarker">
       <div class="dialog-text">
