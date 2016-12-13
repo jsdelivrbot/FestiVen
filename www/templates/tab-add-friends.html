@@ -4,6 +4,7 @@
     <button ng-click="vm.goBack()" class="button"><i class="icon ion-chevron-left"></i>Friends</button>
   </div>
   <h1 class="title">Add Friends</h1>
+  <div class="buttons"></div>
 </ion-header-bar>
 <ion-subheader-bar class="bar bar-subheader pill-container">
 
@@ -23,10 +24,10 @@
       </label>
     </div>
     <ion-list>
-      <ion-item ng-show="!vm.filteredFriends.length">
-        <span>It seems like there aren't any suggestions. </span>
+      <ion-item ng-show="!vm.filteredFriends.length && !vm.nonFbFriends.length">
+        <p class="empty-message">It seems like there aren't any suggestions. </p>
       </ion-item>
-      <ion-item ng-repeat="friend in vm.filteredFriends | filter:search.name track by $index " class="person-list item-remove-animate item-avatar item-button-right"  type="item-text-wrap">
+      <ion-item ng-show="vm.filteredFriends.length" ng-repeat="friend in vm.filteredFriends | filter:search.name track by $index " class="person-list item-remove-animate item-avatar item-button-right"  type="item-text-wrap">
         <img ng-src="http://graph.facebook.com/{{friend.id}}/picture?width=32&height=32"/>
         <span>{{friend.name}}</span>
 
@@ -36,7 +37,7 @@
           </button>
         </div>
       </ion-item>
-      <ion-item ng-repeat="friend in vm.nonFbFriends | filter:search.name track by $index " class="person-list item-remove-animate item-avatar item-button-right"  type="item-text-wrap">
+      <ion-item ng-show="vm.nonFbFriends.length" ng-repeat="friend in vm.nonFbFriends | filter:search.name track by $index " class="person-list item-remove-animate item-avatar item-button-right"  type="item-text-wrap">
         <img ng-src="http://graph.facebook.com/{{friend.id}}/picture?width=32&height=32"/>
         <span>{{friend.name}}</span>
 

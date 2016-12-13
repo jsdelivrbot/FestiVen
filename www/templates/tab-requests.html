@@ -1,6 +1,6 @@
 <ion-view view-title="Friends">
   <ion-header-bar class="bar-assertive">
-  <h1 class="title">Friends</h1>
+  <h1 class="title">Requests</h1>
 </ion-header-bar>
 <ion-subheader-bar class="bar bar-subheader pill-container">
 
@@ -19,9 +19,9 @@
     </div>
     <ion-list>
       <ion-item ng-show="!vm.sent.length">
-        <span>You currently have no sent requests.</span>
+        <p class="empty-message">You currently have no sent requests.</p>
       </ion-item>
-      <ion-item ng-repeat="friend in vm.sent track by $index" class="item-remove-animate item-avatar item-button-right"  type="item-text-wrap">
+      <ion-item  ng-show="vm.sent.length" ng-repeat="friend in vm.sent track by $index" class="item-remove-animate item-avatar item-button-right"  type="item-text-wrap">
 
 
         <img ng-src="http://graph.facebook.com/{{friend.id}}/picture?width=32&height=32"/>
@@ -40,9 +40,9 @@
     </div>
     <ion-list>
       <ion-item ng-show="!vm.received.length">
-        <span>You currently have no received requests.</span>
+        <p class="empty-message">You currently have no received requests.</p>
       </ion-item>
-      <ion-item ng-repeat="friend in vm.received track by $index" class="item-remove-animate item-avatar item-button-right"  type="item-text-wrap">
+      <ion-item ng-show="vm.received.length" ng-repeat="friend in vm.received track by $index" class="item-remove-animate item-avatar item-button-right"  type="item-text-wrap">
           <img ng-src="http://graph.facebook.com/{{friend.id}}/picture?width=32&height=32"/>
           <span>{{friend.name}}</span>
 

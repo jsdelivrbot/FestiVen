@@ -13,3 +13,12 @@
 *, body, html {
   font-family: "Product Sans";
 }
+
+.empty-message {
+  font-size: 1.2rem;
+  padding: 20px;
+  text-align: center;
+  font-weight: 400;
+  color: $roskilde;
+  line-height: 2rem;
+}

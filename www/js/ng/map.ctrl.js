@@ -354,6 +354,10 @@ angular.module('starter.controllers')
           $scope.placeMarker = true;
         })
 
+        google.maps.event.addListener(map, "dblclick", function(event){
+          $scope.placeMarker = false;
+        })
+
         // Add map to the application scope
         $scope.map = map;
 
