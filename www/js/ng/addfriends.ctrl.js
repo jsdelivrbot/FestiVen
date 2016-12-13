@@ -4,6 +4,11 @@ angular.module('starter.controllers')
   vm.filteredFriends = [];
   vm.nonFbFriends = [];
 
+  var requests = [];
+  var fbFriends = [];
+  var received = [];
+  var friends = [];
+
   vm.getFbFriends = function() {
       // Check localStorage for an id
       var myId = $window.localStorage.getItem('id');
@@ -14,10 +19,10 @@ angular.module('starter.controllers')
         $http.get('http://188.166.58.138:8080/api/users/' + myId + '/received'),
         $http.get('http://188.166.58.138:8080/api/users/' + myId + '/friends')
       ]).then(function(data){
-        var requests = data[0].data;
-        var fbFriends = data[1].data;
-        var received = data[2].data;
-        var friends = data[3].data;
+        requests = data[0].data;
+        fbFriends = data[1].data;
+        received = data[2].data;
+        friends = data[3].data;
 
 
 
@@ -44,7 +49,7 @@ angular.module('starter.controllers')
         console.log('People by search: ', result.data);
         var myId =  $window.localStorage.getItem('id');
         vm.nonFbFriends = result.data.filter(function(person){
-          return (!containsFriend(vm.filteredFriends, person)  && person.id !== myId);
+          return (!containsFriend(vm.filteredFriends.concat(received, requests, friends), person)  && person.id !== myId);
         })
 
       }, function(error){

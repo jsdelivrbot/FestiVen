@@ -9,3 +9,7 @@
 @import "components/marker";
 @import "components/dialog";
 @import "components/search";
+
+*, body, html {
+  font-family: "Product Sans";
+}
