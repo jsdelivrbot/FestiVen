@@ -1,7 +1,8 @@
 angular.module('starter.controllers')
-.controller('AddFriendsCtrl', function(ngFB, $rootScope, $http, $document, $q, $window, $state, $timeout) {
+.controller('AddFriendsCtrl', function(ngFB, $rootScope, $http, $document, $q, $window, $state, $timeout, UserService) {
   var vm = this;
   vm.filteredFriends = [];
+  vm.nonFbFriends = [];
 
   vm.getFbFriends = function() {
       // Check localStorage for an id
@@ -32,11 +33,33 @@ angular.module('starter.controllers')
       })
 
   }
+  var searchTimeout;
+  vm.getPeopleByQuery = function(text){
+    if (searchTimeout != undefined) clearTimeout(searchTimeout);
+    searchTimeout = setTimeout(function(){
+      // Send request to the server to get people that match this
+      console.log('Getting people by query');
+      UserService.getPeopleByQuery(text).then(function(result){
+        // Set the array of friends to the scope
+        console.log('People by search: ', result.data);
+        var myId =  $window.localStorage.getItem('id');
+        vm.nonFbFriends = result.data.filter(function(person){
+          return (!containsFriend(vm.filteredFriends, person)  && person.id !== myId);
+        })
+
+      }, function(error){
+        // Show an error message
+      })
+
+      // Subtract the fb friends from this list
+    }, 500);
+  }
+
 
   // Helper function that checks if the array contains a friend object with an id of the facebook friend
   var containsFriend = function(array, friend){
     return array.some(function(element){
-      return element.id === friend.id;
+      return (element.id === friend.id);
     })
   }
 

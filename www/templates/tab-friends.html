@@ -24,7 +24,7 @@
       <ion-item ng-show="!vm.friends.length">
         <span>It seems like you haven't added any friends yet. </span>
       </ion-item>
-      <ion-item ng-repeat="friend in vm.friends track by $index | filter:search.name" class="person-list item-remove-animate item-button-right"  type="item-text-wrap">
+      <ion-item ng-repeat="friend in vm.friends | filter:search.name track by $index" class="person-list item-remove-animate item-button-right"  type="item-text-wrap">
         <img ng-src="http://graph.facebook.com/{{friend.id}}/picture?width=32&height=32"/>
         <span>{{friend.name}}</span>
 
@@ -33,9 +33,6 @@
               <i class="icon ion-trash-b"></i>
           </button>
         </div>
-
-
-
       </ion-item>
     </ion-list>
 

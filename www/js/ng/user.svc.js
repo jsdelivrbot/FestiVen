@@ -9,6 +9,7 @@ angular.module('starter.services')
   var decline = undefined;
   var cancel = undefined;
   var deleting = undefined;
+  var query = undefined;
 
   this.getInfo = function() {
     var deferred = $q.defer();
@@ -164,4 +165,23 @@ angular.module('starter.services')
     return $q.when(sent);
   }
 
+  this.getPeopleByQuery = function(text){
+    var myId = $window.localStorage.getItem('id');
+    var deferred = $q.defer();
+
+    $http.post('http://188.166.58.138:8080/api/users/search', {
+      search: text
+    }).then(function(result) {
+      query = result;
+      deferred.resolve(query);
+    }, function(error) {
+      // Popup with error message
+      // Show the login screen
+      query = error;
+      deferred.reject(error);
+    })
+
+    query = deferred.promise;
+    return $q.when(query);
+  }
 });
