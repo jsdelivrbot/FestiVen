@@ -26,23 +26,23 @@
       <ion-item ng-show="!vm.filteredFriends.length">
         <span>It seems like there aren't any suggestions. </span>
       </ion-item>
-      <ion-item ng-repeat="friend in vm.filteredFriends | filter:search.name track by $index " class="person-list item-remove-animate item-avatar item-button-right item-icon-right"  type="item-text-wrap">
+      <ion-item ng-repeat="friend in vm.filteredFriends | filter:search.name track by $index " class="person-list item-remove-animate item-avatar item-button-right"  type="item-text-wrap">
         <img ng-src="http://graph.facebook.com/{{friend.id}}/picture?width=32&height=32"/>
         <span>{{friend.name}}</span>
 
         <div class="buttons">
           <button friend-button class="button button-assertive" ng-click="disabled || addFriend(friend.id)">
-              <i class="icon ion-plus"></i>
+              <i class="icon ion-plus icon-plus-center"></i>
           </button>
         </div>
       </ion-item>
-      <ion-item ng-repeat="friend in vm.nonFbFriends | filter:search.name track by $index " class="person-list item-remove-animate item-avatar item-button-right item-icon-right"  type="item-text-wrap">
+      <ion-item ng-repeat="friend in vm.nonFbFriends | filter:search.name track by $index " class="person-list item-remove-animate item-avatar item-button-right"  type="item-text-wrap">
         <img ng-src="http://graph.facebook.com/{{friend.id}}/picture?width=32&height=32"/>
         <span>{{friend.name}}</span>
 
         <div class="buttons">
           <button friend-button class="button button-assertive" ng-click="disabled || addFriend(friend.id)">
-              <i class="icon ion-plus"></i>
+              <i class="icon ion-plus icon-plus-center"></i>
           </button>
         </div>
       </ion-item>

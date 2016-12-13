@@ -4,6 +4,14 @@
     vertical-align: middle;
 }
 
+.item span {
+  line-height: 2.5rem;
+}
+
+.item-button-right > .buttons {
+  top: 15px;
+}
+
 .select-list .item {
   border-width: 0;
 }
