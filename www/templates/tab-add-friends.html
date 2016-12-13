@@ -16,12 +16,17 @@
 </ion-subheader-bar>
   <ion-content class="has-header has-big-subheader">
 
-
+    <div class="search-list list list-inset">
+      <label class="search-filter item-input">
+        <i class="icon ion-search placeholder-icon"></i>
+        <input ng-model="search.name" type="text" placeholder="Search">
+      </label>
+    </div>
     <ion-list>
       <ion-item ng-show="!vm.filteredFriends.length">
         <span>It seems like there aren't any suggestions. </span>
       </ion-item>
-      <ion-item ng-repeat="friend in vm.filteredFriends track by $index" class="person-list item-remove-animate item-avatar item-button-right item-icon-right"  type="item-text-wrap">
+      <ion-item ng-repeat="friend in vm.filteredFriends track by $index | filter:search.name" class="person-list item-remove-animate item-avatar item-button-right item-icon-right"  type="item-text-wrap">
         <img ng-src="http://graph.facebook.com/{{friend.id}}/picture?width=32&height=32"/>
         <span>{{friend.name}}</span>
 
@@ -30,8 +35,6 @@
               <i class="icon ion-plus"></i>
           </button>
         </div>
-
-
       </ion-item>
     </ion-list>
   </ion-content>
