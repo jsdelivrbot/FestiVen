@@ -49,6 +49,8 @@ angular.module('starter.services')
     var myId = $window.localStorage.getItem('id');
     var deferred = $q.defer();
 
+    console.log('Sending delete request');
+
     $http.delete('http://188.166.58.138:8080/api/users/' + myId + '/markers/' + id)
     .then(function(result){
       del = result;

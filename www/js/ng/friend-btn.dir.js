@@ -28,6 +28,10 @@ angular.module('starter')
       $scope.deleteFriend = function(id){
         console.log('Deleting friend');
         UserService.deleteFriend(id).then(function(){
+          socket.emit('delete-friend', {
+            myId: $window.localStorage.get('id'),
+            id: id
+          })
           $element.parent().html('Deleted');
         })
       }

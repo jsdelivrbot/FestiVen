@@ -18,6 +18,9 @@
       Sent requests
     </div>
     <ion-list>
+      <ion-item ng-show="!vm.sent.length">
+        <span>You currently have no sent requests.</span>
+      </ion-item>
       <ion-item ng-repeat="friend in vm.sent track by $index" class="item-remove-animate item-avatar item-button-right"  type="item-text-wrap">
 
 
@@ -36,6 +39,9 @@
       Received requests
     </div>
     <ion-list>
+      <ion-item ng-show="!vm.received.length">
+        <span>You currently have no received requests.</span>
+      </ion-item>
       <ion-item ng-repeat="friend in vm.received track by $index" class="item-remove-animate item-avatar item-button-right"  type="item-text-wrap">
           <img ng-src="http://graph.facebook.com/{{friend.id}}/picture?width=32&height=32"/>
           <span>{{friend.name}}</span>

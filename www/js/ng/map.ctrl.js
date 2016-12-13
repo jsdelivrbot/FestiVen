@@ -1,6 +1,6 @@
 angular.module('starter.controllers')
 // Controller for the map view
-.controller('MapCtrl', function($scope, $state, $cordovaGeolocation, $cordovaDeviceOrientation, $ionicLoading, socket, $window, $timeout, $q, MarkerService) {
+.controller('MapCtrl', function($scope, $state, $cordovaGeolocation, $cordovaDeviceOrientation, $ionicLoading, socket, $window, $timeout, $q, MarkerService, $compile) {
 
   var map = null;
   var currentPosition = null;
@@ -18,9 +18,34 @@ angular.module('starter.controllers')
     $scope.placeMarker = false;
   }
 
+  var getSharedMarkerIndex = function(id){
+    for(var i = 0; i < sharedMarkers.length; i++){
+      if (sharedMarkers[i].get('id') == id){
+        return i;
+      }
+    }
+    return -1;
+  }
+
+  var sharedMarkerWithIndex = function(index){
+    return sharedMarkers[index];
+  }
+
   $scope.deleteMarker = function(id){
+    console.log('Delete marker called: ', id);
     MarkerService.deleteMarker(id).then(function(result){
       // Show success message
+      var index = getSharedMarkerIndex(id);
+
+      if (index >= 0){
+        var marker = sharedMarkerWithIndex(index);
+
+        // Delete marker from map
+        marker.setMap(null);
+
+        // Delete marker from array
+        sharedMarkers.splice(index, 1);
+      }
     }, function(err){
       // Do some error handling
     })
@@ -72,22 +97,28 @@ angular.module('starter.controllers')
             icon: myIcon
           });
           var contentString = '';
+          var markerID = "'" + marker._id + "'";
 
           if (marker.owner.id === $window.localStorage.getItem('id')){
             var content_text = '<p>You are the owner of this marker.<p>'
 
-            contentString = '<div id="content"><div><div>' + content_text + '<p>Press "Delete" if you want to get rid of this marker.</p></div><div><button class="info-delete" ng-click="deleteMarker(' + marker._id + ')">Delete</button></div></div></div>';
+            contentString = '<div id="content"><div><div>' + content_text + '<p>Press "Delete" if you want to get rid of this marker.</p></div><div><button class="info-delete" ng-click="deleteMarker(' + markerID + ')">Delete</button></div></div></div>';
           }
           else {
             var content_text = '<div id="content">This marker was shared by ' + marker.owner.name + '</div>';
 
-            contentString = '<div id="content"><div><div>' + content_text + '<p>Press "Delete" if you want to get rid of this marker.</p></div><div><button class="info-delete" ng-click="deleteMarker()">Delete</button></div></div></div>';
+
+
+            contentString = '<div id="content"><div><div>' + content_text + '<p>Press "Delete" if you want to get rid of this marker.</p></div><div><button class="info-delete" ng-click="deleteMarker(' + markerID + ')">Delete</button></div></div></div>';
 
           }
 
 
+          var compiled = $compile(contentString)($scope)
+
+
           var infowindow = new google.maps.InfoWindow({
-            content: contentString
+            content: compiled[0]
           });
 
           newMarker.addListener('click', function() {
@@ -99,6 +130,26 @@ angular.module('starter.controllers')
           sharedMarkers.push(newMarker);
         }
       })
+      var newArray = [];
+      sharedMarkers.forEach(function(marker){
+        var found = false;
+         for (var i = 0; i < result.data.length; i++){
+           var m = result.data[i];
+           if (m._id == marker.get('id')){
+             found = true;
+             break;
+           }
+         }
+         if (found){
+           newArray.push(sharedMarkers[i]);
+         }
+         else {
+           marker.setMap(null);
+         }
+
+      })
+      sharedMarkers = newArray;
+
     }, function(error){
       // Do some error handling
     })
@@ -222,6 +273,11 @@ angular.module('starter.controllers')
       var markerIndex = getMarkerIndex(data, friendsMarkers);
 
       if (markerIndex != -1){
+
+        var marker = friendsMarkers[markerIndex];
+
+        marker.setMap(null);
+
         friendsMarkers.splice(markerIndex, 1);
       }
     })
@@ -291,7 +347,7 @@ angular.module('starter.controllers')
         // Remove spinner when the tiles are loaded
         google.maps.event.addListenerOnce(map, "idle", function(event){
           $scope.hide($ionicLoading);
-          //getSharedMarkers();
+          getSharedMarkers();
         })
 
         google.maps.event.addListener(map, "click", function(event){
