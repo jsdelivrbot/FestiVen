@@ -102,13 +102,21 @@
   top: 120px;
 }
 
-.info-delete {
-  border: none;
-  border-top: 1px solid #eee;
-  background-color: rgba(0,0,0,0);
-  color: $roskilde;
+.info {
+  width: calc(50% - 10px);
   padding: 10px;
-  width: 100%;
+  border: none;
+}
+
+.info-delete {
+  color: white;
+  background-color: $roskilde;
+}
+
+.info-cancel {
+  margin-right: 20px;
+  color: white;
+  background-color: $balanced;
 }
 
 .item-icon-right.icon-plus-center {

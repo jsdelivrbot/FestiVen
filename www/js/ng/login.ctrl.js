@@ -36,7 +36,9 @@ angular.module('starter.controllers')
       $state.go('tab.map');
     }, function(error){
       console.log(error);
-      alert(error.message);
+      //TODO Popup with error message
+
+
       // Popup not successfully logged in
       vm.hide($ionicLoading);
       $state.go('login');

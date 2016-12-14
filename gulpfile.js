@@ -10,7 +10,9 @@ var uglify = require('gulp-uglify')
 
 var paths = {
   sass: ['./scss/**/*.scss'],
-  ng: ['./www/js/ng/**/module.js', './www/js/ng/run.js', './www/js/ng/config.js', './www/js/ng/**/*.dir.js', './www/js/ng/**/*.svc.js', './www/js/ng/**/*.ctrl.js'],
+  ng: ['./www/js/ng/**/module.js', './www/js/ng/run.js',
+  './www/js/ng/**/*.fct.js',
+  './www/js/ng/config.js', './www/js/ng/**/*.dir.js', './www/js/ng/**/*.svc.js', './www/js/ng/**/*.ctrl.js'],
   js: ['./www/js/*.js']
 };
 

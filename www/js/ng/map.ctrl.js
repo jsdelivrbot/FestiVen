@@ -76,6 +76,13 @@ angular.module('starter.controllers')
     '#1abc9c', '#2ecc71', '#f1c40f', '#c0392b', '#2c3e50', '#9b59b6', '#8e44ad', '3b5999', '410093', '4E342E'
   ]
 
+  $scope.closeInfowindow = function(id){
+    var index = getSharedMarkerIndex(id);
+    console.log(index);
+    console.log(sharedMarkers[index]);
+    sharedMarkers[index].infowindow.close();
+  }
+
   var getSharedMarkers = function(){
     MarkerService.getMarkers().then(function(result){
       console.log(result);
@@ -90,19 +97,16 @@ angular.module('starter.controllers')
 
           var myIcon = new google.maps.MarkerImage('../img/icons/' + marker.type + '_orange.svg', null, null, null, new google.maps.Size(32,32));
 
-          var newMarker = new google.maps.Marker({
-            position: newLatLng,
-            draggable: false,
-            map: $scope.map,
-            icon: myIcon
-          });
+
           var contentString = '';
           var markerID = "'" + marker._id + "'";
+
+
 
           if (marker.owner.id === $window.localStorage.getItem('id')){
             var content_text = '<p>You are the owner of this marker.<p>'
 
-            contentString = '<div id="content"><div><div>' + content_text + '<p>Press "Delete" if you want to get rid of this marker.</p></div><div><button class="info-delete" ng-click="deleteMarker(' + markerID + ')">Delete</button></div></div></div>';
+            contentString = '<div id="content"><div><div>' + content_text + '<p>Press "Delete" if you want to get rid of this marker.</p></div><div><button class="info info-cancel button-balanced" ng-click="closeInfowindow(' + markerID + ')">Cancel</button><button class="button-assertive info info-delete" ng-click="deleteMarker(' + markerID + ')">Delete</button></div></div></div>';
           }
           else {
             var content_text = '<div id="content">This marker was shared by ' + marker.owner.name + '</div>';
@@ -119,6 +123,14 @@ angular.module('starter.controllers')
 
           var infowindow = new google.maps.InfoWindow({
             content: compiled[0]
+          });
+
+          var newMarker = new google.maps.Marker({
+            position: newLatLng,
+            draggable: false,
+            map: $scope.map,
+            icon: myIcon,
+            infowindow: infowindow
           });
 
           newMarker.addListener('click', function() {

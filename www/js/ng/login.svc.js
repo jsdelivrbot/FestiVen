@@ -9,7 +9,6 @@ angular.module('starter.services')
 
   // Check whether the current login is still valid
   this.isValidByTime = function() {
-    alert('time');
     var date = $window.localStorage.getItem('createdAt');
     var now = new Date();
 
@@ -63,14 +62,10 @@ angular.module('starter.services')
             registered = result;
             deferred.resolve(registered);
           }, function(error) {
-            alert("error -registering");
-            // Popup with error message
-            // Show the login screen
             registered = error;
             deferred.reject(error);
           })
         }, function(error){
-          alert("error - getting info");
           registered = error;
           deferred.reject(error);
         })
