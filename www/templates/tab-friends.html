@@ -3,7 +3,7 @@
   <h1 class="title">Friends</h1>
 </ion-header-bar>
 
-<ion-subheader-bar class="bar bar-subheader pill-container">
+<ion-subheader-bar class="bar bar-subheader item-input-inset pill-container">
 
     <div class="pill-half left-pill-half pill-active">
       <a href="#/tab/friends">Friends</a>
@@ -12,14 +12,16 @@
       <a href="#/tab/requests">Requests</a>
     </div>
 </ion-subheader-bar>
+<ion-subheader-bar class="bar bar-subheader item-input-inset search-container">
+  <div class="search-list list list-inset">
+    <label class="search-filter item-input">
+      <i class="icon ion-search placeholder-icon"></i>
+      <input ng-model="search.name" type="text" placeholder="Search">
+    </label>
+  </div>
+</ion-subheader-bar>
 
-  <ion-content class="has-big-subheader has-header">
-    <div class="search-list list list-inset">
-      <label class="search-filter item-input">
-        <i class="icon ion-search placeholder-icon"></i>
-        <input ng-model="search.name" type="text" placeholder="Search">
-      </label>
-    </div>
+  <ion-content class="has-big-subheader has-header double-subheader">
     <ion-list>
       <ion-item ng-show="!vm.friends.length">
         <p class="empty-message">It seems like you haven't added any friends yet. </p>
