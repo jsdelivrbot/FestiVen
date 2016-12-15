@@ -1,15 +1,4 @@
-// .center {
-//   //align-items: center;
-//   //background: rgba(0, 0, 0, .5);
-//   display: flex;
-//   position: absolute;
-//   bottom: 220px;
-//   margin: 0 auto;
-//   z-index: 999;
-//   height: 100%
-//   //text-align: center;
-//   width: 100%;
-// }
+
 
 .spinner {
   //background: #eee;
@@ -17,7 +6,7 @@
   display: inline-block;
   height: 100px;
   margin: 50px;
-  bottom: 180px;
+  bottom: 15vh;
   left: calc(50% - 25px);
   position: absolute;
   width: 50px;
@@ -37,7 +26,6 @@
   border: 3px solid transparent;
   border-bottom-color: white;
   border-top-color: white;
-
   left: 0;
   position: absolute;;
   top: 0;
@@ -62,4 +50,17 @@
 
 .loading {
   background-color: rgba(0,0,0,0) !important;
+}
+
+.center {
+  //align-items: center;
+  //background: rgba(0, 0, 0, .5);
+  display: flex;
+  position: absolute;
+  bottom: 220px;
+  margin: 0 auto;
+  z-index: 999;
+  height: 100%;
+  //text-align: center;
+  width: 100%;
 }
