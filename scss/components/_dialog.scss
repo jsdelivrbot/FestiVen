@@ -28,17 +28,12 @@
       font-size: 18px;
       height: 3rem;
       padding: 0;
-      width: 50%;
+      width: 100%;
 
       &.place-marker {
         border-bottom-left-radius: 30px;
-        border-right: 1px solid #eee;
-        color: #0a0;
-      }
-
-      &.cancel-marker {
         border-bottom-right-radius: 30px;
-        color: #f00;
+        color: #0a0;
       }
     }
   }
