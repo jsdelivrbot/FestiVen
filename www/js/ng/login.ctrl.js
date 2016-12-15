@@ -15,11 +15,31 @@ angular.module('starter.controllers')
       $ionicLoading.hide();
   };
 
-  var checkLoggedIn = function() {
+  vm.checkLoggedIn = function() {
     //If fbAccessToken is not null
     vm.show($ionicLoading);
     if(LoginService.isAuthenticated()) {
-      vm.login();
+      // Send a request with the fb auth token, and see if there is an error
+
+      ngFB.api({
+        path: '/me',
+        params: {
+          fields: 'id, name'
+        }
+      }).then(function(data){
+        // Stop the animation
+        vm.hide($ionicLoading);
+
+        // Go to the map view
+        $state.go('tab.map');
+
+      }, function(error){
+        // If there is an error we need to login again
+        // This means the fb auth token has expired
+        vm.login();
+      })
+
+
 
     } else {
       //If fbAccessToken hasn't been created, try logging in
@@ -28,17 +48,11 @@ angular.module('starter.controllers')
   }
 
   vm.login = function(){
-    vm.show($ionicLoading);
     LoginService.login().then(function(result){
-      console.log(result);
-      // Popup successfully logged in
       vm.hide($ionicLoading);
       $state.go('tab.map');
     }, function(error){
-      console.log("LoginService call: ", error);
-
       toasty.error({
-            //title: 'Error on login!',
             msg: 'There was a problem loging in. Please try again.',
             showClose: true,
             clickToClose: true,
@@ -55,6 +69,6 @@ angular.module('starter.controllers')
     })
   }
 
-  //checkLoggedIn();
+  //vm.checkLoggedIn();
 
 })

@@ -1,6 +1,6 @@
 angular.module('starter.controllers')
 // Controller for the map view
-.controller('MapCtrl', function($scope, $state, $cordovaGeolocation, $cordovaDeviceOrientation, $ionicLoading, socket, $window, $timeout, $q, MarkerService, $compile) {
+.controller('MapCtrl', function($scope, $state, $cordovaGeolocation, $cordovaDeviceOrientation, $ionicLoading, socket, $window, $timeout, $q, MarkerService, $compile, toasty) {
 
   var map = null;
   var currentPosition = null;
@@ -40,7 +40,6 @@ angular.module('starter.controllers')
 
   var getSharedMarkers = function(){
     MarkerService.getMarkers().then(function(result){
-      console.log(result);
       result.data.forEach(function(marker){
 
         var markerIndex = getMarkerIndex(marker._id, sharedMarkers);
@@ -48,7 +47,6 @@ angular.module('starter.controllers')
         if (markerIndex == -1){
           var newLatLng = new google.maps.LatLng(marker.location[0], marker.location[1]);
 
-          console.log("Type of marker: ", marker.type);
 
           var myIcon = new google.maps.MarkerImage('../img/icons/' + marker.type + '_orange.svg', null, null, null, new google.maps.Size(32,32));
 
@@ -192,7 +190,6 @@ angular.module('starter.controllers')
       lng: coords.lng()
     }
 
-    console.log('Type of marker at type of creation: ', this.radio);
 
     var myObj = {
       coords: coordinates,
@@ -205,8 +202,6 @@ angular.module('starter.controllers')
 
   $scope.closeInfowindow = function(id){
     var index = getSharedMarkerIndex(id);
-    console.log(index);
-    console.log(sharedMarkers[index]);
     sharedMarkers[index].infowindow.close();
   }
 

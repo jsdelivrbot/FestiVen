@@ -34,7 +34,6 @@ angular.module('starter.services')
 
     $http.get('http://188.166.58.138:8080/api/users/' + myId + '/markers')
     .then(function(result){
-      console.log('MarkerService - getMarkers: ', result);
       get = result;
       deferred.resolve(get);
     }, function(error){
@@ -50,7 +49,6 @@ angular.module('starter.services')
     var myId = $window.localStorage.getItem('id');
     var deferred = $q.defer();
 
-    console.log('Sending delete request');
 
     $http.delete('http://188.166.58.138:8080/api/users/' + myId + '/markers/' + id)
     .then(function(result){
@@ -64,10 +62,4 @@ angular.module('starter.services')
     del = deferred.promise;
     return $q.when(del);
   }
-
-
-
-
-
-
 });

@@ -1,5 +1,5 @@
 angular.module('starter.controllers')
-.controller('FriendsCtrl', function(ngFB, UserService, $timeout) {
+.controller('FriendsCtrl', function(ngFB, UserService, $timeout, toasty) {
   var vm = this;
 
   vm.friends = [];

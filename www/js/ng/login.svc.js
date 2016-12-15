@@ -7,23 +7,6 @@ angular.module('starter.services')
 // The ngFB contains all Facebook functionalities
 .service('LoginService', function($window, $http, $state, UserService, $q, ngFB) {
 
-  // Check whether the current login is still valid
-  this.isValidByTime = function() {
-    var date = $window.localStorage.getItem('createdAt');
-    var now = new Date();
-
-    // Date was stored in ms in localStorage
-    if (date != undefined && date != null){
-      var diff = now.getTime() - date;
-
-      var msIn5days = 1000 * 60 * 60 * 24 * 5
-
-      if(diff < msIn5days) {
-        return true;
-      }
-    }
-    return false;
-  }
 
   // Check whether there is a user currently logged in
   this.isAuthenticated = function() {
@@ -52,7 +35,6 @@ angular.module('starter.services')
       if(response.status === 'connected') {
         // Get the user's id and name
         UserService.getInfo().then(function(data) {
-          console.log(data);
           // Try to register the user
           $http.post('http://188.166.58.138:8080/api/users', {
             id: data.id,
@@ -72,8 +54,6 @@ angular.module('starter.services')
         setToken(response);
       } else {
         var error = { error: "Couldn't login with facebook" };
-        console.log('fb-login');
-        console.log(error);
         registered = error;
         deferred.reject(error);
       }

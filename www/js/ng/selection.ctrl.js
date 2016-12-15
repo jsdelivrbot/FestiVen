@@ -1,5 +1,5 @@
 angular.module('starter.controllers')
-.controller('SelectionCtrl', function(MarkerService, $stateParams, $state, UserService) {
+.controller('SelectionCtrl', function(MarkerService, $stateParams, $state, UserService, toasty) {
   var vm = this;
   console.log($stateParams);
 

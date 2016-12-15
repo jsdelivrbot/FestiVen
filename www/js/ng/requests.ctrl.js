@@ -1,5 +1,5 @@
 angular.module('starter.controllers')
-.controller('RequestsCtrl', function(UserService, $timeout) {
+.controller('RequestsCtrl', function(UserService, $timeout, toasty, $q) {
   var vm = this;
 
   vm.sent = [];
@@ -12,11 +12,11 @@ angular.module('starter.controllers')
       UserService.getSent(),
     ]).then(function(result){
       vm.received = result[0].data;
-      vm.sent = result[0].data
+      vm.sent = result[1].data
 
       // Only keep polling when there are no errors
       $timeout(pollRequests, 2000);
-      
+
     }, function(error){
       toasty.error({
             msg: 'There was a problem getting the requests.',

@@ -24,7 +24,6 @@ angular.module('starter.services')
       info = data;
       deferred.resolve(info);
       // Save the user's id and name to localStorage
-      $window.localStorage.setItem('createdAt', (new Date()).getTime());
       $window.localStorage.setItem('name', data.name);
       $window.localStorage.setItem('id', data.id);
     }, function(error){

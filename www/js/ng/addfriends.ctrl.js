@@ -1,5 +1,5 @@
 angular.module('starter.controllers')
-.controller('AddFriendsCtrl', function(ngFB, $rootScope, $http, $document, $q, $window, $state, $timeout, UserService) {
+.controller('AddFriendsCtrl', function(ngFB, $rootScope, $http, $document, $q, $window, $state, $timeout, UserService, toasty) {
   var vm = this;
   vm.filteredFriends = [];
   vm.nonFbFriends = [];
@@ -40,6 +40,7 @@ angular.module('starter.controllers')
     // Check localStorage for an id
     var myId = $window.localStorage.getItem('id');
     // For the id in localStorage, get the friends,  sent friend requests and received friend requests
+
     $q.all([
       $http.get('http://188.166.58.138:8080/api/users/' + myId + '/sent'),
       ngFB.api({path: '/me/friends'}),
@@ -66,7 +67,6 @@ angular.module('starter.controllers')
       $timeout(pollFbFriends, 2000);
     }, function(error){
       toasty.error({
-            //title: 'Error on login!',
             msg: 'There was a problem fetching possible friends.',
             showClose: true,
             clickToClose: true,
