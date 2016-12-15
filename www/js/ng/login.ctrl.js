@@ -35,8 +35,8 @@ angular.module('starter.controllers')
       vm.hide($ionicLoading);
       $state.go('tab.map');
     }, function(error){
-      console.log(error);
-      //TODO Popup with error message
+      console.log("LoginService call: ", error);
+      $scope.$emit('successPopup', "There was a problem loging in. Please try again.");
 
 
       // Popup not successfully logged in

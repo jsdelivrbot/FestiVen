@@ -9,6 +9,26 @@ angular.module('starter.controllers')
   var long = null;
   var friendsMarkers = [];
   var sharedMarkers = [];
+  var colours =
+  [
+    '#1abc9c', '#2ecc71', '#f1c40f', '#c0392b', '#2c3e50', '#9b59b6', '#8e44ad', '3b5999', '410093', '4E342E'
+  ]
+
+  // Show the spinner
+  $scope.show = function() {
+    $ionicLoading.show({
+      showBackdrop: false,
+      template: '<div class="center"><div class="spinner spinner-1 spinner-roskilde"></div></div>'
+    });
+  };
+
+  // Hide the spinner
+  $scope.hide = function() {
+      $ionicLoading.hide();
+  };
+
+  // Connect to socket - maybe move this to success in login controller
+  var socket = io.connect('http://188.166.58.138:8080');
 
   $scope.radio = {radioValue: 'marker'};
 
@@ -16,71 +36,6 @@ angular.module('starter.controllers')
 
   $scope.cancelPlace = function(){
     $scope.placeMarker = false;
-  }
-
-  var getSharedMarkerIndex = function(id){
-    for(var i = 0; i < sharedMarkers.length; i++){
-      if (sharedMarkers[i].get('id') == id){
-        return i;
-      }
-    }
-    return -1;
-  }
-
-  var sharedMarkerWithIndex = function(index){
-    return sharedMarkers[index];
-  }
-
-  $scope.deleteMarker = function(id){
-    console.log('Delete marker called: ', id);
-    MarkerService.deleteMarker(id).then(function(result){
-      // Show success message
-      var index = getSharedMarkerIndex(id);
-
-      if (index >= 0){
-        var marker = sharedMarkerWithIndex(index);
-
-        // Delete marker from map
-        marker.setMap(null);
-
-        // Delete marker from array
-        sharedMarkers.splice(index, 1);
-      }
-    }, function(err){
-      // Do some error handling
-    })
-  }
-
-  $scope.addMarker = function(){
-    var coords = $scope.map.getCenter();
-    var coordinates = {
-      lat: coords.lat(),
-      lng: coords.lng()
-    }
-
-    console.log('Type of marker at type of creation: ', this.radio);
-
-    var myObj = {
-      coords: coordinates,
-      markerType: $scope.radio.radioValue
-    }
-
-    $state.go('tab.friendSelection',{obj: myObj});
-    $scope.placeMarker = false;
-  }
-
-
-
-  var colours =
-  [
-    '#1abc9c', '#2ecc71', '#f1c40f', '#c0392b', '#2c3e50', '#9b59b6', '#8e44ad', '3b5999', '410093', '4E342E'
-  ]
-
-  $scope.closeInfowindow = function(id){
-    var index = getSharedMarkerIndex(id);
-    console.log(index);
-    console.log(sharedMarkers[index]);
-    sharedMarkers[index].infowindow.close();
   }
 
   var getSharedMarkers = function(){
@@ -106,15 +61,14 @@ angular.module('starter.controllers')
           if (marker.owner.id === $window.localStorage.getItem('id')){
             var content_text = '<p>You are the owner of this marker.<p>'
 
-            contentString = '<div id="content"><div><div>' + content_text + '<p>Press "Delete" if you want to get rid of this marker.</p></div><div><button class="info info-cancel button-balanced" ng-click="closeInfowindow(' + markerID + ')">Cancel</button><button class="button-assertive info info-delete" ng-click="deleteMarker(' + markerID + ')">Delete</button></div></div></div>';
+            contentString = '<div id="content"><div><div>' + content_text + '</div><div><button class="info info-cancel button-balanced" ng-click="closeInfowindow(' + markerID + ')">Cancel</button><button class="button-assertive info info-delete" ng-click="deleteMarker(' + markerID + ')">Delete</button></div></div></div>';
           }
           else {
             var content_text = '<div id="content">This marker was shared by ' + marker.owner.name + '</div>';
 
 
 
-            contentString = '<div id="content"><div><div>' + content_text + '<p>Press "Delete" if you want to get rid of this marker.</p></div><div><button class="info-delete" ng-click="deleteMarker(' + markerID + ')">Delete</button></div></div></div>';
-
+            contentString = '<div id="content"><div><div>' + content_text + '</div><div><button class="info info-cancel button-balanced" ng-click="closeInfowindow(' + markerID + ')">Cancel</button><button class="button-assertive info info-delete" ng-click="deleteMarker(' + markerID + ')">Delete</button></div></div></div>';
           }
 
 
@@ -169,130 +123,170 @@ angular.module('starter.controllers')
     $timeout(getSharedMarkers, 2000);
   }
 
-  //document.addEventListener("deviceready", function() {
-
-  // Connect to socket - maybe move this to success in login controller
-  var socket = io.connect('http://188.166.58.138:8080');
-
-    // Emit on connect, store the fb id in socket
-    socket.on('connect', function (data) {
-        socket.emit('storeClientInfo', { customId: $window.localStorage.getItem('id')});
-    });
-
-    // Show the spinner
-    $scope.show = function() {
-      $ionicLoading.show({
-        showBackdrop: false,
-        template: '<div class="center"><div class="spinner spinner-1 spinner-roskilde"></div></div>'
-      });
-    };
-
-    // Hide the spinner
-    $scope.hide = function() {
-        $ionicLoading.hide();
-    };
-
-    $scope.show($ionicLoading);
-
-
-    var getMarkerIndex = function(id, markerArray){
-      for (var i = 0; i < markerArray.length; i++){
-        if (markerArray[i].get('id') == id){
-          return i;
-        }
+  var getSharedMarkerIndex = function(id){
+    for(var i = 0; i < sharedMarkers.length; i++){
+      if (sharedMarkers[i].get('id') == id){
+        return i;
       }
-      return -1;
     }
+    return -1;
+  }
 
+  var sharedMarkerWithIndex = function(index){
+    return sharedMarkers[index];
+  }
 
-
-    socket.on('start-transmit', function(data){
-      var emitLocation = function(){
-        if (latLng !== null){
-
-          socket.emit('sendLocation', {
-            location: {
-              latitude: lat,
-              longitude: long
-            },
-            id: $window.localStorage.getItem('id'),
-            name: $window.localStorage.getItem('name')
-          });
-        }
-        $timeout(emitLocation, 2000);
+  var getMarkerIndex = function(id, markerArray){
+    for (var i = 0; i < markerArray.length; i++){
+      if (markerArray[i].get('id') == id){
+        return i;
       }
-      emitLocation();
-    })
+    }
+    return -1;
+  }
 
-    socket.on('receive-location', function(data){
-      if (map !== null){
-        var newLatLng = new google.maps.LatLng(data.location.latitude, data.location.longitude);
+  $scope.deleteMarker = function(id){
+    console.log('Delete marker called: ', id);
+    MarkerService.deleteMarker(id).then(function(result){
+      // Show success message
+      var index = getSharedMarkerIndex(id);
 
-        var markerIndex = getMarkerIndex(data.id, friendsMarkers);
+      if (index >= 0){
+        var marker = sharedMarkerWithIndex(index);
 
-        if (markerIndex != -1){
-          friendsMarkers[markerIndex].setPosition(newLatLng);
-          //friendsMarkers.splice(markerIndex, 1);
-        }
-        else {
-          var colourIndex = data.id.substr(data.id.length - 1);
-
-          var newMarker = new google.maps.Marker({
-          // Set the marker at the center of the map
-            position: newLatLng,
-            icon: {
-              path: google.maps.SymbolPath.CIRCLE,
-              strokeColor: colours[colourIndex],
-              strokeWeight: 0,
-              fillColor: colours[colourIndex],
-              fillOpacity: 1,
-              scale: 6,
-              rotation: 0
-            },
-            draggable: false,
-            map: $scope.map
-          });
-
-          var contentString = '<div id="content">' + data.name + '</div>';
-
-          var infowindow = new google.maps.InfoWindow({
-            content: contentString
-          });
-
-          newMarker.addListener('click', function() {
-            infowindow.open(map, newMarker);
-          });
-          infowindow.open(map, newMarker);
-
-          newMarker.setValues({id: data.id});
-          friendsMarkers.push(newMarker);
-        }
-        $timeout(function(){
-          var index = getMarkerIndex(data.id, friendsMarkers);
-          var pos = friendsMarkers[index].getPosition();
-
-          if (pos.lat() == data.location.latitude && pos.lng() == data.location.longitude){
-              // This means the person with this id, hasn't transmitted his/her location in 5 seconds
-
-              // We will get rid of the marker
-              friendsMarkers.splice(index, 1);
-          }
-        }, 5000)
-      }
-    })
-
-    socket.on('delete-location', function(data){
-      var markerIndex = getMarkerIndex(data, friendsMarkers);
-
-      if (markerIndex != -1){
-
-        var marker = friendsMarkers[markerIndex];
-
+        // Delete marker from map
         marker.setMap(null);
 
-        friendsMarkers.splice(markerIndex, 1);
+        // Delete marker from array
+        sharedMarkers.splice(index, 1);
       }
+    }, function(err){
+      // Do some error handling
     })
+  }
+
+  $scope.addMarker = function(){
+    var coords = $scope.map.getCenter();
+    var coordinates = {
+      lat: coords.lat(),
+      lng: coords.lng()
+    }
+
+    console.log('Type of marker at type of creation: ', this.radio);
+
+    var myObj = {
+      coords: coordinates,
+      markerType: $scope.radio.radioValue
+    }
+
+    $state.go('tab.friendSelection',{obj: myObj});
+    $scope.placeMarker = false;
+  }
+
+  $scope.closeInfowindow = function(id){
+    var index = getSharedMarkerIndex(id);
+    console.log(index);
+    console.log(sharedMarkers[index]);
+    sharedMarkers[index].infowindow.close();
+  }
+
+  // Emit on connect, store the fb id in socket
+  socket.on('connect', function (data) {
+      socket.emit('storeClientInfo', { customId: $window.localStorage.getItem('id')});
+  });
+
+  //When connected, start-transmit will start emitting the location through the socket
+  socket.on('start-transmit', function(data){
+    var emitLocation = function(){
+      if (latLng !== null){
+
+        socket.emit('sendLocation', {
+          location: {
+            latitude: lat,
+            longitude: long
+          },
+          id: $window.localStorage.getItem('id'),
+          name: $window.localStorage.getItem('name')
+        });
+      }
+      $timeout(emitLocation, 2000);
+    }
+    emitLocation();
+  })
+
+  socket.on('receive-location', function(data){
+    if (map !== null){
+      var newLatLng = new google.maps.LatLng(data.location.latitude, data.location.longitude);
+
+      var markerIndex = getMarkerIndex(data.id, friendsMarkers);
+
+      if (markerIndex != -1){
+        friendsMarkers[markerIndex].setPosition(newLatLng);
+        //friendsMarkers.splice(markerIndex, 1);
+      }
+      else {
+        var colourIndex = data.id.substr(data.id.length - 1);
+
+        var newMarker = new google.maps.Marker({
+        // Set the marker at the center of the map
+          position: newLatLng,
+          icon: {
+            path: google.maps.SymbolPath.CIRCLE,
+            strokeColor: colours[colourIndex],
+            strokeWeight: 0,
+            fillColor: colours[colourIndex],
+            fillOpacity: 1,
+            scale: 6,
+            rotation: 0
+          },
+          draggable: false,
+          map: $scope.map
+        });
+
+        var contentString = '<div id="content">' + data.name + '</div>';
+
+        var infowindow = new google.maps.InfoWindow({
+          content: contentString
+        });
+
+        newMarker.addListener('click', function() {
+          infowindow.open(map, newMarker);
+        });
+        infowindow.open(map, newMarker);
+
+        newMarker.setValues({id: data.id});
+        friendsMarkers.push(newMarker);
+      }
+      $timeout(function(){
+        var index = getMarkerIndex(data.id, friendsMarkers);
+        var pos = friendsMarkers[index].getPosition();
+
+        if (pos.lat() == data.location.latitude && pos.lng() == data.location.longitude){
+            // This means the person with this id, hasn't transmitted his/her location in 5 seconds
+
+            // We will get rid of the marker
+            friendsMarkers.splice(index, 1);
+        }
+      }, 5000)
+    }
+  })
+
+  socket.on('delete-location', function(data){
+    var markerIndex = getMarkerIndex(data, friendsMarkers);
+
+    if (markerIndex != -1){
+
+      var marker = friendsMarkers[markerIndex];
+
+      marker.setMap(null);
+
+      friendsMarkers.splice(markerIndex, 1);
+    }
+  })
+
+  //document.addEventListener("deviceready", function() {
+
+    $scope.show($ionicLoading);
 
     // Center the map on the current location
     $(".center-map").click(function() {
@@ -307,8 +301,6 @@ angular.module('starter.controllers')
       timeout: 10000,
       enableHighAccuracy: true
     };
-
-    //$scope.show($ionicLoading);
 
     $cordovaGeolocation
     .getCurrentPosition(singleOptions).then(
@@ -362,10 +354,12 @@ angular.module('starter.controllers')
           getSharedMarkers();
         })
 
+        // Clicking on the map brings up a dialog
         google.maps.event.addListener(map, "click", function(event){
           $scope.placeMarker = true;
         })
 
+        // Double clicking zooms in and cancels out a single click on the map
         google.maps.event.addListener(map, "dblclick", function(event){
           $scope.placeMarker = false;
         })
@@ -373,9 +367,10 @@ angular.module('starter.controllers')
         // Add map to the application scope
         $scope.map = map;
 
-        // Create a new marker using an SVG (vector) path
+        // Create a new marker using an SVG (vector) path, on the map that was just set with center as map as location
         var marker = new google.maps.Marker({
-        // Set the marker at the center of the map
+
+          // Set the marker at the center of the map
           position: $scope.map.getCenter(),
           icon: {
             path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW,
@@ -415,6 +410,7 @@ angular.module('starter.controllers')
             marker.setPosition(latLng);
 
             var trueHeading = heading.trueHeading;
+            // Change the icon rotation
             marker.setIcon({
               path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW,
               strokeColor: '#f65338',

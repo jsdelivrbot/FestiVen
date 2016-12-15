@@ -16,7 +16,14 @@
 
 
   </head>
-  <body ng-app="starter" id="#custom">
+  <body ng-app="starter" ng-controller="appController" id="#custom">
+    <div ng-show="showSuccessMessage" class="toast-popup" >
+      <span>{{success}}</span>
+      <span>
+        <i ng-click="closePopup()" class="icon ion-close"></i>
+      </span>
+    </div>
+
     <ion-nav-view>
     </ion-nav-view>
     <!-- ionic/angularjs js -->
