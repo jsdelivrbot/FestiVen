@@ -113,6 +113,7 @@ angular.module('starter.controllers')
 
       })
       sharedMarkers = newArray;
+      $timeout(getSharedMarkers, 500);
 
     }, function(error){
       toasty.error({
@@ -127,7 +128,7 @@ angular.module('starter.controllers')
         });
     })
 
-    $timeout(getSharedMarkers, 500);
+
   }
 
   var getSharedMarkerIndex = function(id){
@@ -299,7 +300,7 @@ angular.module('starter.controllers')
     }
   })
 
-  //document.addEventListener("deviceready", function() {
+  document.addEventListener("deviceready", function() {
 
     $scope.show($ionicLoading);
 
@@ -467,5 +468,5 @@ angular.module('starter.controllers')
           });
       }
     ); // End getCurrentPosition then
-  //}); // End deviceready
+  }); // End deviceready
 }) // End MapCtrl
