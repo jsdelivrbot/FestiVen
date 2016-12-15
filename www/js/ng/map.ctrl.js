@@ -372,7 +372,10 @@ angular.module('starter.controllers')
 
         // Clicking on the map brings up a dialog
         google.maps.event.addListener(map, "click", function(event){
-          $scope.placeMarker = true;
+          if (!$scope.placeMarker){
+            $scope.placeMarker = true;
+          }
+
         })
 
         // Double clicking zooms in and cancels out a single click on the map

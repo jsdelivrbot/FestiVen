@@ -17,6 +17,6 @@ angular.module('starter')
             });
             update(scope.value);
           },
-          template: '<div><img width="32px" src="../img/icons/{{value}}_orange.svg"/></div>'
+          template: '<div><img width="32px" src="img/icons/{{value}}_orange.svg"/></div>'
         };
     });;
