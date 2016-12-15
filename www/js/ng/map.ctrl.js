@@ -30,12 +30,14 @@ angular.module('starter.controllers')
   // Connect to socket - maybe move this to success in login controller
   var socket = io.connect('http://188.166.58.138:8080');
 
+  var mapClick = null;
+
   $scope.radio = {radioValue: 'marker'};
 
   $scope.placeMarker = false;
 
   $scope.cancelPlace = function(){
-    $scope.placeMarker = false;
+    //$scope.placeMarker = false;
   }
 
   var getSharedMarkers = function(){
@@ -300,7 +302,7 @@ angular.module('starter.controllers')
     }
   })
 
-  document.addEventListener("deviceready", function() {
+  //document.addEventListener("deviceready", function() {
 
     $scope.show($ionicLoading);
 
@@ -371,11 +373,13 @@ angular.module('starter.controllers')
         })
 
         // Clicking on the map brings up a dialog
-        google.maps.event.addListener(map, "click", function(event){
-          if (!$scope.placeMarker){
-            $scope.placeMarker = true;
+        mapClick = google.maps.event.addListener(map, "click", function(event){
+          if($scope.placeMarker == false){
+              $scope.placeMarker = true;
           }
-
+          else {
+            $scope.placeMarker = false;
+          }
         })
 
         // Double clicking zooms in and cancels out a single click on the map
@@ -407,7 +411,7 @@ angular.module('starter.controllers')
 
         // ngCordova Geolocation options
         var posOptions = {
-          timeout: 500,
+          timeout: 10000,
           //frequency: 100,
           enableHighAccuracy: true
         };
@@ -442,6 +446,7 @@ angular.module('starter.controllers')
             $timeout(poll, 500);
 
           }, function(error){
+            alert(error.message);
             toasty.error({
                   msg: 'We were unable to pinpoint your location.',
                   showClose: true,
@@ -471,5 +476,5 @@ angular.module('starter.controllers')
           });
       }
     ); // End getCurrentPosition then
-  }); // End deviceready
+  //}); // End deviceready
 }) // End MapCtrl
