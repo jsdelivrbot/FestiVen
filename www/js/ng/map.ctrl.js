@@ -39,10 +39,36 @@ angular.module('starter.controllers')
   $scope.cancelPlace = function(){
     //$scope.placeMarker = false;
   }
+  var createContent = function(marker){
+    var contentString = '';
+    var markerID = "'" + marker._id + "'";
+
+    var description = marker.description === '' ? "No description": marker.description;
+
+    if (marker.owner.id === $window.localStorage.getItem('id')){
+      var content_text = '<p>You are the owner of this marker.<p>'
+
+      contentString = '<div id="content"><div><div>' + content_text + '</div><p>' + description + '</p><div><button class="info info-cancel button-balanced" ng-click="closeInfowindow(' + markerID + ')">Cancel</button><button class="button-assertive info info-delete" ng-click="deleteMarker(' + markerID + ')">Delete</button></div></div></div>';
+    }
+    else {
+      var content_text = '<div id="content">This marker was shared by ' + marker.owner.name + '</div>';
+
+
+
+      contentString = '<div id="content"><div><div>' + content_text + '</div><p>' + description + '</p><div><button class="info info-cancel button-balanced" ng-click="closeInfowindow(' + markerID + ')">Cancel</button><button class="button-assertive info info-delete" ng-click="deleteMarker(' + markerID + ')">Delete</button></div></div></div>';
+    }
+
+
+    var compiled = $compile(contentString)($scope)
+
+    return compiled;
+  }
 
   var getSharedMarkers = function(){
     MarkerService.getMarkers().then(function(result){
+
       result.data.forEach(function(marker){
+
 
         var markerIndex = getMarkerIndex(marker._id, sharedMarkers);
 
@@ -50,39 +76,19 @@ angular.module('starter.controllers')
           var newLatLng = new google.maps.LatLng(marker.location[0], marker.location[1]);
 
 
-          var myIcon = new google.maps.MarkerImage('../img/icons/' + marker.type + '_orange.svg', null, null, null, new google.maps.Size(32,32));
+          var myIcon = new google.maps.MarkerImage('img/icons/' + marker.type + '_orange.svg', null, null, null, new google.maps.Size(32,32));
 
-
-          var contentString = '';
-          var markerID = "'" + marker._id + "'";
-
-          var description = marker.description === '' ? "No description": marker.description;
-
-          if (marker.owner.id === $window.localStorage.getItem('id')){
-            var content_text = '<p>You are the owner of this marker.<p>'
-
-            contentString = '<div id="content"><div><div>' + content_text + '</div><p>' + description + '</p><div><button class="info info-cancel button-balanced" ng-click="closeInfowindow(' + markerID + ')">Cancel</button><button class="button-assertive info info-delete" ng-click="deleteMarker(' + markerID + ')">Delete</button></div></div></div>';
-          }
-          else {
-            var content_text = '<div id="content">This marker was shared by ' + marker.owner.name + '</div>';
-
-
-
-            contentString = '<div id="content"><div><div>' + content_text + '</div><p>' + description + '</p><div><button class="info info-cancel button-balanced" ng-click="closeInfowindow(' + markerID + ')">Cancel</button><button class="button-assertive info info-delete" ng-click="deleteMarker(' + markerID + ')">Delete</button></div></div></div>';
-          }
-
-
-          var compiled = $compile(contentString)($scope)
-
+          compiled = createContent(marker);
 
           var infowindow = new google.maps.InfoWindow({
             content: compiled[0]
           });
 
+
           var newMarker = new google.maps.Marker({
             position: newLatLng,
             draggable: false,
-            map: $scope.map,
+            map: map,
             icon: myIcon,
             infowindow: infowindow
           });
@@ -93,31 +99,46 @@ angular.module('starter.controllers')
 
           newMarker.setValues({id: marker._id});
 
+
           sharedMarkers.push(newMarker);
         }
-      })
-      var newArray = [];
-      sharedMarkers.forEach(function(marker){
-        var found = false;
-         for (var i = 0; i < result.data.length; i++){
-           var m = result.data[i];
-           if (m._id == marker.get('id')){
-             found = true;
-             break;
-           }
-         }
-         if (found){
-           newArray.push(sharedMarkers[i]);
-         }
-         else {
-           marker.setMap(null);
-         }
+        else {
+          var newArray = [];
+          sharedMarkers.forEach(function(marker){
+            var found = false;
+             for (var i = 0; i < result.data.length; i++){
+               var m = result.data[i];
+               if (m._id == marker.get('id')){
+                 found = true;
+                 break;
+               }
+             }
+             if (found){
+               toasty.error({
+                     msg: 'Pushing marker.' ,
+                     showClose: true,
+                     clickToClose: true,
+                     timeout: 5000,
+                     sound: false,
+                     html: true,
+                     shake: false,
+                     theme: "material"
+                 });
+               newArray.push(sharedMarkers[i]);
+             }
+             else {
 
-      })
-      sharedMarkers = newArray;
+               marker.setMap(null);
+             }
+
+          }) // end foreach
+          sharedMarkers = newArray;
+        }
+      }) // end for each
       $timeout(getSharedMarkers, 500);
 
     }, function(error){
+      alert(error.message);
       toasty.error({
             msg: 'Unable to get your friends\' location.' ,
             showClose: true,
@@ -302,7 +323,7 @@ angular.module('starter.controllers')
     }
   })
 
-  //document.addEventListener("deviceready", function() {
+  document.addEventListener("deviceready", function() {
 
     $scope.show($ionicLoading);
 
@@ -476,5 +497,5 @@ angular.module('starter.controllers')
           });
       }
     ); // End getCurrentPosition then
-  //}); // End deviceready
+  }); // End deviceready
 }) // End MapCtrl
