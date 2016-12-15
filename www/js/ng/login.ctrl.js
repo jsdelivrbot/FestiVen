@@ -1,5 +1,5 @@
 angular.module('starter.controllers')
-.controller('LoginCtrl', function($scope, $state, ngFB, $ionicLoading, LoginService, UserService, $window) {
+.controller('LoginCtrl', function($scope, $state, ngFB, $ionicLoading, LoginService, UserService, $window, toasty) {
   var vm = this;
 
   // Show the spinner
@@ -36,8 +36,18 @@ angular.module('starter.controllers')
       $state.go('tab.map');
     }, function(error){
       console.log("LoginService call: ", error);
-      $scope.$emit('successPopup', "There was a problem loging in. Please try again.");
 
+      toasty.error({
+            //title: 'Error on login!',
+            msg: 'There was a problem loging in. Please try again.',
+            showClose: true,
+            clickToClose: true,
+            timeout: 5000,
+            sound: false,
+            html: true,
+            shake: false,
+            theme: "material"
+        });
 
       // Popup not successfully logged in
       vm.hide($ionicLoading);

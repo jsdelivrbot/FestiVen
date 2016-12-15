@@ -9,6 +9,8 @@ angular.module('starter.controllers')
 
   vm.friends = [];
 
+  vm.description = "";
+
   // Array of facebook ids, contains users that are selected
   var sharedWith = [];
 
@@ -44,12 +46,23 @@ angular.module('starter.controllers')
     console.log("People: ", people);
     console.log("Marker: ", markerType);
 
-    MarkerService.addMarker(coords, people, markerType).then(function(result){
+    MarkerService.addMarker(coords, people, markerType, vm.description).then(function(result){
       $state.go('tab.map');
     }, function(error){
       $state.go('tab.map');
 
-      //TODO: Emit error message to the map views
+      // Emit error message to the map views
+
+      toasty.error({
+            msg: 'Unable to place the ' + markerType,
+            showClose: true,
+            clickToClose: true,
+            timeout: 5000,
+            sound: false,
+            html: true,
+            shake: false,
+            theme: "material"
+        });
 
     })
   }

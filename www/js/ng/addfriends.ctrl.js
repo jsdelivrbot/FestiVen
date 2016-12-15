@@ -9,54 +9,22 @@ angular.module('starter.controllers')
   var received = [];
   var friends = [];
 
-  vm.getFbFriends = function() {
-      // Check localStorage for an id
-      var myId = $window.localStorage.getItem('id');
-      // For the id in localStorage, get the friends,  sent friend requests and received friend requests
-      $q.all([
-        $http.get('http://188.166.58.138:8080/api/users/' + myId + '/sent'),
-        ngFB.api({path: '/me/friends'}),
-        $http.get('http://188.166.58.138:8080/api/users/' + myId + '/received'),
-        $http.get('http://188.166.58.138:8080/api/users/' + myId + '/friends')
-      ]).then(function(data){
-        requests = data[0].data;
-        fbFriends = data[1].data;
-        received = data[2].data;
-        friends = data[3].data;
-
-
-
-        // Filter out the facebook friends that either
-        //    1. You sent a request to already
-        //    2. You received a request from already
-        //    3. Are already you friends
-        // These arrays are concatenated together first
-
-        vm.filteredFriends = fbFriends.filter(function(friend){
-          return !(containsFriend(friends.concat(received, requests), friend));
-        })
-      })
-
-  }
   var searchTimeout;
   vm.getPeopleByQuery = function(text){
     if (searchTimeout != undefined) clearTimeout(searchTimeout);
     searchTimeout = setTimeout(function(){
       // Send request to the server to get people that match this
-      console.log('Getting people by query');
       UserService.getPeopleByQuery(text).then(function(result){
         // Set the array of friends to the scope
-        console.log('People by search: ', result.data);
         var myId =  $window.localStorage.getItem('id');
         vm.nonFbFriends = result.data.filter(function(person){
           return (!containsFriend(vm.filteredFriends.concat(received, requests, friends), person)  && person.id !== myId);
         })
 
       }, function(error){
-        // Show an error message
-      })
+        // Just don't do anything. Don't apply the filtering.
 
-      // Subtract the fb friends from this list
+      })
     }, 500);
   }
 
@@ -68,12 +36,47 @@ angular.module('starter.controllers')
     })
   }
 
-  vm.getFbFriends();
-
-
   var pollFbFriends = function(){
-    vm.getFbFriends();
-    $timeout(pollFbFriends, 2000);
+    // Check localStorage for an id
+    var myId = $window.localStorage.getItem('id');
+    // For the id in localStorage, get the friends,  sent friend requests and received friend requests
+    $q.all([
+      $http.get('http://188.166.58.138:8080/api/users/' + myId + '/sent'),
+      ngFB.api({path: '/me/friends'}),
+      $http.get('http://188.166.58.138:8080/api/users/' + myId + '/received'),
+      $http.get('http://188.166.58.138:8080/api/users/' + myId + '/friends')
+    ]).then(function(data){
+      requests = data[0].data;
+      fbFriends = data[1].data;
+      received = data[2].data;
+      friends = data[3].data;
+
+
+
+      // Filter out the facebook friends that either
+      //    1. You sent a request to already
+      //    2. You received a request from already
+      //    3. Are already you friends
+      // These arrays are concatenated together first
+
+      vm.filteredFriends = fbFriends.filter(function(friend){
+        return !(containsFriend(friends.concat(received, requests), friend));
+      })
+      // Only keep polling when no errors
+      $timeout(pollFbFriends, 2000);
+    }, function(error){
+      toasty.error({
+            //title: 'Error on login!',
+            msg: 'There was a problem fetching possible friends.',
+            showClose: true,
+            clickToClose: true,
+            timeout: 5000,
+            sound: false,
+            html: true,
+            shake: false,
+            theme: "material"
+        });
+    })
   }
   pollFbFriends();
 

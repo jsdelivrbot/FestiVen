@@ -5,14 +5,15 @@ angular.module('starter.services')
   var get = null;
   var del = null;
 
-  this.addMarker = function(coords, peopleArray, markerType){
+  this.addMarker = function(coords, peopleArray, markerType, description){
     var myId = $window.localStorage.getItem('id');
     var deferred = $q.defer();
 
     $http.post('http://188.166.58.138:8080/api/users/' + myId + '/markers', {
       people: peopleArray,
       location: coords,
-      markerType: markerType
+      markerType: markerType,
+      description: description
     }).then(function(result) {
       add = result;
       deferred.resolve(add);

@@ -56,19 +56,19 @@ angular.module('starter.controllers')
           var contentString = '';
           var markerID = "'" + marker._id + "'";
 
-
+          var description = marker.description === '' ? "No description": marker.description;
 
           if (marker.owner.id === $window.localStorage.getItem('id')){
             var content_text = '<p>You are the owner of this marker.<p>'
 
-            contentString = '<div id="content"><div><div>' + content_text + '</div><div><button class="info info-cancel button-balanced" ng-click="closeInfowindow(' + markerID + ')">Cancel</button><button class="button-assertive info info-delete" ng-click="deleteMarker(' + markerID + ')">Delete</button></div></div></div>';
+            contentString = '<div id="content"><div><div>' + content_text + '</div><p>' + description + '</p><div><button class="info info-cancel button-balanced" ng-click="closeInfowindow(' + markerID + ')">Cancel</button><button class="button-assertive info info-delete" ng-click="deleteMarker(' + markerID + ')">Delete</button></div></div></div>';
           }
           else {
             var content_text = '<div id="content">This marker was shared by ' + marker.owner.name + '</div>';
 
 
 
-            contentString = '<div id="content"><div><div>' + content_text + '</div><div><button class="info info-cancel button-balanced" ng-click="closeInfowindow(' + markerID + ')">Cancel</button><button class="button-assertive info info-delete" ng-click="deleteMarker(' + markerID + ')">Delete</button></div></div></div>';
+            contentString = '<div id="content"><div><div>' + content_text + '</div><p>' + description + '</p><div><button class="info info-cancel button-balanced" ng-click="closeInfowindow(' + markerID + ')">Cancel</button><button class="button-assertive info info-delete" ng-click="deleteMarker(' + markerID + ')">Delete</button></div></div></div>';
           }
 
 
@@ -117,10 +117,19 @@ angular.module('starter.controllers')
       sharedMarkers = newArray;
 
     }, function(error){
-      // Do some error handling
+      toasty.error({
+            msg: 'Unable to get your friends\' location.' ,
+            showClose: true,
+            clickToClose: true,
+            timeout: 5000,
+            sound: false,
+            html: true,
+            shake: false,
+            theme: "material"
+        });
     })
 
-    $timeout(getSharedMarkers, 2000);
+    $timeout(getSharedMarkers, 500);
   }
 
   var getSharedMarkerIndex = function(id){
@@ -146,35 +155,34 @@ angular.module('starter.controllers')
   }
 
   $scope.deleteMarker = function(id){
-    console.log('Delete marker called: ', id);
     var index = getSharedMarkerIndex(id);
 
-    if (index >= 0){
-      var marker = sharedMarkerWithIndex(index);
 
-      // Delete marker from map
-      marker.setMap(null);
-
-      // Delete marker from array
-      sharedMarkers.splice(index, 1);
 
       MarkerService.deleteMarker(id).then(function(result){
         // Show success message
+        if (index >= 0){
+          var marker = sharedMarkerWithIndex(index);
+
+          // Delete marker from map
+          marker.setMap(null);
+
+          // Delete marker from array
+          sharedMarkers.splice(index, 1);
+        }
 
       }, function(err){
-        // Do some error handling
-        // Set the marker back on the map
-        marker.setMap(map);
-
-        var index = getSharedMarkerIndex(id);
-
-        if (index < 0){
-          sharedMarkers.push(marker);
-        }
+        toasty.error({
+              msg: 'We were unable to delete the marker.' ,
+              showClose: true,
+              clickToClose: true,
+              timeout: 5000,
+              sound: false,
+              html: true,
+              shake: false,
+              theme: "material"
+          });
       })
-    }
-
-
   }
 
   $scope.addMarker = function(){
@@ -432,13 +440,37 @@ angular.module('starter.controllers')
               scale: 6,
               rotation: trueHeading
             })
+            $timeout(poll, 500);
 
+          }, function(error){
+            toasty.error({
+                  msg: 'We were unable to pinpoint your location.',
+                  showClose: true,
+                  clickToClose: true,
+                  timeout: 5000,
+                  sound: false,
+                  html: true,
+                  shake: false,
+                  theme: "material"
+              });
           })
-          $timeout(poll, 500);
         }
         poll();
 
       } // End getCurrentPosition then success
+      , function(error){
+        toasty.error({
+              //title: 'Error on login!',
+              msg: 'Could not pinpoint your location.',
+              showClose: true,
+              clickToClose: true,
+              timeout: 5000,
+              sound: false,
+              html: true,
+              shake: false,
+              theme: "material"
+          });
+      }
     ); // End getCurrentPosition then
   //}); // End deviceready
 }) // End MapCtrl

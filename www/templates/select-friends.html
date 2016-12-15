@@ -2,9 +2,16 @@
   <ion-header-bar class="bar-assertive">
   <h1 class="title">Select friends</h1>
 </ion-header-bar>
+<ion-subheader-bar class="bar bar-subheader item-input-inset search-container">
+  <div class="search-list list list-inset">
+    <label class="search-filter item-input">
+      <input ng-model="vm.description" type="text" placeholder="Description">
+    </label>
+  </div>
+</ion-subheader-bar>
 
+  <ion-content ng-init="vm.init()" class="has-header has-big-subheader">
 
-  <ion-content ng-init="vm.init()" class="has-header">
     <ion-list>
       <h3 class="empty-message">You currently don't have any friends to share this with. You can still press send marker to save the marker just for yourself.</h3>
       <ion-item ng-repeat="friend in vm.friends" class="person-list select-list item-remove-animate"  type="item-text-wrap">

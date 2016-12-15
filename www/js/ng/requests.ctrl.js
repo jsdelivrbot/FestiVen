@@ -5,30 +5,30 @@ angular.module('starter.controllers')
   vm.sent = [];
   vm.received = [];
 
-  var getSent = function() {
-    // Ask the database for the user's sent friend requests
-    UserService.getSent().then(function(result){
-      vm.sent = result.data;
-    })
-  }
-
-  var getReceived = function() {
-    // Ask the database for the user's received friend requests
-    UserService.getReceived().then(function(result){
-      vm.received = result.data;
-    })
-  }
-
-  var getRequests = function(){
-    getSent();
-    getReceived();
-  }
-
-  getRequests();
-
   var pollRequests = function(){
-    getRequests();
-    $timeout(pollRequests, 2000);
+
+    $q.all([
+      UserService.getReceived(),
+      UserService.getSent(),
+    ]).then(function(result){
+      vm.received = result[0].data;
+      vm.sent = result[0].data
+
+      // Only keep polling when there are no errors
+      $timeout(pollRequests, 2000);
+      
+    }, function(error){
+      toasty.error({
+            msg: 'There was a problem getting the requests.',
+            showClose: true,
+            clickToClose: true,
+            timeout: 5000,
+            sound: false,
+            html: true,
+            shake: false,
+            theme: "material"
+        });
+    })
   }
   pollRequests();
 
