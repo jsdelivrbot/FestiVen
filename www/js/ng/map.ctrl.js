@@ -147,22 +147,34 @@ angular.module('starter.controllers')
 
   $scope.deleteMarker = function(id){
     console.log('Delete marker called: ', id);
-    MarkerService.deleteMarker(id).then(function(result){
-      // Show success message
-      var index = getSharedMarkerIndex(id);
+    var index = getSharedMarkerIndex(id);
 
-      if (index >= 0){
-        var marker = sharedMarkerWithIndex(index);
+    if (index >= 0){
+      var marker = sharedMarkerWithIndex(index);
 
-        // Delete marker from map
-        marker.setMap(null);
+      // Delete marker from map
+      marker.setMap(null);
 
-        // Delete marker from array
-        sharedMarkers.splice(index, 1);
-      }
-    }, function(err){
-      // Do some error handling
-    })
+      // Delete marker from array
+      sharedMarkers.splice(index, 1);
+
+      MarkerService.deleteMarker(id).then(function(result){
+        // Show success message
+
+      }, function(err){
+        // Do some error handling
+        // Set the marker back on the map
+        marker.setMap(map);
+
+        var index = getSharedMarkerIndex(id);
+
+        if (index < 0){
+          sharedMarkers.push(marker);
+        }
+      })
+    }
+
+
   }
 
   $scope.addMarker = function(){

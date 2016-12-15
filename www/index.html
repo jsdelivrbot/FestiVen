@@ -17,6 +17,8 @@
 
   </head>
   <body ng-app="starter" ng-controller="appController" id="#custom">
+    <ion-nav-view>
+    </ion-nav-view>
     <div ng-show="showSuccessMessage" class="toast-popup" >
       <span>{{success}}</span>
       <span>
@@ -24,8 +26,6 @@
       </span>
     </div>
 
-    <ion-nav-view>
-    </ion-nav-view>
     <!-- ionic/angularjs js -->
     <script src="lib/ionic/js/ionic.bundle.js"></script>
 
