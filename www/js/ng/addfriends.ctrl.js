@@ -1,5 +1,5 @@
 angular.module('starter.controllers')
-.controller('AddFriendsCtrl', function(ngFB, $rootScope, $http, $document, $q, $window, $state, $timeout, UserService, toasty) {
+.controller('AddFriendsCtrl', function(ngFB, $rootScope, $http, $q, $window, $state, $timeout, UserService, toasty) {
   var vm = this;
   vm.filteredFriends = [];
   vm.nonFbFriends = [];

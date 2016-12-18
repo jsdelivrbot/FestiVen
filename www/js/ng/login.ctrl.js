@@ -1,5 +1,5 @@
 angular.module('starter.controllers')
-.controller('LoginCtrl', function($scope, $state, ngFB, $ionicLoading, LoginService, UserService, $window, toasty) {
+.controller('LoginCtrl', function($state, ngFB, $ionicLoading, LoginService, toasty, $window) {
   var vm = this;
 
   // Show the spinner
@@ -36,6 +36,10 @@ angular.module('starter.controllers')
       }, function(error){
         // If there is an error we need to login again
         // This means the fb auth token has expired
+        $window.localStorage.removeItem('id');
+        $window.localStorage.removeItem('name');
+        $window.localStorage.removeItem('fbAccessToken');
+        $window.sessionStorage.removeItem('fbAccessToken');
         vm.login();
       })
 

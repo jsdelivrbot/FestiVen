@@ -51,16 +51,3 @@
 .loading {
   background-color: rgba(0,0,0,0) !important;
 }
-
-.center {
-  //align-items: center;
-  //background: rgba(0, 0, 0, .5);
-  display: flex;
-  position: absolute;
-  bottom: 220px;
-  margin: 0 auto;
-  z-index: 999;
-  height: 100%;
-  //text-align: center;
-  width: 100%;
-}

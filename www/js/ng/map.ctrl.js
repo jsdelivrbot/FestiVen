@@ -114,16 +114,6 @@ angular.module('starter.controllers')
                }
              }
              if (found){
-               toasty.error({
-                     msg: 'Pushing marker.' ,
-                     showClose: true,
-                     clickToClose: true,
-                     timeout: 5000,
-                     sound: false,
-                     html: true,
-                     shake: false,
-                     theme: "material"
-                 });
                newArray.push(sharedMarkers[i]);
              }
              else {
@@ -323,7 +313,7 @@ angular.module('starter.controllers')
     }
   })
 
-  document.addEventListener("deviceready", function() {
+  //document.addEventListener("deviceready", function() {
 
     $scope.show($ionicLoading);
 
@@ -497,5 +487,5 @@ angular.module('starter.controllers')
           });
       }
     ); // End getCurrentPosition then
-  }); // End deviceready
+  //}); // End deviceready
 }) // End MapCtrl
