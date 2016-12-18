@@ -102,29 +102,8 @@ angular.module('starter.controllers')
 
           sharedMarkers.push(newMarker);
         }
-        else {
-          var newArray = [];
-          sharedMarkers.forEach(function(marker){
-            var found = false;
-             for (var i = 0; i < result.data.length; i++){
-               var m = result.data[i];
-               if (m._id == marker.get('id')){
-                 found = true;
-                 break;
-               }
-             }
-             if (found){
-               newArray.push(sharedMarkers[i]);
-             }
-             else {
-
-               marker.setMap(null);
-             }
-
-          }) // end foreach
-          sharedMarkers = newArray;
-        }
       }) // end for each
+      removeDeletedMarkers(result.data);
       $timeout(getSharedMarkers, 500);
 
     }, function(error){
@@ -142,6 +121,31 @@ angular.module('starter.controllers')
     })
 
 
+  }
+
+  var removeDeletedMarkers = function(array){
+    var newArray = [];
+    sharedMarkers.forEach(function(sharedMarker){
+      var found = false;
+       for (var i = 0; i < array.length; i++){
+         var m = array[i];
+         if (m._id == sharedMarker.get('id')){
+           found = true;
+           break;
+         }
+       }
+       if (found){
+         console.log('Old marker matched with a marker in the new fetched markers');
+         newArray.push(sharedMarker);
+       }
+       else {
+         console.log('Old marker does not have a match in the new fetched markers');
+         sharedMarker.setMap(null);
+
+       }
+
+    }) // end foreach
+    sharedMarkers = newArray;
   }
 
   var getSharedMarkerIndex = function(id){
