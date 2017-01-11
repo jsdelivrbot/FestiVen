@@ -107,7 +107,6 @@ angular.module('starter.controllers')
       $timeout(getSharedMarkers, 500);
 
     }, function(error){
-      alert(error.message);
       toasty.error({
             msg: 'Unable to get your friends\' location.' ,
             showClose: true,
@@ -461,7 +460,6 @@ angular.module('starter.controllers')
             $timeout(poll, 500);
 
           }, function(error){
-            alert(error.message);
             toasty.error({
                   msg: 'We were unable to pinpoint your location.',
                   showClose: true,

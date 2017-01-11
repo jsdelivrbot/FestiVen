@@ -13,7 +13,7 @@
   <ion-content ng-init="vm.init()" class="has-header has-big-subheader">
 
     <ion-list>
-      <h3 class="empty-message">You currently don't have any friends to share this with. You can still press send marker to save the marker just for yourself.</h3>
+      <h3 class="empty-message" ng-show="!vm.friends.length">You currently don't have any friends to share this with. You can still press send marker to save the marker just for yourself.</h3>
       <ion-item ng-repeat="friend in vm.friends" class="person-list select-list item-remove-animate"  type="item-text-wrap">
 
 

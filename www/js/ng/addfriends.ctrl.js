@@ -45,12 +45,14 @@ angular.module('starter.controllers')
       $http.get('http://188.166.58.138:8080/api/users/' + myId + '/sent'),
       ngFB.api({path: '/me/friends'}),
       $http.get('http://188.166.58.138:8080/api/users/' + myId + '/received'),
-      $http.get('http://188.166.58.138:8080/api/users/' + myId + '/friends')
+      $http.get('http://188.166.58.138:8080/api/users/' + myId + '/friends'),
+      $http.get('http://188.166.58.138:8080/api/users/')
     ]).then(function(data){
       requests = data[0].data;
       fbFriends = data[1].data;
       received = data[2].data;
       friends = data[3].data;
+      users = data[4].data;
 
 
 
@@ -61,7 +63,7 @@ angular.module('starter.controllers')
       // These arrays are concatenated together first
 
       vm.filteredFriends = fbFriends.filter(function(friend){
-        return !(containsFriend(friends.concat(received, requests), friend));
+        return !(containsFriend(friends.concat(received, requests), friend)) && containsFriend(users, friend);
       })
       // Only keep polling when no errors
       $timeout(pollFbFriends, 2000);
